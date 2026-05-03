@@ -130,7 +130,7 @@ namespace HDTPlugin.Controls
         {
             int totalBought = buyMinionCount + buySpellCount;
             int totalActions = unitsPlayed + tavernSpells + nonTavernSpells +
-                           totalBought + sellMinionCount + refreshCount + freezeCount;
+                           totalBought + sellMinionCount + refreshCount + freezeCount + leveledUp;
             _totalText.Text = $"Actions: {totalActions}";
             _unitsText.Text = $"Minions Played: {unitsPlayed}";
             _tavernSpellsText.Text = $"Tavern Spells: {tavernSpells}";
