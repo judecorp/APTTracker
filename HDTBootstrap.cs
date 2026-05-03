@@ -3,7 +3,10 @@ using Hearthstone_Deck_Tracker.API;
 using Hearthstone_Deck_Tracker.Enums;
 using Hearthstone_Deck_Tracker.Plugins;
 using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using Card = Hearthstone_Deck_Tracker.Hearthstone.Card;
@@ -15,6 +18,16 @@ namespace HDTPlugin
     {
         private PlugInDisplayControl _displayControl;
         private bool _isTracking;
+        private string _logFilePath;
+        private StreamWriter _logWriter;
+
+        // Shop action counters for verification
+        private int _buyMinionCount;
+        private int _buySpellCount;
+        private int _sellMinionCount;
+        private int _refreshCount;
+        private int _freezeCount;
+        private int _tavernTier;
 
         private int _turnNumber;
         private int _unitsPlayed;
@@ -37,18 +50,99 @@ namespace HDTPlugin
             Canvas.SetTop(_displayControl, 100);
             Canvas.SetLeft(_displayControl, 100);
 
+            // Initialize counters
+            ResetCounters();
+
+            // Initialize PowerLog line logging
+            var logDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "HDTPlugin");
+            Directory.CreateDirectory(logDir);
+            _logFilePath = Path.Combine(logDir, "PowerLogLines.log");
+            _logWriter = new StreamWriter(_logFilePath, false) { AutoFlush = true };
+            _logWriter.WriteLine($"[{DateTime.Now}] HDTPlugin loaded, subscribing to OnPowerLogLine");
+
             GameEvents.OnGameStart.Add(GameStart);
             GameEvents.OnGameEnd.Add(GameEnd);
             GameEvents.OnTurnStart.Add(TurnStart);
             GameEvents.OnPlayerPlay.Add(OnCardPlayed);
+
+            LogEvents.OnPowerLogLine.Add(OnPowerLogLine);
+            _logWriter.WriteLine($"[{DateTime.Now}] Subscribed to OnPowerLogLine");
         }
 
         public void OnUnload()
         {
+            if (_logWriter != null)
+            {
+                _logWriter.Close();
+                _logWriter = null;
+            }
             if (_displayControl != null)
             {
                 Core.OverlayCanvas.Children.Remove(_displayControl);
                 _displayControl = null;
+            }
+        }
+
+        private void OnPowerLogLine(string line)
+        {
+            if (_logWriter == null) return;
+
+            // Only process BLOCK_START BlockType=PLAY lines
+            if (!line.Contains("BLOCK_START BlockType=PLAY"))
+                return;
+
+            // Extract cardId using regex
+            var cardIdMatch = Regex.Match(line, @"cardId=(\S+)");
+            if (!cardIdMatch.Success) return;
+
+            string cardId = cardIdMatch.Groups[1].Value;
+            string entityName = "";
+            var nameMatch = Regex.Match(line, @"entityName=(\S+)");
+            if (nameMatch.Success) entityName = nameMatch.Groups[1].Value;
+
+            // Extract player ID
+            int playerId = 0;
+            var playerMatch = Regex.Match(line, @"player=(\d+)");
+            if (playerMatch.Success) playerId = int.Parse(playerMatch.Groups[1].Value);
+
+            // Identify shop action based on cardId
+            if (cardId == "TB_BaconShop_DragBuy")
+            {
+                _buyMinionCount++;
+                _logWriter.WriteLine($"[{DateTime.Now}] BUY MINION: {entityName} (Player: {playerId})");
+                UpdateDisplay();
+            }
+            else if (cardId == "TB_BaconShop_DragBuy_Spell")
+            {
+                _buySpellCount++;
+                _logWriter.WriteLine($"[{DateTime.Now}] BUY SPELL: {entityName} (Player: {playerId})");
+                UpdateDisplay();
+            }
+            else if (cardId == "TB_BaconShop_DragSell")
+            {
+                _sellMinionCount++;
+                _logWriter.WriteLine($"[{DateTime.Now}] SELL MINION: {entityName} (Player: {playerId})");
+                UpdateDisplay();
+            }
+            else if (cardId == "TB_BaconShop_8p_Reroll_Button")
+            {
+                _refreshCount++;
+                _logWriter.WriteLine($"[{DateTime.Now}] REFRESH: {entityName} (Player: {playerId})");
+                UpdateDisplay();
+            }
+            else if (cardId == "TB_BaconShopLockAll_Button")
+            {
+                _freezeCount++;
+                _logWriter.WriteLine($"[{DateTime.Now}] FREEZE: {entityName} (Player: {playerId})");
+                UpdateDisplay();
+            }
+            // Check for Tavern Tier upgrade (TB_BaconShopTechUp0X_Button)
+            else if (cardId.StartsWith("TB_BaconShopTechUp"))
+            {
+                // Increment level up counter (player pressed tavern up button)
+                _tavernTier++;
+                _logWriter.WriteLine($"[{DateTime.Now}] LEVELED UP: {entityName} (Count: {_tavernTier})");
+                UpdateDisplay();
             }
         }
 
@@ -61,7 +155,7 @@ namespace HDTPlugin
                 return;
 
             _isTracking = true;
-            _turnNumber = 0;
+            _turnNumber =0;
             ResetCounters();
             _displayControl.Visibility = Visibility.Visible;
             UpdateDisplay();
@@ -78,7 +172,7 @@ namespace HDTPlugin
             if (!_isTracking || player != ActivePlayer.Player)
                 return;
 
-            ResetCounters();
+            ResetCounters(); // Resets ALL counters for the turn
             _turnNumber++;
             UpdateDisplay();
         }
@@ -109,11 +203,18 @@ namespace HDTPlugin
             _unitsPlayed = 0;
             _tavernSpells = 0;
             _nonTavernSpells = 0;
+            _buyMinionCount = 0;
+            _buySpellCount = 0;
+            _sellMinionCount = 0;
+            _refreshCount = 0;
+            _freezeCount = 0;
+            _tavernTier = 0; // Start at 0 (no level ups yet this turn)
         }
 
         private void UpdateDisplay()
         {
-            _displayControl.UpdateCounters(_turnNumber, _unitsPlayed, _tavernSpells, _nonTavernSpells);
+            _displayControl.UpdateCounters(_turnNumber, _unitsPlayed, _tavernSpells, _nonTavernSpells,
+                _buyMinionCount, _buySpellCount, _sellMinionCount, _refreshCount, _freezeCount, _tavernTier);
         }
     }
 }
