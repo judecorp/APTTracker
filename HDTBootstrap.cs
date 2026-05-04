@@ -17,6 +17,7 @@ namespace HDTPlugin
     public class HDTBootstrap : IPlugin
     {
         private PlugInDisplayControl _displayControl;
+        private DebugWindow _debugWindow;
         private bool _isTracking;
         private string _logFilePath;
         private StreamWriter _logWriter;
@@ -71,6 +72,11 @@ namespace HDTPlugin
 
         public void OnUnload()
         {
+            if (_debugWindow != null)
+            {
+                _debugWindow.Close();
+                _debugWindow = null;
+            }
             if (_logWriter != null)
             {
                 _logWriter.Close();
@@ -147,7 +153,19 @@ namespace HDTPlugin
         }
 
         public void OnUpdate() { }
-        public void OnButtonPress() { }
+        public void OnButtonPress()
+        {
+            if (_debugWindow == null || !_debugWindow.IsLoaded)
+            {
+                _debugWindow = new DebugWindow();
+                _debugWindow.Closed += (s, e) => _debugWindow = null;
+                _debugWindow.Show();
+            }
+            else
+            {
+                _debugWindow.Activate();
+            }
+        }
 
         private void GameStart()
         {

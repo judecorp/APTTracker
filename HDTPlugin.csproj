@@ -59,8 +59,16 @@
     <Compile Include="Controls\PlugInDisplayControl.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="DebugWindow.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="HDTBootstrap.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="DebugWindow.xaml">
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

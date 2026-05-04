@@ -13,7 +13,7 @@ if ($hdtProcess) {
 # Build the project
 Write-Host "Building HDTPlugin..."
 Set-Location $PSScriptRoot
-dotnet build -c Debug
+msbuild HDTPlugin.csproj /p:Configuration=Debug /t:Rebuild
 
 # Copy to plugins folder
 $pluginsPath = "$env:APPDATA\HearthstoneDeckTracker\Plugins"
