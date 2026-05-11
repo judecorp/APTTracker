@@ -1,5 +1,9 @@
+using System;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media.Imaging;
+using HDTPlugin.Logic;
 
 namespace HDTPlugin
 {
@@ -15,11 +19,51 @@ namespace HDTPlugin
         private int _refreshCount = 0;
         private int _freezeCount = 0;
         private int _leveledUp = 0;
+        private InputMoveManager _inputMoveManager;
 
         public DebugWindow()
         {
             InitializeComponent();
+            LoadBackgroundImage();
+            SetPluginPosition();
             UpdateDisplay();
+            
+            // Initialize input move manager for the debug window's preview control
+            _inputMoveManager = new InputMoveManager(DisplayControl);
+        }
+
+        private void SetPluginPosition()
+        {
+            var position = PluginPosition.GetDefaultPosition();
+            Canvas.SetLeft(DisplayControl, position.X);
+            Canvas.SetTop(DisplayControl, position.Y);
+        }
+
+        private void LoadBackgroundImage()
+        {
+            try
+            {
+                var appDir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+                var hdtDir = Path.Combine(appDir, "HearthstoneDeckTracker");
+                var imagePath = Path.Combine(hdtDir, "img", "hsplugin.png");
+                if (File.Exists(imagePath))
+                {
+                    var bitmap = new BitmapImage();
+                    bitmap.BeginInit();
+                    bitmap.UriSource = new Uri(imagePath, UriKind.Absolute);
+                    bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                    bitmap.EndInit();
+                    BackgroundImage.Source = bitmap;
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine("Image not found at: " + imagePath);
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("Failed to load background image: " + ex.Message);
+            }
         }
 
         private void UpdateDisplay()
@@ -51,6 +95,15 @@ namespace HDTPlugin
             _freezeCount = 0;
             _leveledUp = 0;
             UpdateDisplay();
+        }
+
+        private void BtnToggleDrag_Click(object sender, RoutedEventArgs e)
+        {
+            if (_inputMoveManager != null)
+            {
+                bool isEnabled = _inputMoveManager.Toggle();
+                BtnToggleDrag.Content = isEnabled ? "Lock Position" : "Toggle Dragging";
+            }
         }
 
         // Minions Played

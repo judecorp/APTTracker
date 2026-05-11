@@ -31,7 +31,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <ItemGroup>
+<ItemGroup>
     <Reference Include="HearthDb, Version=28.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\lib\HearthDb.dll</HintPath>
@@ -45,10 +45,10 @@
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
@@ -64,8 +64,18 @@
     </Compile>
     <Compile Include="HDTBootstrap.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="Logic\InputMoveManager.cs" />
+    <Compile Include="Logic\PluginPosition.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Controls\PlugInDisplayControl.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="DebugWindow.xaml">
       <SubType>Designer</SubType>
     </Page>
@@ -77,6 +87,10 @@
   <ItemGroup>
     <Content Include="libs\HearthDb.dll" />
     <Content Include="libs\HearthstoneDeckTracker.exe" />
+    <Resource Include="img\hsplugin.png" />
+    <None Include="img\hsplugin.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

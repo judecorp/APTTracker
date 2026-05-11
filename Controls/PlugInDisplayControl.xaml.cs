@@ -1,12 +1,16 @@
+using System;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
+using System.Windows.Media.Animation;
 
 namespace HDTPlugin.Controls
 {
-    public class PlugInDisplayControl : StackPanel
+    public partial class PlugInDisplayControl : StackPanel
     {
-        private readonly TextBlock _totalText;
+        private readonly TextBlock _summaryCounter;
+        private readonly TextBlock _turnLengthText;
+        private readonly TextBlock _apmText;
+        
         private readonly TextBlock _unitsText;
         private readonly TextBlock _tavernSpellsText;
         private readonly TextBlock _nonTavernSpellsText;
@@ -18,111 +22,26 @@ namespace HDTPlugin.Controls
 
         public PlugInDisplayControl()
         {
-            MinWidth = 180;
-
-            var border = new Border
-            {
-                Background = new SolidColorBrush(Color.FromRgb(0x1d, 0x36, 0x57)),
-                BorderBrush = new SolidColorBrush(Color.FromRgb(0x14, 0x16, 0x17)),
-                BorderThickness = new Thickness(3),
-                Padding = new Thickness(12, 8, 12, 10)
-            };
-
-            var mainPanel = new StackPanel();
-
-            _totalText = new TextBlock
-            {
-                FontSize = 28,
-                FontWeight = FontWeights.Bold,
-                Foreground = new SolidColorBrush(Color.FromRgb(0xFF, 0xC8, 0xE5)),
-                Text = "Actions: 0",
-                TextAlignment = TextAlignment.Center
-            };
-
-            var detailsPanel = new StackPanel
-            {
-                Margin = new Thickness(0, 8, 0, 0)
-            };
-
-            _unitsText = new TextBlock
-            {
-                FontSize = 14,
-                Foreground = new SolidColorBrush(Color.FromRgb(0xCC, 0xCC, 0xCC)),
-                Text = "Minions Played: 0",
-                TextAlignment = TextAlignment.Center
-            };
-
-            _tavernSpellsText = new TextBlock
-            {
-                FontSize = 14,
-                Foreground = new SolidColorBrush(Color.FromRgb(0xCC, 0xCC, 0xCC)),
-                Text = "Tavern Spells: 0",
-                TextAlignment = TextAlignment.Center
-            };
-
-            _nonTavernSpellsText = new TextBlock
-            {
-                FontSize = 14,
-                Foreground = new SolidColorBrush(Color.FromRgb(0xCC, 0xCC, 0xCC)),
-                Text = "Non-Tavern Spells: 0",
-                TextAlignment = TextAlignment.Center
-            };
-
-            _cardsBoughtText = new TextBlock
-            {
-                FontSize = 14,
-                Foreground = new SolidColorBrush(Color.FromRgb(0x4C, 0xAF, 0x50)),
-                Text = "Cards Bought: 0",
-                TextAlignment = TextAlignment.Center
-            };
-
-            _sellMinionText = new TextBlock
-            {
-                FontSize = 14,
-                Foreground = new SolidColorBrush(Color.FromRgb(0xF4, 0x43, 0x36)),
-                Text = "Sell Minion: 0",
-                TextAlignment = TextAlignment.Center
-            };
-
-            _refreshText = new TextBlock
-            {
-                FontSize = 14,
-                Foreground = new SolidColorBrush(Color.FromRgb(0x21, 0x96, 0xF3)),
-                Text = "Refresh: 0",
-                TextAlignment = TextAlignment.Center
-            };
-
-            _freezeText = new TextBlock
-            {
-                FontSize = 14,
-                Foreground = new SolidColorBrush(Color.FromRgb(0x9C, 0x27, 0xB0)),
-                Text = "Freeze: 0",
-                TextAlignment = TextAlignment.Center
-            };
-
-            _tavernTierText = new TextBlock
-            {
-                FontSize = 14,
-                Foreground = new SolidColorBrush(Color.FromRgb(0xFF, 0xD7, 0x00)),
-                Text = "Leveled Up: 0",
-                TextAlignment = TextAlignment.Center
-            };
-
-            detailsPanel.Children.Add(_unitsText);
-            detailsPanel.Children.Add(_tavernSpellsText);
-            detailsPanel.Children.Add(_nonTavernSpellsText);
-            detailsPanel.Children.Add(_cardsBoughtText);
-            detailsPanel.Children.Add(_sellMinionText);
-            detailsPanel.Children.Add(_refreshText);
-            detailsPanel.Children.Add(_freezeText);
-            detailsPanel.Children.Add(_tavernTierText);
-
-            mainPanel.Children.Add(_totalText);
-            mainPanel.Children.Add(detailsPanel);
-
-            border.Child = mainPanel;
-            Children.Add(border);
+            InitializeComponent();
+            
+            _summaryCounter = SummaryCounter;
+            _turnLengthText = TurnLengthText;
+            _apmText = ApmText;
+            _unitsText = UnitsText;
+            _tavernSpellsText = TavernSpellsText;
+            _nonTavernSpellsText = NonTavernSpellsText;
+            _cardsBoughtText = CardsBoughtText;
+            _sellMinionText = SellMinionText;
+            _refreshText = RefreshText;
+            _freezeText = FreezeText;
+            _tavernTierText = TavernTierText;
         }
+
+        private const double MinFontSize = 56;
+        private const double MaxFontSize = 78;
+        private const int MaxScaleValue = 100;
+        private const double PulseIncrease = 8;
+        private int _previousTotalActions;
 
         public void UpdateCounters(int turn, int unitsPlayed, int tavernSpells, int nonTavernSpells,
             int buyMinionCount = 0, int buySpellCount = 0, int sellMinionCount = 0,
@@ -131,15 +50,40 @@ namespace HDTPlugin.Controls
             int totalBought = buyMinionCount + buySpellCount;
             int totalActions = unitsPlayed + tavernSpells + nonTavernSpells +
                            totalBought + sellMinionCount + refreshCount + freezeCount + leveledUp;
-            _totalText.Text = $"Actions: {totalActions}";
-            _unitsText.Text = $"Minions Played: {unitsPlayed}";
-            _tavernSpellsText.Text = $"Tavern Spells: {tavernSpells}";
-            _nonTavernSpellsText.Text = $"Non-Tavern Spells: {nonTavernSpells}";
-            _cardsBoughtText.Text = $"Cards Bought: {totalBought}";
-            _sellMinionText.Text = $"Sell Minion: {sellMinionCount}";
-            _refreshText.Text = $"Refresh: {refreshCount}";
-            _freezeText.Text = $"Freeze: {freezeCount}";
-            _tavernTierText.Text = $"Leveled Up: {leveledUp}";
+
+            double scale = Math.Min(totalActions, MaxScaleValue) / (double)MaxScaleValue;
+            double targetFontSize = MinFontSize + (MaxFontSize - MinFontSize) * scale;
+            _summaryCounter.FontSize = targetFontSize;
+            _summaryCounter.Text = $"{totalActions}";
+
+            if (totalActions != _previousTotalActions && totalActions > 0)
+            {
+                var animation = new DoubleAnimation
+                {
+                    From = targetFontSize,
+                    To = targetFontSize + PulseIncrease,
+                    Duration = TimeSpan.FromMilliseconds(150),
+                    AutoReverse = true,
+                    FillBehavior = FillBehavior.Stop
+                };
+                _summaryCounter.BeginAnimation(TextBlock.FontSizeProperty, animation);
+            }
+
+            _previousTotalActions = totalActions;
+            UpdateCounterText(_unitsText, "Minions Played", unitsPlayed);
+            UpdateCounterText(_tavernSpellsText, "Tavern Spells", tavernSpells);
+            UpdateCounterText(_nonTavernSpellsText, "Non-Tavern Spells", nonTavernSpells);
+            UpdateCounterText(_cardsBoughtText, "Cards Bought", totalBought);
+            UpdateCounterText(_sellMinionText, "Sell Minion", sellMinionCount);
+            UpdateCounterText(_refreshText, "Refresh", refreshCount);
+            UpdateCounterText(_freezeText, "Freeze", freezeCount);
+            UpdateCounterText(_tavernTierText, "Leveled Up", leveledUp);
+        }
+
+        private void UpdateCounterText(TextBlock textBlock, string label, int value)
+        {
+            textBlock.Text = $"{label}: {value}";
+            textBlock.Visibility = value > 0 ? Visibility.Visible : Visibility.Collapsed;
         }
     }
 }

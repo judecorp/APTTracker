@@ -1,4 +1,5 @@
 using HDTPlugin.Controls;
+using HDTPlugin.Logic;
 using Hearthstone_Deck_Tracker.API;
 using Hearthstone_Deck_Tracker.Enums;
 using Hearthstone_Deck_Tracker.Plugins;
@@ -21,6 +22,7 @@ namespace HDTPlugin
         private bool _isTracking;
         private string _logFilePath;
         private StreamWriter _logWriter;
+        private InputMoveManager _inputMoveManager;
 
         // Shop action counters for verification
         private int _buyMinionCount;
@@ -48,8 +50,12 @@ namespace HDTPlugin
             _displayControl.Visibility = Visibility.Collapsed;
             Core.OverlayCanvas.Children.Add(_displayControl);
 
-            Canvas.SetTop(_displayControl, 100);
-            Canvas.SetLeft(_displayControl, 100);
+            // Load position from settings
+            Canvas.SetTop(_displayControl, global::HDTPlugin.Properties.Settings.Default.Top);
+            Canvas.SetLeft(_displayControl, global::HDTPlugin.Properties.Settings.Default.Left);
+
+            // Initialize input move manager for dragging functionality
+            _inputMoveManager = new InputMoveManager(_displayControl);
 
             // Initialize counters
             ResetCounters();
@@ -86,6 +92,11 @@ namespace HDTPlugin
             {
                 Core.OverlayCanvas.Children.Remove(_displayControl);
                 _displayControl = null;
+            }
+            if (_inputMoveManager != null)
+            {
+                _inputMoveManager.Dispose();
+                _inputMoveManager = null;
             }
         }
 

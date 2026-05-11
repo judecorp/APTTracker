@@ -1,0 +1,88 @@
+<StackPanel
+    x:Class="HDTPlugin.Controls.PlugInDisplayControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    MinWidth="320"
+    d:DesignHeight="400" d:DesignWidth="320">
+    
+    <!-- Summary Panel -->
+    <Border
+        Background="#1A1A1A"
+        BorderBrush="#AAAAAA"
+        BorderThickness="1"
+        Padding="8,0,8,8">
+        
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            
+            <!-- Left Stack: Rank -->
+            <StackPanel Grid.Column="0" Orientation="Vertical">
+                <TextBlock
+                    x:Name="RankLabel"
+                    FontSize="20"
+                    FontWeight="Bold"
+                    Foreground="White"
+                    Text="Rank: Bronze"/>
+                <Border
+                    Width="120"
+                    Height="120"
+                    Background="#CD7F32"
+                    CornerRadius="8"
+                    Margin="0,0,0,0"
+                    HorizontalAlignment="Left"/>
+            </StackPanel>
+            
+            <!-- Right Stack: Counter, Turn Length, APM -->
+            <StackPanel Grid.Column="1" Orientation="Vertical" HorizontalAlignment="Center">
+                
+                <!-- Counter Container with reserved space -->
+                <Border MinWidth="90" Height="100" VerticalAlignment="Center">
+                    <TextBlock
+                        x:Name="SummaryCounter"
+                        FontSize="56"
+                        FontWeight="UltraBold"
+                        Foreground="White"
+                        Text="41"
+                        TextAlignment="Center"
+                        VerticalAlignment="Center" />
+                </Border>
+                
+                <!-- Turn Length -->
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,0">
+                    <TextBlock FontSize="18" FontWeight="Bold" Foreground="White" Text="Turn Length: "/>
+                    <TextBlock x:Name="TurnLengthText" FontSize="18" FontWeight="Bold" Foreground="White" Text="120s"/>
+                </StackPanel>
+                
+                <!-- APM -->
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,0">
+                    <TextBlock FontSize="18" FontWeight="Bold" Foreground="White" Text="APM: "/>
+                    <TextBlock x:Name="ApmText" FontSize="18" FontWeight="Bold" Foreground="White" Text="2.13"/>
+                </StackPanel>
+            </StackPanel>
+        </Grid>
+    </Border>
+    
+    <!-- Counters Panel -->
+    <Border
+        Background="#1A1A1A"
+        Padding="8,8,8,8"
+        Margin="0,0,0,0">
+        
+        <StackPanel>
+            <TextBlock x:Name="UnitsText" FontSize="18" Foreground="White" Text="Minions Played: 0" TextAlignment="Center" Margin="0,4,0,0"/>
+            <TextBlock x:Name="TavernSpellsText" FontSize="18" Foreground="White" Text="Tavern Spells: 0" TextAlignment="Center" Margin="0,4,0,0"/>
+            <TextBlock x:Name="NonTavernSpellsText" FontSize="18" Foreground="White" Text="Non-Tavern Spells: 0" TextAlignment="Center" Margin="0,4,0,0"/>
+            <TextBlock x:Name="CardsBoughtText" FontSize="18" Foreground="#4CAF50" Text="Cards Bought: 0" TextAlignment="Center" Margin="0,4,0,0"/>
+            <TextBlock x:Name="SellMinionText" FontSize="18" Foreground="#F44336" Text="Sell Minion: 0" TextAlignment="Center" Margin="0,4,0,0"/>
+            <TextBlock x:Name="RefreshText" FontSize="18" Foreground="#2196F3" Text="Refresh: 0" TextAlignment="Center" Margin="0,4,0,0"/>
+            <TextBlock x:Name="FreezeText" FontSize="18" Foreground="#9C27B0" Text="Freeze: 0" TextAlignment="Center" Margin="0,4,0,0"/>
+            <TextBlock x:Name="TavernTierText" FontSize="18" Foreground="#FFD700" Text="Leveled Up: 0" TextAlignment="Center" Margin="0,4,0,0"/>
+        </StackPanel>
+    </Border>
+</StackPanel>
