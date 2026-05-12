@@ -91,44 +91,44 @@ namespace HDTPlugin.Logic
 
         public static double GetSummaryFontSize()
         {
-            if (CurrentTier == ResolutionTier.UHD4K) return 172;
-            if (CurrentTier == ResolutionTier.QHD1440p) return 86;
-            return 43;
+            if (CurrentTier == ResolutionTier.UHD4K) return 84;
+            if (CurrentTier == ResolutionTier.QHD1440p) return 63;
+            return 42;
         }
 
         public static double GetHeaderFontSize()
         {
-            if (CurrentTier == ResolutionTier.UHD4K) return 60;
-            if (CurrentTier == ResolutionTier.QHD1440p) return 30;
-            return 15;
+            if (CurrentTier == ResolutionTier.UHD4K) return 28;
+            if (CurrentTier == ResolutionTier.QHD1440p) return 21;
+            return 14;
         }
 
         public static double GetBodyFontSize()
         {
-            if (CurrentTier == ResolutionTier.UHD4K) return 44;
-            if (CurrentTier == ResolutionTier.QHD1440p) return 22;
-            return 11;
+            if (CurrentTier == ResolutionTier.UHD4K) return 28;
+            if (CurrentTier == ResolutionTier.QHD1440p) return 21;
+            return 14;
         }
 
         public static double GetRankBorderSize()
         {
-            if (CurrentTier == ResolutionTier.UHD4K) return 312;
-            if (CurrentTier == ResolutionTier.QHD1440p) return 156;
-            return 78;
+            if (CurrentTier == ResolutionTier.UHD4K) return 160;
+            if (CurrentTier == ResolutionTier.QHD1440p) return 120;
+            return 80;
         }
 
         public static double GetMinWidth()
         {
-            if (CurrentTier == ResolutionTier.UHD4K) return 640;
-            if (CurrentTier == ResolutionTier.QHD1440p) return 320;
-            return 160;
+            if (CurrentTier == ResolutionTier.UHD4K) return 450;
+            if (CurrentTier == ResolutionTier.QHD1440p) return 338;
+            return 225;
         }
 
         public static double GetCounterHeight()
         {
-            if (CurrentTier == ResolutionTier.UHD4K) return 234;
-            if (CurrentTier == ResolutionTier.QHD1440p) return 117;
-            return 60;
+            if (CurrentTier == ResolutionTier.UHD4K) return 240;
+            if (CurrentTier == ResolutionTier.QHD1440p) return 180;
+            return 120;
         }
     }
 }

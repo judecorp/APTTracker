@@ -5,8 +5,8 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    MinWidth="340"
-    d:DesignHeight="400" d:DesignWidth="340">
+    MinWidth="225"
+    d:DesignHeight="400" d:DesignWidth="225">
     
     <!-- Summary Panel -->
     <Border
@@ -26,27 +26,27 @@
             <TextBlock
                 x:Name="RankLabel"
                 Grid.Row="0"
-                FontSize="20"
+                FontSize="14"
                 FontWeight="Bold"
                 Foreground="White"
                 Text="Rank: Barely Awake"
-                Margin="0,0,0,0"/>
+                Margin="0,-8,0,0"/>
             
             <!-- Bottom: Two columns -->
             <Grid Grid.Row="1">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 
                 <!-- Left: Rank Image -->
                 <Border
                     x:Name="RankBorder"
                     Grid.Column="0"
-                    Width="140"
-                    Height="140"
+                    Width="80"
+                    Height="80"
                     Background="#CD7F32"
-                    CornerRadius="8"
+                    CornerRadius="0"
                     Margin="0,0,8,0"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Top"/>
@@ -58,13 +58,13 @@
                     </Grid.RowDefinitions>
 
                     <!-- Total Actions Counter -->
-                    <Border x:Name="CounterBorder" Grid.Row="0" Width="120" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                    <Border x:Name="CounterBorder" Grid.Row="0" MinWidth="90" Height="40" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                         <TextBlock
                             x:Name="SummaryCounter"
-                            FontSize="56"
+                            FontSize="42"
                             FontWeight="UltraBold"
                             Foreground="White"
-                            Margin="0,-8,0,0"
+                            Margin="0,-16,0,-8"
                             Text="41"
                             TextAlignment="Center"
                             VerticalAlignment="Center" />
@@ -73,14 +73,14 @@
                     <StackPanel Grid.Row="1" >
                         <!-- Turn Length -->
                         <StackPanel x:Name="TurnLengthPanel" Orientation="Horizontal" HorizontalAlignment="Center"  VerticalAlignment="Bottom" Margin="0,0,0,0">
-                            <TextBlock x:Name="TurnLengthLabel" FontSize="20" FontWeight="Bold" Foreground="White" Text="Turn Length: "/>
-                            <TextBlock x:Name="TurnLengthText" FontSize="20" FontWeight="Bold" Foreground="White" Text="120s"/>
+                            <TextBlock x:Name="TurnLengthLabel" FontSize="14" FontWeight="Bold" Foreground="White" Text="Turn Length: "/>
+                            <TextBlock x:Name="TurnLengthText" FontSize="14" FontWeight="Bold" Foreground="White" Text="102s"/>
                         </StackPanel>
 
                         <!-- APM -->
                         <StackPanel x:Name="ApmPanel" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,0">
-                            <TextBlock x:Name="ApmLabel" FontSize="20" FontWeight="Bold" Foreground="White" Text="APM: "/>
-                            <TextBlock x:Name="ApmText" FontSize="20" FontWeight="Bold" Foreground="White" Text="2.13"/>
+                            <TextBlock x:Name="ApmLabel" FontSize="14" FontWeight="Bold" Foreground="White" Text="APM: "/>
+                            <TextBlock x:Name="ApmText" FontSize="14" FontWeight="Bold" Foreground="White" Text="2.13"/>
                         </StackPanel>
                     </StackPanel>
                 </Grid>
@@ -96,14 +96,14 @@
         Margin="0,0,0,0">
         
         <StackPanel>
-            <TextBlock x:Name="UnitsText" FontSize="18" Foreground="White" Text="Minions Played: 0" TextAlignment="Center" Margin="0,4,0,0"/>
-            <TextBlock x:Name="TavernSpellsText" FontSize="18" Foreground="White" Text="Tavern Spells: 0" TextAlignment="Center" Margin="0,4,0,0"/>
-            <TextBlock x:Name="NonTavernSpellsText" FontSize="18" Foreground="White" Text="Non-Tavern Spells: 0" TextAlignment="Center" Margin="0,4,0,0"/>
-            <TextBlock x:Name="CardsBoughtText" FontSize="18" Foreground="#4CAF50" Text="Cards Bought: 0" TextAlignment="Center" Margin="0,4,0,0"/>
-            <TextBlock x:Name="SellMinionText" FontSize="18" Foreground="#F44336" Text="Sell Minion: 0" TextAlignment="Center" Margin="0,4,0,0"/>
-            <TextBlock x:Name="RefreshText" FontSize="18" Foreground="#2196F3" Text="Refresh: 0" TextAlignment="Center" Margin="0,4,0,0"/>
-            <TextBlock x:Name="FreezeText" FontSize="18" Foreground="#9C27B0" Text="Freeze: 0" TextAlignment="Center" Margin="0,4,0,0"/>
-            <TextBlock x:Name="TavernTierText" FontSize="18" Foreground="#FFD700" Text="Leveled Up: 0" TextAlignment="Center" Margin="0,4,0,0"/>
+            <TextBlock x:Name="UnitsText" FontSize="14" Foreground="White" Text="Minions Played: 0" TextAlignment="Center" Margin="0"/>
+            <TextBlock x:Name="TavernSpellsText" FontSize="14" Foreground="White" Text="Tavern Spells: 0" TextAlignment="Center" Margin="0"/>
+            <TextBlock x:Name="NonTavernSpellsText" FontSize="14" Foreground="White" Text="Non-Tavern Spells: 0" TextAlignment="Center" Margin="0"/>
+            <TextBlock x:Name="CardsBoughtText" FontSize="14" Foreground="#4CAF50" Text="Cards Bought: 0" TextAlignment="Center" Margin="0"/>
+            <TextBlock x:Name="SellMinionText" FontSize="14" Foreground="#F44336" Text="Sell Minion: 0" TextAlignment="Center" Margin="0"/>
+            <TextBlock x:Name="RefreshText" FontSize="14" Foreground="#2196F3" Text="Refresh: 0" TextAlignment="Center" Margin="0"/>
+            <TextBlock x:Name="FreezeText" FontSize="14" Foreground="#9C27B0" Text="Freeze: 0" TextAlignment="Center" Margin="0"/>
+            <TextBlock x:Name="TavernTierText" FontSize="14" Foreground="#FFD700" Text="Leveled Up: 0" TextAlignment="Center" Margin="0"/>
         </StackPanel>
     </Border>
 </StackPanel>

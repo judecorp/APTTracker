@@ -79,8 +79,8 @@ namespace HDTPlugin.Controls
             _rankBorder.Width = UIScaler.GetRankBorderSize();
             _rankBorder.Height = UIScaler.GetRankBorderSize();
 
-            _counterBorder.MinWidth = 90;
-            _counterBorder.Height = UIScaler.GetCounterHeight();
+            //_counterBorder.MinWidth = 90;
+            //_counterBorder.Height = UIScaler.GetCounterHeight();
 
             MinWidth = UIScaler.GetMinWidth();
         }
