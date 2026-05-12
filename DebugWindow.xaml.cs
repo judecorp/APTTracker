@@ -24,12 +24,14 @@ namespace HDTPlugin
         public DebugWindow()
         {
             InitializeComponent();
-            LoadBackgroundImage();
-            SetPluginPosition();
-            UpdateDisplay();
             
             // Initialize input move manager for the debug window's preview control
             _inputMoveManager = new InputMoveManager(DisplayControl);
+            _inputMoveManager.Enable();
+            
+            LoadBackgroundImage();
+            SetPluginPosition();
+            UpdateDisplay();
         }
 
         private void SetPluginPosition()
@@ -97,13 +99,38 @@ namespace HDTPlugin
             UpdateDisplay();
         }
 
-        private void BtnToggleDrag_Click(object sender, RoutedEventArgs e)
+        private void Btn1080p_Click(object sender, RoutedEventArgs e)
         {
-            if (_inputMoveManager != null)
-            {
-                bool isEnabled = _inputMoveManager.Toggle();
-                BtnToggleDrag.Content = isEnabled ? "Lock Position" : "Toggle Dragging";
-            }
+            UIScaler.SetResolutionTier(Logic.ResolutionTier.HD1080p);
+            TxtCurrentTier.Text = "Current: 1080p";
+            RefreshUI(1.0);
+        }
+
+        private void Btn1440p_Click(object sender, RoutedEventArgs e)
+        {
+            UIScaler.SetResolutionTier(Logic.ResolutionTier.QHD1440p);
+            TxtCurrentTier.Text = "Current: 1440p";
+            RefreshUI(1.33);
+        }
+
+        private void Btn4K_Click(object sender, RoutedEventArgs e)
+        {
+            UIScaler.SetResolutionTier(Logic.ResolutionTier.UHD4K);
+            TxtCurrentTier.Text = "Current: 4K";
+            RefreshUI(2.0);
+        }
+
+        private void RefreshUI(double scaleFactor)
+        {
+            DisplayControl.RecalculateScaling();
+            
+            // Scale background from top-right corner
+            BackgroundScale.ScaleX = scaleFactor;
+            BackgroundScale.ScaleY = scaleFactor;
+            
+            // Keep plugin at default visible position in DebugWindow
+            Canvas.SetLeft(DisplayControl, 100);
+            Canvas.SetTop(DisplayControl, 100);
         }
 
         // Minions Played

@@ -10,6 +10,7 @@
     
     <!-- Summary Panel -->
     <Border
+        x:Name="SummaryBorder"
         Background="#1A1A1A"
         BorderBrush="#AAAAAA"
         BorderThickness="1"
@@ -30,6 +31,7 @@
                     Foreground="White"
                     Text="Rank: Bronze"/>
                 <Border
+                    x:Name="RankBorder"
                     Width="120"
                     Height="120"
                     Background="#CD7F32"
@@ -38,11 +40,11 @@
                     HorizontalAlignment="Left"/>
             </StackPanel>
             
-            <!-- Right Stack: Counter, Turn Length, APM -->
-            <StackPanel Grid.Column="1" Orientation="Vertical" HorizontalAlignment="Center">
+<!-- Right Stack: Counter, Turn Length, APM -->
+            <StackPanel Grid.Column="1" Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Stretch">
                 
                 <!-- Counter Container with reserved space -->
-                <Border MinWidth="90" Height="100" VerticalAlignment="Center">
+                <Border x:Name="CounterBorder" MinWidth="90" VerticalAlignment="Stretch" Margin="0,0,0,0">
                     <TextBlock
                         x:Name="SummaryCounter"
                         FontSize="56"
@@ -50,19 +52,21 @@
                         Foreground="White"
                         Text="41"
                         TextAlignment="Center"
-                        VerticalAlignment="Center" />
+                        VerticalAlignment="Bottom" />
                 </Border>
-                
-                <!-- Turn Length -->
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,0">
-                    <TextBlock FontSize="18" FontWeight="Bold" Foreground="White" Text="Turn Length: "/>
-                    <TextBlock x:Name="TurnLengthText" FontSize="18" FontWeight="Bold" Foreground="White" Text="120s"/>
-                </StackPanel>
-                
-                <!-- APM -->
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,0">
-                    <TextBlock FontSize="18" FontWeight="Bold" Foreground="White" Text="APM: "/>
-                    <TextBlock x:Name="ApmText" FontSize="18" FontWeight="Bold" Foreground="White" Text="2.13"/>
+
+                <StackPanel x:Name="PinnedDetails" VerticalAlignment="Bottom" HorizontalAlignment="Center">
+                    <!-- Turn Length -->
+                    <StackPanel x:Name="TurnLengthPanel" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Bottom">
+                        <TextBlock x:Name="TurnLengthLabel" FontSize="20" FontWeight="Bold" Foreground="White" Text="Turn Length: "/>
+                        <TextBlock x:Name="TurnLengthText" FontSize="20" FontWeight="Bold" Foreground="White" Text="120s"/>
+                    </StackPanel>
+
+                    <!-- APM -->
+                    <StackPanel x:Name="ApmPanel" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Bottom">
+                        <TextBlock x:Name="ApmLabel" FontSize="20" FontWeight="Bold" Foreground="White" Text="APM: "/>
+                        <TextBlock x:Name="ApmText" FontSize="20" FontWeight="Bold" Foreground="White" Text="2.13"/>
+                    </StackPanel>
                 </StackPanel>
             </StackPanel>
         </Grid>
@@ -70,6 +74,7 @@
     
     <!-- Counters Panel -->
     <Border
+        x:Name="CountersBorder"
         Background="#1A1A1A"
         Padding="8,8,8,8"
         Margin="0,0,0,0">

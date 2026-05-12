@@ -7,113 +7,162 @@ using DrawingPoint = System.Drawing.Point;
 
 namespace HDTPlugin.Logic
 {
-    /// <summary>
-    /// Handles the functionality & math required to allow panel movement & permanency.
-    /// </summary>
     public class InputMoveManager
     {
         private User32.MouseInput _mouseInput;
         private bool _selected = false;
-        private StackPanel _StackPanel;
+        private FrameworkElement _element;
+        private double _offsetX;
+        private double _offsetY;
+        private bool _isEnabled = false;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="InputMoveManager"/> class.
-        /// </summary>
-        /// <param name="panel">The <see cref="StackPanel"/> object to move.</param>
-        public InputMoveManager(StackPanel panel)
+        public InputMoveManager(FrameworkElement element)
         {
-            _StackPanel = panel;
+            _element = element;
+        }
+
+        private Canvas GetParentCanvas()
+        {
+            if (_element == null)
+                return Core.OverlayCanvas;
+            
+            var parent = _element.Parent;
+            while (parent != null)
+            {
+                if (parent is Canvas canvas)
+                    return canvas;
+                if (parent is FrameworkElement fe)
+                    parent = fe.Parent;
+                else
+                    break;
+            }
+            
+            return Core.OverlayCanvas;
         }
 
         private void MouseInputOnLmbDown(object sender, EventArgs eventArgs)
         {
-            var pos = User32.GetMousePos();
-            var _mousePos = new DrawingPoint(pos.X, pos.Y);
-            if (PointInsideControl(_mousePos, _StackPanel))
+            if (!_isEnabled)
+                return;
+
+            try
             {
-                _selected = true;
+                var pos = User32.GetMousePos();
+                var mousePos = new DrawingPoint(pos.X, pos.Y);
+                if (PointInsideControl(mousePos, _element))
+                {
+                    _selected = true;
+                    try
+                    {
+                        var canvas = GetParentCanvas();
+                        if (canvas != null)
+                        {
+                            var canvasPos = canvas.PointFromScreen(new System.Windows.Point(pos.X, pos.Y));
+                            _offsetX = canvasPos.X - Canvas.GetLeft(_element);
+                            _offsetY = canvasPos.Y - Canvas.GetTop(_element);
+                        }
+                    }
+                    catch
+                    {
+                        _selected = false;
+                    }
+                }
+                else
+                {
+                    _selected = false;
+                }
             }
-            else
+            catch (Exception ex)
             {
+                System.Diagnostics.Debug.WriteLine($"[InputMoveManager] LmbDown error: {ex.Message}");
                 _selected = false;
             }
         }
 
         private void MouseInputOnLmbUp(object sender, EventArgs eventArgs)
         {
-            var pos = User32.GetMousePos();
-            var _mousePos = new DrawingPoint(pos.X, pos.Y);
-            if (_selected)
-            {
-                var p = Core.OverlayCanvas.PointFromScreen(new System.Windows.Point(pos.X, pos.Y));
-                if (pos.X > Core.OverlayCanvas.Width)
-                {
-                    // Save position to settings when dragged beyond canvas width
-                    global::HDTPlugin.Properties.Settings.Default.Left = p.X;
-                    global::HDTPlugin.Properties.Settings.Default.Save();
-                }
-                if (pos.Y > Core.OverlayCanvas.Height)
-                {
-                    // Save position to settings when dragged beyond canvas height
-                    global::HDTPlugin.Properties.Settings.Default.Top = p.Y;
-                    global::HDTPlugin.Properties.Settings.Default.Save();
-                }
-            }
-
             _selected = false;
         }
 
         private void MouseInputOnMouseMoved(object sender, EventArgs eventArgs)
         {
-            if (_selected == false)
-            {
+            if (!_isEnabled || !_selected)
                 return;
-            }
 
-            var pos = User32.GetMousePos();
-            var p = Core.OverlayCanvas.PointFromScreen(new System.Windows.Point(pos.X, pos.Y));
-            if (pos.X > Core.OverlayCanvas.Width)
+            try
             {
-                Canvas.SetLeft(_StackPanel, p.X);
+                var pos = User32.GetMousePos();
+                try
+                {
+                    var canvas = GetParentCanvas();
+                    if (canvas != null)
+                    {
+                        var canvasPos = canvas.PointFromScreen(new System.Windows.Point(pos.X, pos.Y));
+                        Canvas.SetLeft(_element, canvasPos.X - _offsetX);
+                        Canvas.SetTop(_element, canvasPos.Y - _offsetY);
+                    }
+                }
+                catch
+                {
+                    // Ignore coordinate conversion errors
+                }
             }
-            if (pos.Y > Core.OverlayCanvas.Height)
+            catch (Exception ex)
             {
-                Canvas.SetTop(_StackPanel, p.Y);
+                System.Diagnostics.Debug.WriteLine($"[InputMoveManager] MouseMoved error: {ex.Message}");
             }
         }
 
-        /// <summary>
-        /// Verify that the point the mouse is clicking upon, is inside the bounds of our control..
-        /// </summary>
-        /// <param name="p">The <see cref="System.Drawing.Point" /> of the mouse click.</param>
-        /// <param name="control">The <see cref="FrameworkElement" /> control.</param>
-        /// <returns>True if inside the bounds of the control</returns>
         private bool PointInsideControl(DrawingPoint p, FrameworkElement control)
         {
-            var pos = control.PointFromScreen(new System.Windows.Point(p.X, p.Y));
-            return pos.X > 0 && pos.X < control.ActualWidth && pos.Y > 0 && pos.Y < control.ActualHeight;
+            try
+            {
+                var pos = control.PointFromScreen(new System.Windows.Point(p.X, p.Y));
+                return pos.X >= 0 && pos.X <= control.ActualWidth && pos.Y >= 0 && pos.Y <= control.ActualHeight;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
-        /// <summary>
-        /// Toggles the panel movement capability.
-        /// </summary>
-        /// <returns>True if movement is now enabled, else false</returns>
         public bool Toggle()
         {
-            if (Hearthstone_Deck_Tracker.Core.Game.IsRunning && _mouseInput == null)
+            if (_mouseInput == null)
             {
                 _mouseInput = new User32.MouseInput();
                 _mouseInput.LmbDown += MouseInputOnLmbDown;
                 _mouseInput.LmbUp += MouseInputOnLmbUp;
                 _mouseInput.MouseMoved += MouseInputOnMouseMoved;
+                _isEnabled = true;
                 return true;
             }
             Dispose();
             return false;
         }
 
+        public void Enable()
+        {
+            if (_mouseInput == null)
+            {
+                _mouseInput = new User32.MouseInput();
+                _mouseInput.LmbDown += MouseInputOnLmbDown;
+                _mouseInput.LmbUp += MouseInputOnLmbUp;
+                _mouseInput.MouseMoved += MouseInputOnMouseMoved;
+            }
+            _isEnabled = true;
+        }
+
+        public void Disable()
+        {
+            _isEnabled = false;
+            _selected = false;
+        }
+
         public void Dispose()
         {
+            _isEnabled = false;
+            _selected = false;
             _mouseInput?.Dispose();
             _mouseInput = null;
         }

@@ -50,12 +50,13 @@ namespace HDTPlugin
             _displayControl.Visibility = Visibility.Collapsed;
             Core.OverlayCanvas.Children.Add(_displayControl);
 
-            // Load position from settings
-            Canvas.SetTop(_displayControl, global::HDTPlugin.Properties.Settings.Default.Top);
-            Canvas.SetLeft(_displayControl, global::HDTPlugin.Properties.Settings.Default.Left);
+            var position = PluginPosition.GetDefaultPosition();
+            Canvas.SetTop(_displayControl, position.Y);
+            Canvas.SetLeft(_displayControl, position.X);
 
             // Initialize input move manager for dragging functionality
             _inputMoveManager = new InputMoveManager(_displayControl);
+            _inputMoveManager.Enable();
 
             // Initialize counters
             ResetCounters();
@@ -163,7 +164,23 @@ namespace HDTPlugin
             }
         }
 
-        public void OnUpdate() { }
+        private ResolutionTier _lastTier;
+        
+        public void OnUpdate()
+        {
+            if (_displayControl == null)
+                return;
+
+            UIScaler.DetectResolutionTier();
+            if (UIScaler.CurrentTier != _lastTier)
+            {
+                _lastTier = UIScaler.CurrentTier;
+                _displayControl.RecalculateScaling();
+                var position = PluginPosition.GetDefaultPosition();
+                Canvas.SetTop(_displayControl, position.Y);
+                Canvas.SetLeft(_displayControl, position.X);
+            }
+        }
         public void OnButtonPress()
         {
             if (_debugWindow == null || !_debugWindow.IsLoaded)
@@ -187,6 +204,9 @@ namespace HDTPlugin
             _turnNumber =0;
             ResetCounters();
             _displayControl.Visibility = Visibility.Visible;
+            var position = PluginPosition.GetDefaultPosition();
+            Canvas.SetTop(_displayControl, position.Y);
+            Canvas.SetLeft(_displayControl, position.X);
             UpdateDisplay();
         }
 

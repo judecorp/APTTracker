@@ -1,12 +1,63 @@
+using System;
+using System.IO;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace HDTPlugin.Logic
 {
     public static class PluginPosition
     {
-        public const double DefaultLeft = 1770;
-        public const double DefaultTop = 0;
+        private static readonly string LogPath = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+            "HDTPlugin", "position.log");
 
-        public static Point GetDefaultPosition() => new Point(DefaultLeft, DefaultTop);
+        private static void Log(string message)
+        {
+            try
+            {
+                string dir = Path.GetDirectoryName(LogPath);
+                if (dir != null)
+                {
+                    Directory.CreateDirectory(dir);
+                    File.AppendAllText(LogPath, $"[{DateTime.Now:HH:mm:ss}] {message}\n");
+                }
+            }
+            catch { }
+        }
+
+        public static Point GetDefaultPosition()
+        {
+            var tier = UIScaler.CurrentTier;
+            Log($"Getting position for tier: {tier}");
+
+            Point pos;
+            if (tier == ResolutionTier.UHD4K)
+                pos = new Point(2680, 0);
+            else if (tier == ResolutionTier.QHD1440p)
+                pos = new Point(1792, 0);
+            else
+                pos = new Point(1344, 0);
+
+            Log($"Position: {pos.X}, {pos.Y}");
+            return pos;
+        }
+
+        public static Point GetPosition(double leftPercent, double topPercent)
+        {
+            double width = UIScaler.GetWindowWidth();
+            double height = UIScaler.GetWindowHeight();
+
+            return new Point(width * leftPercent, height * topPercent);
+        }
+
+        public static void UpdatePosition(FrameworkElement element, double leftPercent, double topPercent)
+        {
+            var pos = GetPosition(leftPercent, topPercent);
+            Log($"Setting Left={pos.X}, Top={pos.Y}");
+            Canvas.SetTop(element, pos.Y);
+            Canvas.SetLeft(element, pos.X);
+        }
+
+        public static bool IsOverlayAvailable => UIScaler.GetWindowWidth() > 0 && UIScaler.GetWindowHeight() > 0;
     }
 }

@@ -2,6 +2,7 @@ using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Animation;
+using HDTPlugin.Logic;
 
 namespace HDTPlugin.Controls
 {
@@ -19,6 +20,13 @@ namespace HDTPlugin.Controls
         private readonly TextBlock _refreshText;
         private readonly TextBlock _freezeText;
         private readonly TextBlock _tavernTierText;
+        private readonly Border _rankBorder;
+        private readonly TextBlock _rankLabel;
+        private readonly Border _summaryBorder;
+        private readonly Border _countersBorder;
+        private readonly Border _counterBorder;
+        private readonly TextBlock _turnLengthLabel;
+        private readonly TextBlock _apmLabel;
 
         public PlugInDisplayControl()
         {
@@ -35,12 +43,49 @@ namespace HDTPlugin.Controls
             _refreshText = RefreshText;
             _freezeText = FreezeText;
             _tavernTierText = TavernTierText;
+            _rankBorder = RankBorder;
+            _rankLabel = RankLabel;
+            _summaryBorder = SummaryBorder;
+            _countersBorder = CountersBorder;
+            _counterBorder = CounterBorder;
+            _turnLengthLabel = TurnLengthLabel;
+            _apmLabel = ApmLabel;
+
+            ApplyScaling();
         }
 
-        private const double MinFontSize = 56;
-        private const double MaxFontSize = 78;
-        private const int MaxScaleValue = 100;
-        private const double PulseIncrease = 8;
+        public void RecalculateScaling()
+        {
+            ApplyScaling();
+        }
+
+        public void ApplyScaling()
+        {
+            _summaryCounter.FontSize = UIScaler.GetSummaryFontSize();
+            _rankLabel.FontSize = UIScaler.GetHeaderFontSize();
+            _turnLengthText.FontSize = UIScaler.GetBodyFontSize();
+            _turnLengthLabel.FontSize = UIScaler.GetBodyFontSize();
+            _apmText.FontSize = UIScaler.GetBodyFontSize();
+            _apmLabel.FontSize = UIScaler.GetBodyFontSize();
+            _unitsText.FontSize = UIScaler.GetBodyFontSize();
+            _tavernSpellsText.FontSize = UIScaler.GetBodyFontSize();
+            _nonTavernSpellsText.FontSize = UIScaler.GetBodyFontSize();
+            _cardsBoughtText.FontSize = UIScaler.GetBodyFontSize();
+            _sellMinionText.FontSize = UIScaler.GetBodyFontSize();
+            _refreshText.FontSize = UIScaler.GetBodyFontSize();
+            _freezeText.FontSize = UIScaler.GetBodyFontSize();
+            _tavernTierText.FontSize = UIScaler.GetBodyFontSize();
+
+            _rankBorder.Width = UIScaler.GetRankBorderSize();
+            _rankBorder.Height = UIScaler.GetRankBorderSize();
+
+            _counterBorder.MinWidth = 90;
+            _counterBorder.Height = UIScaler.GetCounterHeight();
+
+            MinWidth = UIScaler.GetMinWidth();
+        }
+
+        private const double PulseIncrease = 6;
         private int _previousTotalActions;
 
         public void UpdateCounters(int turn, int unitsPlayed, int tavernSpells, int nonTavernSpells,
@@ -51,8 +96,8 @@ namespace HDTPlugin.Controls
             int totalActions = unitsPlayed + tavernSpells + nonTavernSpells +
                            totalBought + sellMinionCount + refreshCount + freezeCount + leveledUp;
 
-            double scale = Math.Min(totalActions, MaxScaleValue) / (double)MaxScaleValue;
-            double targetFontSize = MinFontSize + (MaxFontSize - MinFontSize) * scale;
+            double baseFontSize = UIScaler.GetSummaryFontSize();
+            double targetFontSize = baseFontSize + (totalActions > 0 ? PulseIncrease : 0);
             _summaryCounter.FontSize = targetFontSize;
             _summaryCounter.Text = $"{totalActions}";
 

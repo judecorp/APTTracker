@@ -71,6 +71,7 @@
     </Compile>
     <Compile Include="Logic\InputMoveManager.cs" />
     <Compile Include="Logic\PluginPosition.cs" />
+    <Compile Include="Logic\UIScaler.cs" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="Controls\PlugInDisplayControl.xaml">
