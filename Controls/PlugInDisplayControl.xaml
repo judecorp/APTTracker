@@ -5,8 +5,8 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    MinWidth="320"
-    d:DesignHeight="400" d:DesignWidth="320">
+    MinWidth="340"
+    d:DesignHeight="400" d:DesignWidth="340">
     
     <!-- Summary Panel -->
     <Border
@@ -14,61 +14,77 @@
         Background="#1A1A1A"
         BorderBrush="#AAAAAA"
         BorderThickness="1"
-        Padding="8,0,8,8">
+        Padding="8,4,8,8">
         
         <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
             
-            <!-- Left Stack: Rank -->
-            <StackPanel Grid.Column="0" Orientation="Vertical">
-                <TextBlock
-                    x:Name="RankLabel"
-                    FontSize="20"
-                    FontWeight="Bold"
-                    Foreground="White"
-                    Text="Rank: Bronze"/>
+            <!-- Top: Rank Label (header) -->
+            <TextBlock
+                x:Name="RankLabel"
+                Grid.Row="0"
+                FontSize="20"
+                FontWeight="Bold"
+                Foreground="White"
+                Text="Rank: Barely Awake"
+                Margin="0,0,0,0"/>
+            
+            <!-- Bottom: Two columns -->
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                
+                <!-- Left: Rank Image -->
                 <Border
                     x:Name="RankBorder"
-                    Width="120"
-                    Height="120"
+                    Grid.Column="0"
+                    Width="140"
+                    Height="140"
                     Background="#CD7F32"
                     CornerRadius="8"
-                    Margin="0,0,0,0"
-                    HorizontalAlignment="Left"/>
-            </StackPanel>
-            
-<!-- Right Stack: Counter, Turn Length, APM -->
-            <StackPanel Grid.Column="1" Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Stretch">
-                
-                <!-- Counter Container with reserved space -->
-                <Border x:Name="CounterBorder" MinWidth="90" VerticalAlignment="Stretch" Margin="0,0,0,0">
-                    <TextBlock
-                        x:Name="SummaryCounter"
-                        FontSize="56"
-                        FontWeight="UltraBold"
-                        Foreground="White"
-                        Text="41"
-                        TextAlignment="Center"
-                        VerticalAlignment="Bottom" />
-                </Border>
+                    Margin="0,0,8,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"/>
 
-                <StackPanel x:Name="PinnedDetails" VerticalAlignment="Bottom" HorizontalAlignment="Center">
-                    <!-- Turn Length -->
-                    <StackPanel x:Name="TurnLengthPanel" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Bottom">
-                        <TextBlock x:Name="TurnLengthLabel" FontSize="20" FontWeight="Bold" Foreground="White" Text="Turn Length: "/>
-                        <TextBlock x:Name="TurnLengthText" FontSize="20" FontWeight="Bold" Foreground="White" Text="120s"/>
-                    </StackPanel>
+                <Grid Grid.Column="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
 
-                    <!-- APM -->
-                    <StackPanel x:Name="ApmPanel" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Bottom">
-                        <TextBlock x:Name="ApmLabel" FontSize="20" FontWeight="Bold" Foreground="White" Text="APM: "/>
-                        <TextBlock x:Name="ApmText" FontSize="20" FontWeight="Bold" Foreground="White" Text="2.13"/>
+                    <!-- Total Actions Counter -->
+                    <Border x:Name="CounterBorder" Grid.Row="0" Width="120" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                        <TextBlock
+                            x:Name="SummaryCounter"
+                            FontSize="56"
+                            FontWeight="UltraBold"
+                            Foreground="White"
+                            Margin="0,-8,0,0"
+                            Text="41"
+                            TextAlignment="Center"
+                            VerticalAlignment="Center" />
+                    </Border>
+
+                    <StackPanel Grid.Row="1" >
+                        <!-- Turn Length -->
+                        <StackPanel x:Name="TurnLengthPanel" Orientation="Horizontal" HorizontalAlignment="Center"  VerticalAlignment="Bottom" Margin="0,0,0,0">
+                            <TextBlock x:Name="TurnLengthLabel" FontSize="20" FontWeight="Bold" Foreground="White" Text="Turn Length: "/>
+                            <TextBlock x:Name="TurnLengthText" FontSize="20" FontWeight="Bold" Foreground="White" Text="120s"/>
+                        </StackPanel>
+
+                        <!-- APM -->
+                        <StackPanel x:Name="ApmPanel" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,0">
+                            <TextBlock x:Name="ApmLabel" FontSize="20" FontWeight="Bold" Foreground="White" Text="APM: "/>
+                            <TextBlock x:Name="ApmText" FontSize="20" FontWeight="Bold" Foreground="White" Text="2.13"/>
+                        </StackPanel>
                     </StackPanel>
-                </StackPanel>
-            </StackPanel>
+                </Grid>
+            </Grid>
         </Grid>
     </Border>
     
