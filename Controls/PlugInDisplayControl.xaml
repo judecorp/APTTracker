@@ -14,14 +14,17 @@
         Background="#1A1A1A"
         BorderBrush="#AAAAAA"
         BorderThickness="1"
-        Padding="8,4,8,8">
-        
+        Padding="8,4,8,8"
+        MouseEnter="SummaryBorder_MouseEnter"
+        MouseLeave="SummaryBorder_MouseLeave">
+
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            
+
             <!-- Top: Rank Label (header) -->
             <TextBlock
                 x:Name="RankLabel"
@@ -31,14 +34,14 @@
                 Foreground="White"
                 Text="Rank: Barely Awake"
                 Margin="0,-8,0,0"/>
-            
+
             <!-- Bottom: Two columns -->
             <Grid Grid.Row="1">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                
+
                 <!-- Left: Rank Image -->
                 <Border
                     x:Name="RankBorder"
@@ -71,12 +74,6 @@
                     </Border>
 
                     <StackPanel Grid.Row="1" >
-                        <!-- Turn Length -->
-                        <StackPanel x:Name="TurnLengthPanel" Orientation="Horizontal" HorizontalAlignment="Center"  VerticalAlignment="Bottom" Margin="0,0,0,0">
-                            <TextBlock x:Name="TurnLengthLabel" FontSize="14" FontWeight="Bold" Foreground="White" Text="Turn Length: "/>
-                            <TextBlock x:Name="TurnLengthText" FontSize="14" FontWeight="Bold" Foreground="White" Text="102s"/>
-                        </StackPanel>
-
                         <!-- APM -->
                         <StackPanel x:Name="ApmPanel" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,0">
                             <TextBlock x:Name="ApmLabel" FontSize="14" FontWeight="Bold" Foreground="White" Text="APM: "/>
@@ -93,9 +90,13 @@
         x:Name="CountersBorder"
         Background="#1A1A1A"
         Padding="8,8,8,8"
-        Margin="0,0,0,0">
+        Margin="0,0,0,0"
+        MouseEnter="CountersBorder_MouseEnter"
+        MouseLeave="CountersBorder_MouseLeave">
         
         <StackPanel>
+            <TextBlock x:Name="ShopLengthText" FontSize="14" Foreground="#FF9800" Text="Shop Length: 0s" TextAlignment="Center" Margin="0"/>
+            <TextBlock x:Name="CombatLengthText" FontSize="14" Foreground="#E91E63" Text="Combat Length: 0s" TextAlignment="Center" Margin="0"/>
             <TextBlock x:Name="UnitsText" FontSize="14" Foreground="White" Text="Minions Played: 0" TextAlignment="Center" Margin="0"/>
             <TextBlock x:Name="TavernSpellsText" FontSize="14" Foreground="White" Text="Tavern Spells: 0" TextAlignment="Center" Margin="0"/>
             <TextBlock x:Name="NonTavernSpellsText" FontSize="14" Foreground="White" Text="Non-Tavern Spells: 0" TextAlignment="Center" Margin="0"/>

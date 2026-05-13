@@ -19,6 +19,8 @@ namespace HDTPlugin
         private int _refreshCount = 0;
         private int _freezeCount = 0;
         private int _leveledUp = 0;
+        private int _shopLength = 0;
+        private int _combatLength = 0;
         private InputMoveManager _inputMoveManager;
 
         public DebugWindow()
@@ -81,7 +83,7 @@ namespace HDTPlugin
             TxtLeveledUp.Text = _leveledUp.ToString();
             
             DisplayControl.UpdateCounters(_turn, _unitsPlayed, _tavernSpells, _nonTavernSpells,
-                _buyMinionCount, _buySpellCount, _sellMinionCount, _refreshCount, _freezeCount, _leveledUp);
+                _buyMinionCount, _buySpellCount, _sellMinionCount, _refreshCount, _freezeCount, _leveledUp, _shopLength, _combatLength, 0);
         }
 
         private void BtnReset_Click(object sender, RoutedEventArgs e)
@@ -200,5 +202,17 @@ namespace HDTPlugin
         private void BtnLeveledUpAdd10_Click(object sender, RoutedEventArgs e) { _leveledUp += 10; UpdateDisplay(); }
         private void BtnLeveledUpSub1_Click(object sender, RoutedEventArgs e) { _leveledUp = System.Math.Max(0, _leveledUp - 1); UpdateDisplay(); }
         private void BtnLeveledUpSub10_Click(object sender, RoutedEventArgs e) { _leveledUp = System.Math.Max(0, _leveledUp - 10); UpdateDisplay(); }
+
+        // Shop Length
+        private void BtnShopLengthAdd1_Click(object sender, RoutedEventArgs e) { _shopLength++; UpdateDisplay(); }
+        private void BtnShopLengthAdd10_Click(object sender, RoutedEventArgs e) { _shopLength += 10; UpdateDisplay(); }
+        private void BtnShopLengthSub1_Click(object sender, RoutedEventArgs e) { _shopLength = System.Math.Max(0, _shopLength - 1); UpdateDisplay(); }
+        private void BtnShopLengthSub10_Click(object sender, RoutedEventArgs e) { _shopLength = System.Math.Max(0, _shopLength - 10); UpdateDisplay(); }
+
+        // Combat Length
+        private void BtnCombatLengthAdd1_Click(object sender, RoutedEventArgs e) { _combatLength++; UpdateDisplay(); }
+        private void BtnCombatLengthAdd10_Click(object sender, RoutedEventArgs e) { _combatLength += 10; UpdateDisplay(); }
+        private void BtnCombatLengthSub1_Click(object sender, RoutedEventArgs e) { _combatLength = System.Math.Max(0, _combatLength - 1); UpdateDisplay(); }
+        private void BtnCombatLengthSub10_Click(object sender, RoutedEventArgs e) { _combatLength = System.Math.Max(0, _combatLength - 10); UpdateDisplay(); }
     }
 }

@@ -36,6 +36,10 @@ namespace HDTPlugin
         private int _unitsPlayed;
         private int _tavernSpells;
         private int _nonTavernSpells;
+        private DateTime _turnStartTime;
+        private int _lastShopLength;
+        private int _lastCombatLength;
+        private int _currentTimeout;
 
         public string Author => "Author";
         public string ButtonText => "BG Action Tracker";
@@ -109,6 +113,52 @@ namespace HDTPlugin
         private void OnPowerLogLine(string line)
         {
             if (_logWriter == null) return;
+
+            // Track TIMEOUT value (allocated shop time)
+            if (line.Contains("TAG_CHANGE Entity=SLOSK#1451 tag=TIMEOUT value="))
+            {
+                var timeoutMatch = Regex.Match(line, @"tag=TIMEOUT value=(\d+)");
+                if (timeoutMatch.Success)
+                {
+                    _currentTimeout = int.Parse(timeoutMatch.Groups[1].Value);
+                }
+                return;
+            }
+
+            // Track turn changes - calculate length when new turn starts
+            if (line.Contains("TAG_CHANGE Entity=GameEntity tag=TURN value="))
+            {
+                var turnMatch = Regex.Match(line, @"tag=TURN value=(\d+)");
+                if (turnMatch.Success)
+                {
+                    int newTurn = int.Parse(turnMatch.Groups[1].Value);
+                    if (_turnStartTime != DateTime.MinValue && newTurn > 1)
+                    {
+                        var duration = DateTime.Now - _turnStartTime;
+                        int elapsedSeconds = (int)duration.TotalSeconds;
+                        
+                        // Even turn = shop phase, odd turn = combat phase
+                        if (newTurn % 2 == 0)
+                        {
+                            // Starting shop phase - reset shop length, keep combat length
+                            _lastShopLength = 0;
+                            _lastCombatLength = Math.Max(0, _currentTimeout - elapsedSeconds);
+                            _logWriter.WriteLine($"[{DateTime.Now}] SHOP TURN {newTurn} STARTED - Combat from turn {newTurn - 1}: {_lastCombatLength}s (timeout: {_currentTimeout}s)");
+                        }
+                        else
+                        {
+                            // Starting combat phase - show previous shop length, calculate combat
+                            _lastShopLength = elapsedSeconds;
+                            _lastCombatLength = Math.Max(0, _currentTimeout - _lastShopLength);
+                            _logWriter.WriteLine($"[{DateTime.Now}] COMBAT TURN {newTurn} STARTED - Shop from turn {newTurn - 1}: {_lastShopLength}s, Combat: {_lastCombatLength}s (timeout: {_currentTimeout}s)");
+                        }
+                    }
+                    _turnStartTime = DateTime.Now;
+                    if (_isTracking)
+                        UpdateDisplay();
+                }
+                return;
+            }
 
             // Only process BLOCK_START BlockType=PLAY lines
             if (!line.Contains("BLOCK_START BlockType=PLAY"))
@@ -197,6 +247,10 @@ namespace HDTPlugin
                     Canvas.SetLeft(_displayControl, position.X);
                 }
             }
+
+            // Update APM display during active turn
+            if (_isTracking)
+                UpdateDisplay();
         }
         public void OnButtonPress()
         {
@@ -218,7 +272,11 @@ namespace HDTPlugin
                 return;
 
             _isTracking = true;
-            _turnNumber =0;
+            _turnNumber = 0;
+            _turnStartTime = DateTime.MinValue;
+            _lastShopLength = 0;
+            _lastCombatLength = 0;
+            _currentTimeout = 0;
             ResetCounters();
             _displayControl.Visibility = Visibility.Visible;
             Point position;
@@ -284,8 +342,26 @@ namespace HDTPlugin
 
         private void UpdateDisplay()
         {
+            double apm = CalculateApm();
             _displayControl.UpdateCounters(_turnNumber, _unitsPlayed, _tavernSpells, _nonTavernSpells,
-                _buyMinionCount, _buySpellCount, _sellMinionCount, _refreshCount, _freezeCount, _tavernTier);
+                _buyMinionCount, _buySpellCount, _sellMinionCount, _refreshCount, _freezeCount, _tavernTier, 
+                _lastShopLength, _lastCombatLength, apm);
+        }
+
+        private double CalculateApm()
+        {
+            if (_turnStartTime == DateTime.MinValue || !_isTracking)
+                return 0;
+
+            var elapsed = DateTime.Now - _turnStartTime;
+            if (elapsed.TotalSeconds < 1)
+                return 0;
+
+            int totalActions = _unitsPlayed + _tavernSpells + _nonTavernSpells +
+                _buyMinionCount + _buySpellCount + _sellMinionCount + _refreshCount + _freezeCount + _tavernTier;
+
+            double minutes = elapsed.TotalSeconds / 60.0;
+            return Math.Round(totalActions / minutes, 2);
         }
     }
 }
