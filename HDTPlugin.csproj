@@ -31,7 +31,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-<ItemGroup>
+  <ItemGroup>
     <Reference Include="HearthDb, Version=28.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\lib\HearthDb.dll</HintPath>
@@ -72,6 +72,11 @@
     <Compile Include="Logic\InputMoveManager.cs" />
     <Compile Include="Logic\PluginPosition.cs" />
     <Compile Include="Logic\UIScaler.cs" />
+    <Compile Include="Properties\Settings1.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Page Include="Controls\PlugInDisplayControl.xaml">

@@ -126,9 +126,9 @@ namespace HDTPlugin.Logic
 
         public static double GetCounterHeight()
         {
-            if (CurrentTier == ResolutionTier.UHD4K) return 240;
-            if (CurrentTier == ResolutionTier.QHD1440p) return 180;
-            return 120;
+            if (CurrentTier == ResolutionTier.UHD4K) return 50;
+            if (CurrentTier == ResolutionTier.QHD1440p) return 45;
+            return 40;
         }
     }
 }

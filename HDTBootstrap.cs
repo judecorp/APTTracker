@@ -171,6 +171,9 @@ namespace HDTPlugin
             if (_displayControl == null)
                 return;
 
+            if (_debugWindow != null && _debugWindow.IsLoaded)
+                return;
+
             UIScaler.DetectResolutionTier();
             if (UIScaler.CurrentTier != _lastTier)
             {
