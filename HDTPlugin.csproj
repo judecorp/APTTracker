@@ -72,11 +72,7 @@
     <Compile Include="Logic\InputMoveManager.cs" />
     <Compile Include="Logic\PluginPosition.cs" />
     <Compile Include="Logic\UIScaler.cs" />
-    <Compile Include="Properties\Settings1.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>Settings.settings</DependentUpon>
-    </Compile>
+    
   </ItemGroup>
   <ItemGroup>
     <Page Include="Controls\PlugInDisplayControl.xaml">

@@ -59,16 +59,40 @@ namespace HDTPlugin.Properties {
            }
        }
        
-       [global::System.Configuration.UserScopedSettingAttribute()]
-       [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-       [global::System.Configuration.DefaultSettingValueAttribute("100")]
-       public double Left {
-           get {
-               return ((double)(this["Left"]));
-           }
-           set {
-               this["Left"] = value;
-           }
-       }
-   }
+[global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("100")]
+        public double Left {
+            get {
+                return ((double)(this["Left"]));
+            }
+            set {
+                this["Left"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("-1")]
+        public double PositionLeftPercent {
+            get {
+                return ((double)(this["PositionLeftPercent"]));
+            }
+            set {
+                this["PositionLeftPercent"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("-1")]
+        public double PositionTopPercent {
+            get {
+                return ((double)(this["PositionTopPercent"]));
+            }
+            set {
+                this["PositionTopPercent"] = value;
+            }
+        }
+    }
 }

@@ -128,9 +128,23 @@ namespace HDTPlugin
             BackgroundScale.ScaleX = scaleFactor;
             BackgroundScale.ScaleY = scaleFactor;
             
-            // Keep plugin at default visible position in DebugWindow
-            Canvas.SetLeft(DisplayControl, 100);
-            Canvas.SetTop(DisplayControl, 100);
+            // In debug window, shift left by offscreen pixels, then scale
+            // 4K: screenWidth=3840, visible=1920, offscreen=1920
+            // 1440p: screenWidth=2560, visible=1920, offscreen=640
+            // 1080p: screenWidth=1920, visible=1920, offscreen=0
+            var basePosition = Logic.PluginPosition.GetDefaultPosition();
+            double debugWindowWidth = 1920.0;
+            double screenWidth;
+            if (scaleFactor > 1.5)
+                screenWidth = 3840;  // 4K
+            else if (scaleFactor > 1.0)
+                screenWidth = 2560;  // 1440p
+            else
+                screenWidth = 1920;  // 1080p
+            double offscreen = screenWidth - debugWindowWidth;
+            double scaledLeft = (basePosition.X - offscreen);
+            Canvas.SetLeft(DisplayControl, scaledLeft);
+            Canvas.SetTop(DisplayControl, basePosition.Y);
         }
 
         // Minions Played

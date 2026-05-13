@@ -28,7 +28,6 @@ namespace HDTPlugin.Logic
         public static Point GetDefaultPosition()
         {
             var tier = UIScaler.CurrentTier;
-            Log($"Getting position for tier: {tier}");
 
             Point pos;
             if (tier == ResolutionTier.UHD4K)
@@ -38,7 +37,6 @@ namespace HDTPlugin.Logic
             else
                 pos = new Point(1344, 0);
 
-            Log($"Position: {pos.X}, {pos.Y}");
             return pos;
         }
 
@@ -59,5 +57,33 @@ namespace HDTPlugin.Logic
         }
 
         public static bool IsOverlayAvailable => UIScaler.GetWindowWidth() > 0 && UIScaler.GetWindowHeight() > 0;
+
+        public static Point GetSavedPosition()
+        {
+            var settings = Properties.Settings.Default;
+            if (settings.PositionLeftPercent < 0 || settings.PositionTopPercent < 0)
+                return new Point(double.NaN, double.NaN);
+
+            return GetPosition(settings.PositionLeftPercent, settings.PositionTopPercent);
+        }
+
+        public static void SavePosition(FrameworkElement element)
+        {
+            double width = UIScaler.GetWindowWidth();
+            double height = UIScaler.GetWindowHeight();
+
+            if (width <= 0 || height <= 0)
+                return;
+
+            double leftPercent = Canvas.GetLeft(element) / width;
+            double topPercent = Canvas.GetTop(element) / height;
+
+            var settings = Properties.Settings.Default;
+            settings.PositionLeftPercent = leftPercent;
+            settings.PositionTopPercent = topPercent;
+            settings.Save();
+        }
+
+        public static bool HasSavedPosition => Properties.Settings.Default.PositionLeftPercent >= 0 && Properties.Settings.Default.PositionTopPercent >= 0;
     }
 }

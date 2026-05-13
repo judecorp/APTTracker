@@ -50,7 +50,12 @@ namespace HDTPlugin
             _displayControl.Visibility = Visibility.Collapsed;
             Core.OverlayCanvas.Children.Add(_displayControl);
 
-            var position = PluginPosition.GetDefaultPosition();
+            Point position;
+            if (PluginPosition.HasSavedPosition && PluginPosition.IsOverlayAvailable)
+                position = PluginPosition.GetSavedPosition();
+            else
+                position = PluginPosition.GetDefaultPosition();
+
             Canvas.SetTop(_displayControl, position.Y);
             Canvas.SetLeft(_displayControl, position.X);
 
@@ -179,9 +184,18 @@ namespace HDTPlugin
             {
                 _lastTier = UIScaler.CurrentTier;
                 _displayControl.RecalculateScaling();
-                var position = PluginPosition.GetDefaultPosition();
-                Canvas.SetTop(_displayControl, position.Y);
-                Canvas.SetLeft(_displayControl, position.X);
+                if (!PluginPosition.HasSavedPosition)
+                {
+                    var position = PluginPosition.GetDefaultPosition();
+                    Canvas.SetTop(_displayControl, position.Y);
+                    Canvas.SetLeft(_displayControl, position.X);
+                }
+                else if (PluginPosition.IsOverlayAvailable)
+                {
+                    var position = PluginPosition.GetSavedPosition();
+                    Canvas.SetTop(_displayControl, position.Y);
+                    Canvas.SetLeft(_displayControl, position.X);
+                }
             }
         }
         public void OnButtonPress()
@@ -207,7 +221,12 @@ namespace HDTPlugin
             _turnNumber =0;
             ResetCounters();
             _displayControl.Visibility = Visibility.Visible;
-            var position = PluginPosition.GetDefaultPosition();
+            Point position;
+            if (PluginPosition.HasSavedPosition && PluginPosition.IsOverlayAvailable)
+                position = PluginPosition.GetSavedPosition();
+            else
+                position = PluginPosition.GetDefaultPosition();
+
             Canvas.SetTop(_displayControl, position.Y);
             Canvas.SetLeft(_displayControl, position.X);
             UpdateDisplay();

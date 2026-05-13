@@ -81,6 +81,10 @@ namespace HDTPlugin.Logic
 
         private void MouseInputOnLmbUp(object sender, EventArgs eventArgs)
         {
+            if (_selected && _isEnabled && _element != null)
+            {
+                PluginPosition.SavePosition(_element);
+            }
             _selected = false;
         }
 
