@@ -10,6 +10,7 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Threading;
 using Card = Hearthstone_Deck_Tracker.Hearthstone.Card;
 using Core = Hearthstone_Deck_Tracker.API.Core;
 
@@ -17,7 +18,7 @@ namespace HDTPlugin
 {
     public class HDTBootstrap : IPlugin
     {
-        private PlugInDisplayControl _displayControl;
+        private PluginContainer _pluginContainer;
         private DebugWindow _debugWindow;
         private bool _isTracking;
         private string _logFilePath;
@@ -40,6 +41,7 @@ namespace HDTPlugin
         private int _lastShopLength;
         private int _lastCombatLength;
         private int _currentTimeout;
+        private DispatcherTimer _apmTimer;
 
         public string Author => "Author";
         public string ButtonText => "BG Action Tracker";
@@ -50,9 +52,9 @@ namespace HDTPlugin
 
         public void OnLoad()
         {
-            _displayControl = new PlugInDisplayControl();
-            _displayControl.Visibility = Visibility.Collapsed;
-            Core.OverlayCanvas.Children.Add(_displayControl);
+            _pluginContainer = new PluginContainer();
+            _pluginContainer.Visibility = Visibility.Collapsed;
+            Core.OverlayCanvas.Children.Add(_pluginContainer);
 
             Point position;
             if (PluginPosition.HasSavedPosition && PluginPosition.IsOverlayAvailable)
@@ -60,11 +62,11 @@ namespace HDTPlugin
             else
                 position = PluginPosition.GetDefaultPosition();
 
-            Canvas.SetTop(_displayControl, position.Y);
-            Canvas.SetLeft(_displayControl, position.X);
+            Canvas.SetTop(_pluginContainer, position.Y);
+            Canvas.SetLeft(_pluginContainer, position.X);
 
             // Initialize input move manager for dragging functionality
-            _inputMoveManager = new InputMoveManager(_displayControl);
+            _inputMoveManager = new InputMoveManager(_pluginContainer);
             _inputMoveManager.Enable();
 
             // Initialize counters
@@ -84,6 +86,9 @@ namespace HDTPlugin
 
             LogEvents.OnPowerLogLine.Add(OnPowerLogLine);
             _logWriter.WriteLine($"[{DateTime.Now}] Subscribed to OnPowerLogLine");
+
+            _apmTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
+            _apmTimer.Tick += ApmTimer_Tick;
         }
 
         public void OnUnload()
@@ -98,10 +103,10 @@ namespace HDTPlugin
                 _logWriter.Close();
                 _logWriter = null;
             }
-            if (_displayControl != null)
+            if (_pluginContainer != null)
             {
-                Core.OverlayCanvas.Children.Remove(_displayControl);
-                _displayControl = null;
+                Core.OverlayCanvas.Children.Remove(_pluginContainer);
+                _pluginContainer = null;
             }
             if (_inputMoveManager != null)
             {
@@ -223,7 +228,7 @@ namespace HDTPlugin
         
         public void OnUpdate()
         {
-            if (_displayControl == null)
+            if (_pluginContainer == null)
                 return;
 
             if (_debugWindow != null && _debugWindow.IsLoaded)
@@ -233,18 +238,18 @@ namespace HDTPlugin
             if (UIScaler.CurrentTier != _lastTier)
             {
                 _lastTier = UIScaler.CurrentTier;
-                _displayControl.RecalculateScaling();
+                _pluginContainer.DisplayControl.RecalculateScaling();
                 if (!PluginPosition.HasSavedPosition)
                 {
                     var position = PluginPosition.GetDefaultPosition();
-                    Canvas.SetTop(_displayControl, position.Y);
-                    Canvas.SetLeft(_displayControl, position.X);
+                    Canvas.SetTop(_pluginContainer, position.Y);
+                    Canvas.SetLeft(_pluginContainer, position.X);
                 }
                 else if (PluginPosition.IsOverlayAvailable)
                 {
                     var position = PluginPosition.GetSavedPosition();
-                    Canvas.SetTop(_displayControl, position.Y);
-                    Canvas.SetLeft(_displayControl, position.X);
+                    Canvas.SetTop(_pluginContainer, position.Y);
+                    Canvas.SetLeft(_pluginContainer, position.X);
                 }
             }
 
@@ -278,22 +283,24 @@ namespace HDTPlugin
             _lastCombatLength = 0;
             _currentTimeout = 0;
             ResetCounters();
-            _displayControl.Visibility = Visibility.Visible;
+            _pluginContainer.DisplayControl.Visibility = Visibility.Visible;
+            _apmTimer.Start();
             Point position;
             if (PluginPosition.HasSavedPosition && PluginPosition.IsOverlayAvailable)
                 position = PluginPosition.GetSavedPosition();
             else
                 position = PluginPosition.GetDefaultPosition();
 
-            Canvas.SetTop(_displayControl, position.Y);
-            Canvas.SetLeft(_displayControl, position.X);
+            Canvas.SetTop(_pluginContainer, position.Y);
+            Canvas.SetLeft(_pluginContainer, position.X);
             UpdateDisplay();
         }
 
         private void GameEnd()
         {
             _isTracking = false;
-            _displayControl.Visibility = Visibility.Collapsed;
+            _apmTimer.Stop();
+            _pluginContainer.DisplayControl.Visibility = Visibility.Collapsed;
         }
 
         private void TurnStart(ActivePlayer player)
@@ -343,7 +350,7 @@ namespace HDTPlugin
         private void UpdateDisplay()
         {
             double apm = CalculateApm();
-            _displayControl.UpdateCounters(_turnNumber, _unitsPlayed, _tavernSpells, _nonTavernSpells,
+            _pluginContainer.DisplayControl.UpdateCounters(_turnNumber, _unitsPlayed, _tavernSpells, _nonTavernSpells,
                 _buyMinionCount, _buySpellCount, _sellMinionCount, _refreshCount, _freezeCount, _tavernTier, 
                 _lastShopLength, _lastCombatLength, apm);
         }
@@ -360,8 +367,13 @@ namespace HDTPlugin
             int totalActions = _unitsPlayed + _tavernSpells + _nonTavernSpells +
                 _buyMinionCount + _buySpellCount + _sellMinionCount + _refreshCount + _freezeCount + _tavernTier;
 
-            double minutes = elapsed.TotalSeconds / 60.0;
-            return Math.Round(totalActions / minutes, 2);
+            return Math.Round(totalActions * 60.0 / elapsed.TotalSeconds, 2);
+        }
+
+        private void ApmTimer_Tick(object sender, EventArgs e)
+        {
+            if (_isTracking)
+                UpdateDisplay();
         }
     }
 }

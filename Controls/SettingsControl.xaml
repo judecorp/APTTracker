@@ -1,0 +1,155 @@
+<Border
+    x:Class="HDTPlugin.Controls.SettingsControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="#1A1A1A"
+    BorderBrush="#AAAAAA"
+    BorderThickness="1"
+    Padding="8"
+    MinWidth="225">
+
+    <ScrollViewer MaxHeight="300" VerticalScrollBarVisibility="Auto">
+        <StackPanel>
+            <!-- Show Section -->
+            <TextBlock Text="Show:" FontSize="14" FontWeight="Bold" Foreground="White" Margin="0,0,0,8"/>
+            
+            <CheckBox x:Name="SettingShowCombatTime" IsChecked="True" Foreground="White" Content="Combat Time" Margin="0,2"/>
+            <CheckBox x:Name="SettingShowShopTime" IsChecked="True" Foreground="White" Content="Shop Time" Margin="0,2"/>
+            <CheckBox x:Name="SettingShowAPM" IsChecked="True" Foreground="White" Content="APM" Margin="0,2"/>
+            <CheckBox x:Name="SettingShowRank" IsChecked="True" Foreground="White" Content="Rank" Margin="0,2"/>
+            
+            <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
+                <CheckBox x:Name="SettingCountersAlways" IsChecked="False" Foreground="White" Content="All Counters: Always" Margin="0,0,8,0"/>
+                <TextBlock Text="👁" FontSize="14" Foreground="#888888" VerticalAlignment="Center"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="0,2,0,0">
+                <CheckBox x:Name="SettingCountersHover" IsChecked="False" Foreground="White" Content="All Counters: On Hover" Margin="0,0,8,0"/>
+                <TextBlock Text="👆" FontSize="14" Foreground="#888888" VerticalAlignment="Center"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="0,2,0,8">
+                <CheckBox x:Name="SettingCountersNever" IsChecked="False" Foreground="White" Content="All Counters: Never" Margin="0,0,8,0"/>
+                <TextBlock Text="🚫" FontSize="14" Foreground="#888888" VerticalAlignment="Center"/>
+            </StackPanel>
+            
+            <Separator Background="#444444" Margin="0,4"/>
+            
+            <!-- Individual Counter Section -->
+            <TextBlock Text="Individual Counters:" FontSize="12" FontWeight="Bold" Foreground="White" Margin="0,4,0,8"/>
+            
+            <!-- Minions Played -->
+            <Grid Margin="0,2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Text="Minions Played" Foreground="White" VerticalAlignment="Center"/>
+                <Button Grid.Column="1" Content="👁" FontSize="12" Width="24" Height="24" Margin="2" Background="#333" Foreground="White"/>
+                <Button Grid.Column="2" Content="👆" FontSize="12" Width="24" Height="24" Margin="2" Background="#333" Foreground="White"/>
+                <Button Grid.Column="3" Content="🚫" FontSize="12" Width="24" Height="24" Margin="2" Background="#333" Foreground="White"/>
+            </Grid>
+            
+            <!-- Tavern Spells -->
+            <Grid Margin="0,2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Text="Tavern Spells" Foreground="White" VerticalAlignment="Center"/>
+                <Button Grid.Column="1" Content="👁" FontSize="12" Width="24" Height="24" Margin="2" Background="#333" Foreground="White"/>
+                <Button Grid.Column="2" Content="👆" FontSize="12" Width="24" Height="24" Margin="2" Background="#333" Foreground="White"/>
+                <Button Grid.Column="3" Content="🚫" FontSize="12" Width="24" Height="24" Margin="2" Background="#333" Foreground="White"/>
+            </Grid>
+            
+            <!-- Non-Tavern Spells -->
+            <Grid Margin="0,2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Text="Non-Tavern Spells" Foreground="White" VerticalAlignment="Center"/>
+                <Button Grid.Column="1" Content="👁" FontSize="12" Width="24" Height="24" Margin="2" Background="#333" Foreground="White"/>
+                <Button Grid.Column="2" Content="👆" FontSize="12" Width="24" Height="24" Margin="2" Background="#333" Foreground="White"/>
+                <Button Grid.Column="3" Content="🚫" FontSize="12" Width="24" Height="24" Margin="2" Background="#333" Foreground="White"/>
+            </Grid>
+            
+            <!-- Cards Bought -->
+            <Grid Margin="0,2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Text="Cards Bought" Foreground="White" VerticalAlignment="Center"/>
+                <Button Grid.Column="1" Content="👁" FontSize="12" Width="24" Height="24" Margin="2" Background="#333" Foreground="White"/>
+                <Button Grid.Column="2" Content="👆" FontSize="12" Width="24" Height="24" Margin="2" Background="#333" Foreground="White"/>
+                <Button Grid.Column="3" Content="🚫" FontSize="12" Width="24" Height="24" Margin="2" Background="#333" Foreground="White"/>
+            </Grid>
+            
+            <!-- Sell Minion -->
+            <Grid Margin="0,2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Text="Sell Minion" Foreground="White" VerticalAlignment="Center"/>
+                <Button Grid.Column="1" Content="👁" FontSize="12" Width="24" Height="24" Margin="2" Background="#333" Foreground="White"/>
+                <Button Grid.Column="2" Content="👆" FontSize="12" Width="24" Height="24" Margin="2" Background="#333" Foreground="White"/>
+                <Button Grid.Column="3" Content="🚫" FontSize="12" Width="24" Height="24" Margin="2" Background="#333" Foreground="White"/>
+            </Grid>
+            
+            <!-- Refresh -->
+            <Grid Margin="0,2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Text="Refresh" Foreground="White" VerticalAlignment="Center"/>
+                <Button Grid.Column="1" Content="👁" FontSize="12" Width="24" Height="24" Margin="2" Background="#333" Foreground="White"/>
+                <Button Grid.Column="2" Content="👆" FontSize="12" Width="24" Height="24" Margin="2" Background="#333" Foreground="White"/>
+                <Button Grid.Column="3" Content="🚫" FontSize="12" Width="24" Height="24" Margin="2" Background="#333" Foreground="White"/>
+            </Grid>
+            
+            <!-- Freeze -->
+            <Grid Margin="0,2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Text="Freeze" Foreground="White" VerticalAlignment="Center"/>
+                <Button Grid.Column="1" Content="👁" FontSize="12" Width="24" Height="24" Margin="2" Background="#333" Foreground="White"/>
+                <Button Grid.Column="2" Content="👆" FontSize="12" Width="24" Height="24" Margin="2" Background="#333" Foreground="White"/>
+                <Button Grid.Column="3" Content="🚫" FontSize="12" Width="24" Height="24" Margin="2" Background="#333" Foreground="White"/>
+            </Grid>
+            
+            <!-- Leveled Up -->
+            <Grid Margin="0,2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Text="Leveled Up" Foreground="White" VerticalAlignment="Center"/>
+                <Button Grid.Column="1" Content="👁" FontSize="12" Width="24" Height="24" Margin="2" Background="#333" Foreground="White"/>
+                <Button Grid.Column="2" Content="👆" FontSize="12" Width="24" Height="24" Margin="2" Background="#333" Foreground="White"/>
+                <Button Grid.Column="3" Content="🚫" FontSize="12" Width="24" Height="24" Margin="2" Background="#333" Foreground="White"/>
+            </Grid>
+        </StackPanel>
+    </ScrollViewer>
+</Border>

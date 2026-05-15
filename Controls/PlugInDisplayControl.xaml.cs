@@ -2,6 +2,7 @@ using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Animation;
+using System.Windows.Media.Imaging;
 using HDTPlugin.Logic;
 
 namespace HDTPlugin.Controls
@@ -11,8 +12,8 @@ namespace HDTPlugin.Controls
         private readonly TextBlock _summaryCounter;
         private readonly TextBlock _apmText;
         
-        private readonly TextBlock _shopLengthText;
-        private readonly TextBlock _combatLengthText;
+        private readonly TextBlock _combatTimeText;
+        private readonly TextBlock _shopTimeText;
         private readonly TextBlock _unitsText;
         private readonly TextBlock _tavernSpellsText;
         private readonly TextBlock _nonTavernSpellsText;
@@ -21,7 +22,7 @@ namespace HDTPlugin.Controls
         private readonly TextBlock _refreshText;
         private readonly TextBlock _freezeText;
         private readonly TextBlock _tavernTierText;
-        private readonly Border _rankBorder;
+        private readonly Image _rankImage;
         private readonly TextBlock _rankLabel;
         private readonly Border _summaryBorder;
         private readonly Border _countersBorder;
@@ -34,8 +35,8 @@ namespace HDTPlugin.Controls
             
             _summaryCounter = SummaryCounter;
             _apmText = ApmText;
-            _shopLengthText = ShopLengthText;
-            _combatLengthText = CombatLengthText;
+            _combatTimeText = CombatTimeText;
+            _shopTimeText = ShopTimeText;
             _unitsText = UnitsText;
             _tavernSpellsText = TavernSpellsText;
             _nonTavernSpellsText = NonTavernSpellsText;
@@ -44,14 +45,12 @@ namespace HDTPlugin.Controls
             _refreshText = RefreshText;
             _freezeText = FreezeText;
             _tavernTierText = TavernTierText;
-            _rankBorder = RankBorder;
+            _rankImage = RankImage;
             _rankLabel = RankLabel;
             _summaryBorder = SummaryBorder;
             _countersBorder = CountersBorder;
             _counterBorder = CounterBorder;
             _apmLabel = ApmLabel;
-
-            _countersBorder.Visibility = Visibility.Collapsed;
 
             ApplyScaling();
         }
@@ -67,8 +66,8 @@ namespace HDTPlugin.Controls
             _rankLabel.FontSize = UIScaler.GetHeaderFontSize();
             _apmText.FontSize = UIScaler.GetBodyFontSize();
             _apmLabel.FontSize = UIScaler.GetBodyFontSize();
-            _shopLengthText.FontSize = UIScaler.GetBodyFontSize();
-            _combatLengthText.FontSize = UIScaler.GetBodyFontSize();
+            _combatTimeText.FontSize = UIScaler.GetBodyFontSize();
+            _shopTimeText.FontSize = UIScaler.GetBodyFontSize();
             _unitsText.FontSize = UIScaler.GetBodyFontSize();
             _tavernSpellsText.FontSize = UIScaler.GetBodyFontSize();
             _nonTavernSpellsText.FontSize = UIScaler.GetBodyFontSize();
@@ -78,10 +77,9 @@ namespace HDTPlugin.Controls
             _freezeText.FontSize = UIScaler.GetBodyFontSize();
             _tavernTierText.FontSize = UIScaler.GetBodyFontSize();
 
-            _rankBorder.Width = UIScaler.GetRankBorderSize();
-            _rankBorder.Height = UIScaler.GetRankBorderSize();
+            _rankImage.Width = UIScaler.GetRankBorderSize();
+            _rankImage.Height = UIScaler.GetRankBorderSize();
 
-            //_counterBorder.MinWidth = 90;
             _counterBorder.Height = UIScaler.GetCounterHeight();
 
             MinWidth = UIScaler.GetMinWidth();
@@ -89,6 +87,7 @@ namespace HDTPlugin.Controls
 
         private const double PulseIncrease = 6;
         private int _previousTotalActions;
+        private int _previousRankIndex = -1;
 
         public void UpdateCounters(int turn, int unitsPlayed, int tavernSpells, int nonTavernSpells,
             int buyMinionCount = 0, int buySpellCount = 0, int sellMinionCount = 0,
@@ -119,8 +118,8 @@ namespace HDTPlugin.Controls
 
             _previousTotalActions = totalActions;
             _apmText.Text = apm > 0 ? $"{apm:F2}" : "0.00";
-            UpdateCounterText(_shopLengthText, "Shop Length", shopLength, "s");
-            UpdateCounterText(_combatLengthText, "Combat Length", combatLength, "s");
+            _combatTimeText.Text = combatLength > 0 ? $"{combatLength}s" : "0s";
+            _shopTimeText.Text = shopLength > 0 ? $"{shopLength}s" : "???";
             UpdateCounterText(_unitsText, "Minions Played", unitsPlayed);
             UpdateCounterText(_tavernSpellsText, "Tavern Spells", tavernSpells);
             UpdateCounterText(_nonTavernSpellsText, "Non-Tavern Spells", nonTavernSpells);
@@ -129,6 +128,8 @@ namespace HDTPlugin.Controls
             UpdateCounterText(_refreshText, "Refresh", refreshCount);
             UpdateCounterText(_freezeText, "Freeze", freezeCount);
             UpdateCounterText(_tavernTierText, "Leveled Up", leveledUp);
+
+            UpdateRank(totalActions);
         }
 
         private void UpdateCounterText(TextBlock textBlock, string label, int value)
@@ -143,55 +144,57 @@ namespace HDTPlugin.Controls
             textBlock.Visibility = value > 0 ? Visibility.Visible : Visibility.Collapsed;
         }
 
-        private System.Windows.Threading.DispatcherTimer _hideTimer;
+        private void UpdateRank(int totalActions)
+        {
+            int rankIndex = RankSystem.GetRankIndex(totalActions);
+            if (rankIndex != _previousRankIndex)
+            {
+                _previousRankIndex = rankIndex;
+                var rankInfo = RankSystem.GetRank(totalActions);
+                _rankLabel.Text = $"Rank: {rankInfo.Label}";
+
+                var image = RankSystem.GetRankImage(totalActions);
+                if (image != null)
+                {
+                    _rankImage.Source = image;
+                }
+            }
+        }
 
         private void SummaryBorder_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            _hideTimer?.Stop();
-            _countersBorder.Visibility = Visibility.Visible;
+            ExpandCounters();
         }
 
         private void SummaryBorder_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            _hideTimer?.Stop();
-            _hideTimer = new System.Windows.Threading.DispatcherTimer
-            {
-                Interval = TimeSpan.FromMilliseconds(150)
-            };
-            _hideTimer.Tick += (s, args) =>
-            {
-                _hideTimer.Stop();
-                if (!IsMouseOverSummaryOrCounters())
-                    _countersBorder.Visibility = Visibility.Collapsed;
-            };
-            _hideTimer.Start();
+            if (!_countersBorder.IsMouseOver)
+                CollapseCounters();
+        }
+
+        private void ExpandCounters()
+        {
+            _countersBorder.Visibility = Visibility.Visible;
+        }
+
+        private void CollapseCounters()
+        {
+            _countersBorder.Visibility = Visibility.Collapsed;
         }
 
         private void CountersBorder_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            _hideTimer?.Stop();
-            _countersBorder.Visibility = Visibility.Visible;
         }
 
         private void CountersBorder_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            _hideTimer?.Stop();
-            _hideTimer = new System.Windows.Threading.DispatcherTimer
-            {
-                Interval = TimeSpan.FromMilliseconds(150)
-            };
-            _hideTimer.Tick += (s, args) =>
-            {
-                _hideTimer.Stop();
-                if (!IsMouseOverSummaryOrCounters())
-                    _countersBorder.Visibility = Visibility.Collapsed;
-            };
-            _hideTimer.Start();
+            if (!_summaryBorder.IsMouseOver)
+                CollapseCounters();
         }
 
-        private bool IsMouseOverSummaryOrCounters()
+        private void Plugin_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            return _summaryBorder.IsMouseOver || _countersBorder.IsMouseOver;
+            CollapseCounters();
         }
     }
 }

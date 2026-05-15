@@ -59,6 +59,12 @@
     <Compile Include="Controls\PlugInDisplayControl.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Controls\SettingsControl.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Controls\PluginContainer.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="DebugWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -72,10 +78,17 @@
     <Compile Include="Logic\InputMoveManager.cs" />
     <Compile Include="Logic\PluginPosition.cs" />
     <Compile Include="Logic\UIScaler.cs" />
+    <Compile Include="Logic\RankSystem.cs" />
     
   </ItemGroup>
   <ItemGroup>
     <Page Include="Controls\PlugInDisplayControl.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\SettingsControl.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\PluginContainer.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Include="DebugWindow.xaml">
@@ -93,6 +106,22 @@
     <None Include="img\hsplugin.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <Resource Include="img\rank_00.png" />
+    <Resource Include="img\rank_01.png" />
+    <Resource Include="img\rank_02.png" />
+    <Resource Include="img\rank_03.png" />
+    <Resource Include="img\rank_04.png" />
+    <Resource Include="img\rank_05.png" />
+    <Resource Include="img\rank_06.png" />
+    <Resource Include="img\rank_07.png" />
+    <Resource Include="img\rank_08.png" />
+    <Resource Include="img\rank_09.png" />
+    <Resource Include="img\rank_10.png" />
+    <Resource Include="img\rank_11.png" />
+    <Resource Include="img\rank_12.png" />
+    <Resource Include="img\rank_13.png" />
+    <Resource Include="img\rank_14.png" />
+    <Resource Include="img\rank_15.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
