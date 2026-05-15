@@ -1,5 +1,6 @@
 using System.Windows;
 using System.Windows.Controls;
+using HDTPlugin.Logic;
 
 namespace HDTPlugin.Controls
 {
@@ -25,6 +26,16 @@ namespace HDTPlugin.Controls
         public void RecalculateScaling()
         {
             _displayControl.RecalculateScaling();
+            _settingsControl.RecalculateScaling();
+            ApplyButtonScaling();
+            Width = UIScaler.GetMinWidth();
+        }
+
+        private void ApplyButtonScaling()
+        {
+            double buttonFontSize = UIScaler.GetSettingsFontSize();
+            _settingsButton.FontSize = buttonFontSize;
+            _backButton.FontSize = buttonFontSize;
         }
 
         public void ShowSettings()

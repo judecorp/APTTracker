@@ -26,7 +26,7 @@
             
             <!-- Plugin Display - positioned as in-game -->
             <Canvas x:Name="PluginCanvas">
-                <controls:PlugInDisplayControl x:Name="DisplayControl"/>
+                <controls:PluginContainer x:Name="PluginContainer"/>
             </Canvas>
             
             <!-- Debug Controls - centered -->

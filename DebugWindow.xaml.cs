@@ -28,7 +28,7 @@ namespace HDTPlugin
             InitializeComponent();
             
             // Initialize input move manager for the debug window's preview control
-            _inputMoveManager = new InputMoveManager(DisplayControl);
+            _inputMoveManager = new InputMoveManager(PluginContainer);
             _inputMoveManager.Enable();
             
             LoadBackgroundImage();
@@ -39,8 +39,8 @@ namespace HDTPlugin
         private void SetPluginPosition()
         {
             var position = PluginPosition.GetDefaultPosition();
-            Canvas.SetLeft(DisplayControl, position.X);
-            Canvas.SetTop(DisplayControl, position.Y);
+            Canvas.SetLeft(PluginContainer, position.X);
+            Canvas.SetTop(PluginContainer, position.Y);
         }
 
         private void LoadBackgroundImage()
@@ -82,7 +82,7 @@ namespace HDTPlugin
             TxtFreeze.Text = _freezeCount.ToString();
             TxtLeveledUp.Text = _leveledUp.ToString();
             
-            DisplayControl.UpdateCounters(_turn, _unitsPlayed, _tavernSpells, _nonTavernSpells,
+            PluginContainer.DisplayControl.UpdateCounters(_turn, _unitsPlayed, _tavernSpells, _nonTavernSpells,
                 _buyMinionCount, _buySpellCount, _sellMinionCount, _refreshCount, _freezeCount, _leveledUp, _shopLength, _combatLength, 0);
         }
 
@@ -124,7 +124,7 @@ namespace HDTPlugin
 
         private void RefreshUI(double scaleFactor)
         {
-            DisplayControl.RecalculateScaling();
+            PluginContainer.RecalculateScaling();
             
             // Scale background from top-right corner
             BackgroundScale.ScaleX = scaleFactor;
@@ -145,8 +145,8 @@ namespace HDTPlugin
                 screenWidth = 1920;  // 1080p
             double offscreen = screenWidth - debugWindowWidth;
             double scaledLeft = (basePosition.X - offscreen);
-            Canvas.SetLeft(DisplayControl, scaledLeft);
-            Canvas.SetTop(DisplayControl, basePosition.Y);
+            Canvas.SetLeft(PluginContainer, scaledLeft);
+            Canvas.SetTop(PluginContainer, basePosition.Y);
         }
 
         // Minions Played

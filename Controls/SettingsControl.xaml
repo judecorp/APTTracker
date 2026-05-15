@@ -8,11 +8,10 @@
     Background="#1A1A1A"
     BorderBrush="#AAAAAA"
     BorderThickness="1"
-    Padding="8"
-    MinWidth="225">
+    Padding="8">
 
-    <ScrollViewer MaxHeight="300" VerticalScrollBarVisibility="Auto">
-        <StackPanel>
+    <ScrollViewer x:Name="SettingsScrollViewer" VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="0,24,0,0">
             <!-- Show Section -->
             <TextBlock Text="Show:" FontSize="14" FontWeight="Bold" Foreground="White" Margin="0,0,0,8"/>
             

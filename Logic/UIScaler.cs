@@ -130,5 +130,26 @@ namespace HDTPlugin.Logic
             if (CurrentTier == ResolutionTier.QHD1440p) return 45;
             return 40;
         }
+
+        public static double GetSettingsFontSize()
+        {
+            if (CurrentTier == ResolutionTier.UHD4K) return 28;
+            if (CurrentTier == ResolutionTier.QHD1440p) return 21;
+            return 14;
+        }
+
+        public static double GetSettingsButtonSize()
+        {
+            if (CurrentTier == ResolutionTier.UHD4K) return 48;
+            if (CurrentTier == ResolutionTier.QHD1440p) return 36;
+            return 24;
+        }
+
+        public static double GetSettingsMaxHeight()
+        {
+            if (CurrentTier == ResolutionTier.UHD4K) return 600;
+            if (CurrentTier == ResolutionTier.QHD1440p) return 450;
+            return 300;
+        }
     }
 }

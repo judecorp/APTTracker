@@ -9,44 +9,35 @@
     MinWidth="225">
 
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
-        
         <!-- Main Content Area (PlugInDisplayControl or SettingsControl) -->
-        <controls:PlugInDisplayControl x:Name="DisplayPanel" Grid.Row="0"/>
-        <controls:SettingsControl x:Name="SettingsPanel" Grid.Row="0" Visibility="Collapsed"/>
+        <controls:PlugInDisplayControl x:Name="DisplayPanel"/>
+        <controls:SettingsControl x:Name="SettingsPanel" Visibility="Collapsed"/>
         
-        <!-- Transparent Overlay Header -->
-        <Grid Grid.Row="0" x:Name="OverlayHeader" IsHitTestVisible="False">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
-            
-            <!-- Back Button Area (clickable when in settings) -->
-            <Button x:Name="BackButton" Grid.Column="0"
-                    Click="BackButton_Click"
-                    Background="Transparent" BorderThickness="0"
-                    Cursor="Hand" HorizontalAlignment="Left"
-                    Margin="8,0,0,0" Padding="0"
-                    Visibility="Collapsed">
-                <TextBlock Text="←" FontSize="10" Foreground="#FFFFFF"/>
-            </Button>
-        </Grid>
-        
-        <!-- Settings Button Overlay (always visible, on top) -->
-        <Button x:Name="SettingsButton" Grid.Row="0"
+        <!-- Settings Button Overlay (always visible) -->
+        <Button x:Name="SettingsButton"
                 Click="SettingsButton_Click"
                 Background="Transparent" BorderThickness="0"
                 Cursor="Hand"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Top"
-                Margin="0,0,2,0"
-                Padding="0"
+                Margin="0,4,4,0"
+                Padding="4"
                 Panel.ZIndex="100">
-            <TextBlock Text="⚙" FontSize="10" Foreground="#FFFFFF"/>
+            <TextBlock Text="⚙" FontSize="14" Foreground="#FFFFFF"/>
+        </Button>
+        
+        <!-- Back Button (visible when in settings) -->
+        <Button x:Name="BackButton"
+                Click="BackButton_Click"
+                Background="Transparent" BorderThickness="0"
+                Cursor="Hand"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Margin="4,4,0,0"
+                Padding="4"
+                Panel.ZIndex="100"
+                Visibility="Collapsed">
+            <TextBlock Text="←" FontSize="14" Foreground="#FFFFFF"/>
         </Button>
     </Grid>
 </Grid>

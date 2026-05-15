@@ -28,6 +28,8 @@ namespace HDTPlugin.Controls
         private readonly Border _countersBorder;
         private readonly Border _counterBorder;
         private readonly TextBlock _apmLabel;
+        private readonly TextBlock _combatShopTimeLabel;
+        private readonly TextBlock _combatShopSlash;
 
         public PlugInDisplayControl()
         {
@@ -51,6 +53,8 @@ namespace HDTPlugin.Controls
             _countersBorder = CountersBorder;
             _counterBorder = CounterBorder;
             _apmLabel = ApmLabel;
+            _combatShopTimeLabel = CombatShopTimeLabel;
+            _combatShopSlash = CombatShopSlash;
 
             ApplyScaling();
         }
@@ -68,6 +72,8 @@ namespace HDTPlugin.Controls
             _apmLabel.FontSize = UIScaler.GetBodyFontSize();
             _combatTimeText.FontSize = UIScaler.GetBodyFontSize();
             _shopTimeText.FontSize = UIScaler.GetBodyFontSize();
+            _combatShopTimeLabel.FontSize = UIScaler.GetBodyFontSize();
+            _combatShopSlash.FontSize = UIScaler.GetBodyFontSize();
             _unitsText.FontSize = UIScaler.GetBodyFontSize();
             _tavernSpellsText.FontSize = UIScaler.GetBodyFontSize();
             _nonTavernSpellsText.FontSize = UIScaler.GetBodyFontSize();
