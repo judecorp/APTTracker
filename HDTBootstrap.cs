@@ -238,7 +238,7 @@ namespace HDTPlugin
             if (UIScaler.CurrentTier != _lastTier)
             {
                 _lastTier = UIScaler.CurrentTier;
-                _pluginContainer.DisplayControl.RecalculateScaling();
+                _pluginContainer.RecalculateScaling();
                 if (!PluginPosition.HasSavedPosition)
                 {
                     var position = PluginPosition.GetDefaultPosition();

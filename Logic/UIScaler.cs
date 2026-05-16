@@ -140,9 +140,9 @@ namespace HDTPlugin.Logic
 
         public static double GetSettingsButtonSize()
         {
-            if (CurrentTier == ResolutionTier.UHD4K) return 48;
-            if (CurrentTier == ResolutionTier.QHD1440p) return 36;
-            return 24;
+            if (CurrentTier == ResolutionTier.UHD4K) return 32;
+            if (CurrentTier == ResolutionTier.QHD1440p) return 20;
+            return 12;
         }
 
         public static double GetSettingsMaxHeight()
@@ -150,6 +150,12 @@ namespace HDTPlugin.Logic
             if (CurrentTier == ResolutionTier.UHD4K) return 600;
             if (CurrentTier == ResolutionTier.QHD1440p) return 450;
             return 300;
+        }
+
+        public static double GetSettingsButtonPaddingSize() {
+            if (CurrentTier == ResolutionTier.UHD4K) return 8;
+            if (CurrentTier == ResolutionTier.QHD1440p) return 4;
+            return 2;
         }
     }
 }

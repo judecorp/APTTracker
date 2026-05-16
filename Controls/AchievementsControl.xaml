@@ -1,0 +1,20 @@
+<Border
+    x:Class="HDTPlugin.Controls.AchievementsControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="#1A1A1A"
+    BorderBrush="#AAAAAA"
+    BorderThickness="1"
+    Padding="8">
+
+    <ScrollViewer x:Name="AchievementsScrollViewer" VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="0,24,0,0">
+            <TextBlock Text="Achievements &amp; Stats" FontSize="14" FontWeight="Bold" Foreground="White" Margin="0,0,0,16"/>
+            
+            <TextBlock Text="Coming Soon!" FontSize="14" Foreground="#888888" HorizontalAlignment="Center" Margin="0,20,0,0"/>
+        </StackPanel>
+    </ScrollViewer>
+</Border>

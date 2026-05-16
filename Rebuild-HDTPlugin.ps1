@@ -21,6 +21,13 @@ $targetDll = Join-Path $pluginsPath "HDTPlugin.dll"
 Copy-Item "bin\Debug\HDTPlugin.dll" $targetDll -Force
 Write-Host "Copied to $targetDll"
 
+# Copy MahApps IconPacks DLLs
+$iconPacksCore = Join-Path $pluginsPath "MahApps.Metro.IconPacks.Core.dll"
+$iconPacksMaterial = Join-Path $pluginsPath "MahApps.Metro.IconPacks.Material.dll"
+Copy-Item "bin\Debug\MahApps.Metro.IconPacks.Core.dll" $iconPacksCore -Force
+Copy-Item "bin\Debug\MahApps.Metro.IconPacks.Material.dll" $iconPacksMaterial -Force
+Write-Host "Copied IconPacks DLLs"
+
 # Copy debug settings if exists
 if (Test-Path "debugSettings.json") {
     Copy-Item "debugSettings.json" $pluginsPath -Force

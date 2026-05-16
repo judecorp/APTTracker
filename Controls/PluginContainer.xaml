@@ -5,39 +5,33 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="clr-namespace:HDTPlugin.Controls"
+    xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
     mc:Ignorable="d"
     MinWidth="225">
 
     <Grid>
-        <!-- Main Content Area (PlugInDisplayControl or SettingsControl) -->
+        <!-- Main Content Area -->
         <controls:PlugInDisplayControl x:Name="DisplayPanel"/>
         <controls:SettingsControl x:Name="SettingsPanel" Visibility="Collapsed"/>
+        <controls:AchievementsControl x:Name="AchievementsPanel" Visibility="Collapsed"/>
+        <controls:AboutControl x:Name="AboutPanel" Visibility="Collapsed"/>
         
-        <!-- Settings Button Overlay (always visible) -->
-        <Button x:Name="SettingsButton"
-                Click="SettingsButton_Click"
-                Background="Transparent" BorderThickness="0"
-                Cursor="Hand"
-                HorizontalAlignment="Right"
-                VerticalAlignment="Top"
-                Margin="0,4,4,0"
-                Padding="4"
-                Panel.ZIndex="100">
-            <TextBlock Text="⚙" FontSize="14" Foreground="#FFFFFF"/>
-        </Button>
+        <!-- Navigation Buttons Overlay (always visible) -->
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,2,4,0" Panel.ZIndex="100">
+            <Button x:Name="AboutButton" Click="AboutButton_Click" Background="Transparent" BorderThickness="0" Cursor="Hand" Padding="0" Margin="0,0,4,0" MinHeight="0" VerticalContentAlignment="Center">
+                <iconPacks:PackIconMaterial x:Name="HelpIcon" Kind="HelpCircle" Foreground="White"/>
+            </Button>
+            <Button x:Name="AchievementsButton" Click="AchievementsButton_Click" Background="Transparent" BorderThickness="0" Cursor="Hand" Padding="0" Margin="0,0,4,0" MinHeight="0" VerticalContentAlignment="Center">
+                <iconPacks:PackIconMaterial x:Name="TrophyIcon" Kind="Trophy" Foreground="White"/>
+            </Button>
+            <Button x:Name="SettingsButton" Click="SettingsButton_Click" Background="Transparent" BorderThickness="0" Cursor="Hand" Padding="0" Margin="0" MinHeight="0" VerticalContentAlignment="Center">
+                <iconPacks:PackIconMaterial x:Name="SettingsIcon" Kind="Cog" Foreground="White"/>
+            </Button>
+        </StackPanel>
         
-        <!-- Back Button (visible when in settings) -->
-        <Button x:Name="BackButton"
-                Click="BackButton_Click"
-                Background="Transparent" BorderThickness="0"
-                Cursor="Hand"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Top"
-                Margin="4,4,0,0"
-                Padding="4"
-                Panel.ZIndex="100"
-                Visibility="Collapsed">
-            <TextBlock Text="←" FontSize="14" Foreground="#FFFFFF"/>
+        <!-- Back Button (visible when in any non-display mode) -->
+        <Button x:Name="BackButton" Click="BackButton_Click" Background="Transparent" BorderThickness="0" Cursor="Hand" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="4,2,0,0" Padding="0" Panel.ZIndex="100" Visibility="Collapsed" MinHeight="0" VerticalContentAlignment="Center">
+            <iconPacks:PackIconMaterial x:Name="BackIcon" Kind="ArrowLeft" Foreground="White"/>
         </Button>
     </Grid>
 </Grid>

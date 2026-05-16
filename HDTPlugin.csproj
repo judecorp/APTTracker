@@ -42,11 +42,19 @@
       <HintPath>..\..\..\lib\HearthstoneDeckTracker.exe</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="MahApps.Metro.IconPacks.Core, Version=6.0.0.0, Culture=neutral, PublicKeyToken=0c0d510f9915137a, processorArchitecture=MSIL">
+      <HintPath>packages\MahApps.Metro.IconPacks.Core.6.2.1\lib\net47\MahApps.Metro.IconPacks.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="MahApps.Metro.IconPacks.Material, Version=6.0.0.0, Culture=neutral, PublicKeyToken=0c0d510f9915137a, processorArchitecture=MSIL">
+      <HintPath>packages\MahApps.Metro.IconPacks.Material.6.2.1\lib\net47\MahApps.Metro.IconPacks.Material.dll</HintPath>
+    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="Microsoft.CSharp" />
@@ -60,6 +68,12 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Controls\SettingsControl.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Controls\AchievementsControl.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Controls\AboutControl.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Controls\PluginContainer.xaml.cs">
@@ -79,13 +93,18 @@
     <Compile Include="Logic\PluginPosition.cs" />
     <Compile Include="Logic\UIScaler.cs" />
     <Compile Include="Logic\RankSystem.cs" />
-    
   </ItemGroup>
   <ItemGroup>
     <Page Include="Controls\PlugInDisplayControl.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\SettingsControl.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\AchievementsControl.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\AboutControl.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\PluginContainer.xaml">
@@ -97,11 +116,12 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
-    <None Include="App.config" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="libs\HearthDb.dll" />
     <Content Include="libs\HearthstoneDeckTracker.exe" />
+    <None Include="packages.config" />
     <Resource Include="img\hsplugin.png" />
     <None Include="img\hsplugin.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
