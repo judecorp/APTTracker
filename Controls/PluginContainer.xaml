@@ -9,6 +9,28 @@
     mc:Ignorable="d"
     MinWidth="225">
 
+    <Grid.Resources>
+        <Style x:Key="HeaderButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="MinHeight" Value="0"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" 
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Grid.Resources>
+
     <Grid>
         <!-- Main Content Area -->
         <controls:PlugInDisplayControl x:Name="DisplayPanel"/>
@@ -18,20 +40,20 @@
         
         <!-- Navigation Buttons Overlay (always visible) -->
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,2,4,0" Panel.ZIndex="100">
-            <Button x:Name="AboutButton" Click="AboutButton_Click" Background="Transparent" BorderThickness="0" Cursor="Hand" Padding="0" Margin="0,0,4,0" MinHeight="0" VerticalContentAlignment="Center">
-                <iconPacks:PackIconMaterial x:Name="HelpIcon" Kind="HelpCircle" Foreground="White"/>
+            <Button x:Name="AboutButton" Click="AboutButton_Click" Style="{StaticResource HeaderButtonStyle}" Margin="0,0,4,0" MouseEnter="HeaderButton_MouseEnter" MouseLeave="HeaderButton_MouseLeave" Tag="HelpIcon">
+                <iconPacks:PackIconMaterial x:Name="HelpIcon" Kind="HelpCircle" Foreground="#888888"/>
             </Button>
-            <Button x:Name="AchievementsButton" Click="AchievementsButton_Click" Background="Transparent" BorderThickness="0" Cursor="Hand" Padding="0" Margin="0,0,4,0" MinHeight="0" VerticalContentAlignment="Center">
-                <iconPacks:PackIconMaterial x:Name="TrophyIcon" Kind="Trophy" Foreground="White"/>
+            <Button x:Name="AchievementsButton" Click="AchievementsButton_Click" Style="{StaticResource HeaderButtonStyle}" Margin="0,0,4,0" MouseEnter="HeaderButton_MouseEnter" MouseLeave="HeaderButton_MouseLeave" Tag="TrophyIcon">
+                <iconPacks:PackIconMaterial x:Name="TrophyIcon" Kind="Trophy" Foreground="#888888"/>
             </Button>
-            <Button x:Name="SettingsButton" Click="SettingsButton_Click" Background="Transparent" BorderThickness="0" Cursor="Hand" Padding="0" Margin="0" MinHeight="0" VerticalContentAlignment="Center">
-                <iconPacks:PackIconMaterial x:Name="SettingsIcon" Kind="Cog" Foreground="White"/>
+            <Button x:Name="SettingsButton" Click="SettingsButton_Click" Style="{StaticResource HeaderButtonStyle}" Margin="0" MouseEnter="HeaderButton_MouseEnter" MouseLeave="HeaderButton_MouseLeave" Tag="SettingsIcon">
+                <iconPacks:PackIconMaterial x:Name="SettingsIcon" Kind="Cog" Foreground="#888888"/>
             </Button>
         </StackPanel>
         
         <!-- Back Button (visible when in any non-display mode) -->
-        <Button x:Name="BackButton" Click="BackButton_Click" Background="Transparent" BorderThickness="0" Cursor="Hand" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="4,2,0,0" Padding="0" Panel.ZIndex="100" Visibility="Collapsed" MinHeight="0" VerticalContentAlignment="Center">
-            <iconPacks:PackIconMaterial x:Name="BackIcon" Kind="ArrowLeft" Foreground="White"/>
+        <Button x:Name="BackButton" Click="BackButton_Click" Style="{StaticResource HeaderButtonStyle}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="4,2,0,0" Panel.ZIndex="100" Visibility="Collapsed" MouseEnter="HeaderButton_MouseEnter" MouseLeave="HeaderButton_MouseLeave" Tag="BackIcon">
+            <iconPacks:PackIconMaterial x:Name="BackIcon" Kind="ArrowLeft" Foreground="#888888"/>
         </Button>
     </Grid>
 </Grid>

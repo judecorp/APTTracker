@@ -75,12 +75,13 @@ namespace HDTPlugin.Controls
             _backButton.Margin = new Thickness(4, 2, 0, 0);
         }
 
-        public void ShowDisplay()
+public void ShowDisplay()
         {
             _settingsControl.Visibility = Visibility.Collapsed;
             _achievementsControl.Visibility = Visibility.Collapsed;
             _aboutControl.Visibility = Visibility.Collapsed;
             _displayControl.Visibility = Visibility.Visible;
+            _displayControl.ApplyVisibilitySettings();
             _backButton.Visibility = Visibility.Collapsed;
         }
 
@@ -126,9 +127,29 @@ namespace HDTPlugin.Controls
             ShowAbout();
         }
 
-        private void BackButton_Click(object sender, RoutedEventArgs e)
+private void BackButton_Click(object sender, RoutedEventArgs e)
         {
             ShowDisplay();
+        }
+
+        private void HeaderButton_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            if (sender is Button btn && btn.Tag is string iconName)
+            {
+                var icon = FindName(iconName) as PackIconMaterial;
+                if (icon != null)
+                    icon.Foreground = System.Windows.Media.Brushes.White;
+            }
+        }
+
+        private void HeaderButton_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            if (sender is Button btn && btn.Tag is string iconName)
+            {
+                var icon = FindName(iconName) as PackIconMaterial;
+                if (icon != null)
+                    icon.Foreground = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(0x88, 0x88, 0x88));
+            }
         }
     }
 }

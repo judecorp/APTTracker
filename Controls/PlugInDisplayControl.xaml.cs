@@ -30,6 +30,8 @@ namespace HDTPlugin.Controls
         private readonly TextBlock _apmLabel;
         private readonly TextBlock _combatShopTimeLabel;
         private readonly TextBlock _combatShopSlash;
+        private StackPanel _combatShopTimePanel;
+        private StackPanel _apmPanel;
 
         public PlugInDisplayControl()
         {
@@ -55,8 +57,23 @@ namespace HDTPlugin.Controls
             _apmLabel = ApmLabel;
             _combatShopTimeLabel = CombatShopTimeLabel;
             _combatShopSlash = CombatShopSlash;
+            _combatShopTimePanel = CombatShopTimePanel;
+            _apmPanel = ApmPanel;
 
             ApplyScaling();
+            ApplyVisibilitySettings();
+        }
+
+        public void ApplyVisibilitySettings()
+        {
+            var settings = Properties.Settings.Default;
+            _combatShopTimePanel.Visibility = settings.ShowCombatTime || settings.ShowShopTime ? Visibility.Visible : Visibility.Collapsed;
+            _combatTimeText.Visibility = settings.ShowCombatTime ? Visibility.Visible : Visibility.Collapsed;
+            _combatShopSlash.Visibility = settings.ShowCombatTime && settings.ShowShopTime ? Visibility.Visible : Visibility.Collapsed;
+            _shopTimeText.Visibility = settings.ShowShopTime ? Visibility.Visible : Visibility.Collapsed;
+            _apmPanel.Visibility = settings.ShowAPM ? Visibility.Visible : Visibility.Collapsed;
+            _rankImage.Visibility = settings.ShowRank ? Visibility.Visible : Visibility.Collapsed;
+            _rankLabel.Visibility = settings.ShowRank ? Visibility.Visible : Visibility.Collapsed;
         }
 
         public void RecalculateScaling()
@@ -94,6 +111,15 @@ namespace HDTPlugin.Controls
         private const double PulseIncrease = 6;
         private int _previousTotalActions;
         private int _previousRankIndex = -1;
+        private int _unitsPlayedVal;
+        private int _tavernSpellsVal;
+        private int _nonTavernSpellsVal;
+        private int _cardsBoughtVal;
+        private int _sellMinionVal;
+        private int _refreshVal;
+        private int _freezeVal;
+        private int _leveledUpVal;
+        private bool _isHovering;
 
         public void UpdateCounters(int turn, int unitsPlayed, int tavernSpells, int nonTavernSpells,
             int buyMinionCount = 0, int buySpellCount = 0, int sellMinionCount = 0,
@@ -103,6 +129,15 @@ namespace HDTPlugin.Controls
             int totalBought = buyMinionCount + buySpellCount;
             int totalActions = unitsPlayed + tavernSpells + nonTavernSpells +
                            totalBought + sellMinionCount + refreshCount + freezeCount + leveledUp;
+
+            _unitsPlayedVal = unitsPlayed;
+            _tavernSpellsVal = tavernSpells;
+            _nonTavernSpellsVal = nonTavernSpells;
+            _cardsBoughtVal = totalBought;
+            _sellMinionVal = sellMinionCount;
+            _refreshVal = refreshCount;
+            _freezeVal = freezeCount;
+            _leveledUpVal = leveledUp;
 
             double baseFontSize = UIScaler.GetSummaryFontSize();
             double targetFontSize = baseFontSize + (totalActions > 0 ? PulseIncrease : 0);
@@ -180,16 +215,82 @@ namespace HDTPlugin.Controls
 
         private void ExpandCounters()
         {
-            _countersBorder.Visibility = Visibility.Visible;
+            _isHovering = true;
+            var settings = Properties.Settings.Default;
+            bool hasAlways = settings.CounterMinionsPlayed == 2 || settings.CounterTavernSpells == 2 ||
+                settings.CounterNonTavernSpells == 2 || settings.CounterCardsBought == 2 ||
+                settings.CounterSellMinion == 2 || settings.CounterRefresh == 2 ||
+                settings.CounterFreeze == 2 || settings.CounterLeveledUp == 2;
+
+            bool hasHover = settings.CounterMinionsPlayed == 1 || settings.CounterTavernSpells == 1 ||
+                settings.CounterNonTavernSpells == 1 || settings.CounterCardsBought == 1 ||
+                settings.CounterSellMinion == 1 || settings.CounterRefresh == 1 ||
+                settings.CounterFreeze == 1 || settings.CounterLeveledUp == 1;
+
+            if (hasAlways)
+            {
+                _countersBorder.Visibility = Visibility.Visible;
+                ApplyCounterVisibility(hasHover);
+            }
+            else
+            {
+                ApplyCounterVisibility(true);
+                _countersBorder.Visibility = hasHover ? Visibility.Visible : Visibility.Collapsed;
+            }
         }
 
         private void CollapseCounters()
         {
-            _countersBorder.Visibility = Visibility.Collapsed;
+            _isHovering = false;
+            var settings = Properties.Settings.Default;
+            bool hasAlways = settings.CounterMinionsPlayed == 2 || settings.CounterTavernSpells == 2 ||
+                settings.CounterNonTavernSpells == 2 || settings.CounterCardsBought == 2 ||
+                settings.CounterSellMinion == 2 || settings.CounterRefresh == 2 ||
+                settings.CounterFreeze == 2 || settings.CounterLeveledUp == 2;
+
+            if (hasAlways)
+            {
+                ApplyCounterVisibility(false);
+            }
+            else
+            {
+                _countersBorder.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private void ApplyCounterVisibility(bool isHover)
+        {
+            var settings = Properties.Settings.Default;
+            _unitsText.Visibility = GetCounterVisibility(settings.CounterMinionsPlayed, isHover, _unitsPlayedVal);
+            _tavernSpellsText.Visibility = GetCounterVisibility(settings.CounterTavernSpells, isHover, _tavernSpellsVal);
+            _nonTavernSpellsText.Visibility = GetCounterVisibility(settings.CounterNonTavernSpells, isHover, _nonTavernSpellsVal);
+            _cardsBoughtText.Visibility = GetCounterVisibility(settings.CounterCardsBought, isHover, _cardsBoughtVal);
+            _sellMinionText.Visibility = GetCounterVisibility(settings.CounterSellMinion, isHover, _sellMinionVal);
+            _refreshText.Visibility = GetCounterVisibility(settings.CounterRefresh, isHover, _refreshVal);
+            _freezeText.Visibility = GetCounterVisibility(settings.CounterFreeze, isHover, _freezeVal);
+            _tavernTierText.Visibility = GetCounterVisibility(settings.CounterLeveledUp, isHover, _leveledUpVal);
+        }
+
+        private Visibility GetCounterVisibility(int setting, bool isHover, int value)
+        {
+            if (value <= 0) return Visibility.Collapsed;
+            if (setting == 2) return Visibility.Visible;
+            if (setting == 1 && isHover) return Visibility.Visible;
+            return Visibility.Collapsed;
         }
 
         private void CountersBorder_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
         {
+            _isHovering = true;
+            var settings = Properties.Settings.Default;
+            bool hasHover = settings.CounterMinionsPlayed == 1 || settings.CounterTavernSpells == 1 ||
+                settings.CounterNonTavernSpells == 1 || settings.CounterCardsBought == 1 ||
+                settings.CounterSellMinion == 1 || settings.CounterRefresh == 1 ||
+                settings.CounterFreeze == 1 || settings.CounterLeveledUp == 1;
+            if (hasHover)
+            {
+                ApplyCounterVisibility(true);
+            }
         }
 
         private void CountersBorder_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)

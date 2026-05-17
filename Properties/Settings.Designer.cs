@@ -94,5 +94,149 @@ namespace HDTPlugin.Properties {
                 this["PositionTopPercent"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool ShowCombatTime {
+            get {
+                return ((bool)(this["ShowCombatTime"]));
+            }
+            set {
+                this["ShowCombatTime"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool ShowShopTime {
+            get {
+                return ((bool)(this["ShowShopTime"]));
+            }
+            set {
+                this["ShowShopTime"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool ShowAPM {
+            get {
+                return ((bool)(this["ShowAPM"]));
+            }
+            set {
+                this["ShowAPM"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool ShowRank {
+            get {
+                return ((bool)(this["ShowRank"]));
+            }
+            set {
+                this["ShowRank"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("2")]
+        public int CounterMinionsPlayed {
+            get {
+                return ((int)(this["CounterMinionsPlayed"]));
+            }
+            set {
+                this["CounterMinionsPlayed"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("2")]
+        public int CounterTavernSpells {
+            get {
+                return ((int)(this["CounterTavernSpells"]));
+            }
+            set {
+                this["CounterTavernSpells"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("2")]
+        public int CounterNonTavernSpells {
+            get {
+                return ((int)(this["CounterNonTavernSpells"]));
+            }
+            set {
+                this["CounterNonTavernSpells"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("2")]
+        public int CounterCardsBought {
+            get {
+                return ((int)(this["CounterCardsBought"]));
+            }
+            set {
+                this["CounterCardsBought"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("2")]
+        public int CounterSellMinion {
+            get {
+                return ((int)(this["CounterSellMinion"]));
+            }
+            set {
+                this["CounterSellMinion"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("2")]
+        public int CounterRefresh {
+            get {
+                return ((int)(this["CounterRefresh"]));
+            }
+            set {
+                this["CounterRefresh"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("2")]
+        public int CounterFreeze {
+            get {
+                return ((int)(this["CounterFreeze"]));
+            }
+            set {
+                this["CounterFreeze"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("2")]
+        public int CounterLeveledUp {
+            get {
+                return ((int)(this["CounterLeveledUp"]));
+            }
+            set {
+                this["CounterLeveledUp"] = value;
+            }
+        }
     }
 }
