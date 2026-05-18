@@ -79,6 +79,7 @@
     <Compile Include="Controls\PluginContainer.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Data\CounterData.cs" />
     <Compile Include="DebugWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -89,6 +90,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="Logic\GameCounters.cs" />
     <Compile Include="Logic\InputMoveManager.cs" />
     <Compile Include="Logic\PluginPosition.cs" />
     <Compile Include="Logic\UIScaler.cs" />

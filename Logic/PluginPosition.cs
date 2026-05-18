@@ -66,7 +66,7 @@ namespace HDTPlugin.Logic
 
             return GetPosition(settings.PositionLeftPercent, settings.PositionTopPercent);
         }
-
+         
         public static void SavePosition(FrameworkElement element)
         {
             double width = UIScaler.GetWindowWidth();

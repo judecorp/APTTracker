@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Animation;
@@ -33,6 +34,8 @@ namespace HDTPlugin.Controls
         private StackPanel _combatShopTimePanel;
         private StackPanel _apmPanel;
 
+        private readonly Dictionary<CounterKey, TextBlock> _textBlocks = new Dictionary<CounterKey, TextBlock>();
+
         public PlugInDisplayControl()
         {
             InitializeComponent();
@@ -59,6 +62,16 @@ namespace HDTPlugin.Controls
             _combatShopSlash = CombatShopSlash;
             _combatShopTimePanel = CombatShopTimePanel;
             _apmPanel = ApmPanel;
+
+            _textBlocks[CounterKey.UNITS_PLAYED] = _unitsText;
+            _textBlocks[CounterKey.TAVERN_SPELLS] = _tavernSpellsText;
+            _textBlocks[CounterKey.NON_TAVERN_SPELLS] = _nonTavernSpellsText;
+            _textBlocks[CounterKey.BUY_MINION_COUNT] = _cardsBoughtText; // Will be handled specially
+            _textBlocks[CounterKey.BUY_SPELL_COUNT] = _cardsBoughtText; // Will be handled specially
+            _textBlocks[CounterKey.SELL_MINION_COUNT] = _sellMinionText;
+            _textBlocks[CounterKey.REFRESH_COUNT] = _refreshText;
+            _textBlocks[CounterKey.FREEZE_COUNT] = _freezeText;
+            _textBlocks[CounterKey.LEVELED_UP] = _tavernTierText;
 
             ApplyScaling();
             ApplyVisibilitySettings();
@@ -111,33 +124,14 @@ namespace HDTPlugin.Controls
         private const double PulseIncrease = 6;
         private int _previousTotalActions;
         private int _previousRankIndex = -1;
-        private int _unitsPlayedVal;
-        private int _tavernSpellsVal;
-        private int _nonTavernSpellsVal;
-        private int _cardsBoughtVal;
-        private int _sellMinionVal;
-        private int _refreshVal;
-        private int _freezeVal;
-        private int _leveledUpVal;
+        private GameCounters _lastCounters;
         private bool _isHovering;
 
-        public void UpdateCounters(int turn, int unitsPlayed, int tavernSpells, int nonTavernSpells,
-            int buyMinionCount = 0, int buySpellCount = 0, int sellMinionCount = 0,
-            int refreshCount = 0, int freezeCount = 0, int leveledUp = 0, 
-            int shopLength = 0, int combatLength = 0, double apm = 0)
+        public void UpdateCounters(GameCounters counters)
         {
-            int totalBought = buyMinionCount + buySpellCount;
-            int totalActions = unitsPlayed + tavernSpells + nonTavernSpells +
-                           totalBought + sellMinionCount + refreshCount + freezeCount + leveledUp;
-
-            _unitsPlayedVal = unitsPlayed;
-            _tavernSpellsVal = tavernSpells;
-            _nonTavernSpellsVal = nonTavernSpells;
-            _cardsBoughtVal = totalBought;
-            _sellMinionVal = sellMinionCount;
-            _refreshVal = refreshCount;
-            _freezeVal = freezeCount;
-            _leveledUpVal = leveledUp;
+            _lastCounters = counters;
+            int totalBought = counters.TotalBought;
+            int totalActions = counters.TotalActions;
 
             double baseFontSize = UIScaler.GetSummaryFontSize();
             double targetFontSize = baseFontSize + (totalActions > 0 ? PulseIncrease : 0);
@@ -158,17 +152,32 @@ namespace HDTPlugin.Controls
             }
 
             _previousTotalActions = totalActions;
-            _apmText.Text = apm > 0 ? $"{apm:F2}" : "0.00";
-            _combatTimeText.Text = combatLength > 0 ? $"{combatLength}s" : "0s";
-            _shopTimeText.Text = shopLength > 0 ? $"{shopLength}s" : "???";
-            UpdateCounterText(_unitsText, "Minions Played", unitsPlayed);
-            UpdateCounterText(_tavernSpellsText, "Tavern Spells", tavernSpells);
-            UpdateCounterText(_nonTavernSpellsText, "Non-Tavern Spells", nonTavernSpells);
-            UpdateCounterText(_cardsBoughtText, "Cards Bought", totalBought);
-            UpdateCounterText(_sellMinionText, "Sell Minion", sellMinionCount);
-            UpdateCounterText(_refreshText, "Refresh", refreshCount);
-            UpdateCounterText(_freezeText, "Freeze", freezeCount);
-            UpdateCounterText(_tavernTierText, "Leveled Up", leveledUp);
+            _apmText.Text = counters.Apm > 0 ? $"{counters.Apm:F2}" : "0.00";
+            _combatTimeText.Text = counters.CombatLength > 0 ? $"{counters.CombatLength}s" : "0s";
+            _shopTimeText.Text = counters.ShopLength > 0 ? $"{counters.ShopLength}s" : "???";
+
+            foreach (var kvp in _textBlocks)
+            {
+                CounterKey key = kvp.Key;
+                TextBlock textBlock = kvp.Value;
+                int value = counters[key];
+                
+                // Special handling for Cards Bought (combines BuyMinionCount + BuySpellCount)
+                if (key == CounterKey.BUY_MINION_COUNT || key == CounterKey.BUY_SPELL_COUNT)
+                {
+                    // Skip individual handling, will be handled together below
+                    continue;
+                }
+                
+                UpdateCounterText(textBlock, key.ToString(), value);
+            }
+            
+            // Handle Cards Bought separately (combines BuyMinionCount + BuySpellCount)
+            if (_textBlocks.ContainsKey(CounterKey.BUY_MINION_COUNT))
+            {
+                int cardsBought = counters[CounterKey.BUY_MINION_COUNT] + counters[CounterKey.BUY_SPELL_COUNT];
+                UpdateCounterText(_textBlocks[CounterKey.BUY_MINION_COUNT], "Cards Bought", cardsBought);
+            }
 
             UpdateRank(totalActions);
         }
@@ -260,15 +269,17 @@ namespace HDTPlugin.Controls
 
         private void ApplyCounterVisibility(bool isHover)
         {
+            if (_lastCounters == null) return;
+            
             var settings = Properties.Settings.Default;
-            _unitsText.Visibility = GetCounterVisibility(settings.CounterMinionsPlayed, isHover, _unitsPlayedVal);
-            _tavernSpellsText.Visibility = GetCounterVisibility(settings.CounterTavernSpells, isHover, _tavernSpellsVal);
-            _nonTavernSpellsText.Visibility = GetCounterVisibility(settings.CounterNonTavernSpells, isHover, _nonTavernSpellsVal);
-            _cardsBoughtText.Visibility = GetCounterVisibility(settings.CounterCardsBought, isHover, _cardsBoughtVal);
-            _sellMinionText.Visibility = GetCounterVisibility(settings.CounterSellMinion, isHover, _sellMinionVal);
-            _refreshText.Visibility = GetCounterVisibility(settings.CounterRefresh, isHover, _refreshVal);
-            _freezeText.Visibility = GetCounterVisibility(settings.CounterFreeze, isHover, _freezeVal);
-            _tavernTierText.Visibility = GetCounterVisibility(settings.CounterLeveledUp, isHover, _leveledUpVal);
+            _unitsText.Visibility = GetCounterVisibility(settings.CounterMinionsPlayed, isHover, _lastCounters[CounterKey.UNITS_PLAYED]);
+            _tavernSpellsText.Visibility = GetCounterVisibility(settings.CounterTavernSpells, isHover, _lastCounters[CounterKey.TAVERN_SPELLS]);
+            _nonTavernSpellsText.Visibility = GetCounterVisibility(settings.CounterNonTavernSpells, isHover, _lastCounters[CounterKey.NON_TAVERN_SPELLS]);
+            _cardsBoughtText.Visibility = GetCounterVisibility(settings.CounterCardsBought, isHover, _lastCounters[CounterKey.BUY_MINION_COUNT] + _lastCounters[CounterKey.BUY_SPELL_COUNT]);
+            _sellMinionText.Visibility = GetCounterVisibility(settings.CounterSellMinion, isHover, _lastCounters[CounterKey.SELL_MINION_COUNT]);
+            _refreshText.Visibility = GetCounterVisibility(settings.CounterRefresh, isHover, _lastCounters[CounterKey.REFRESH_COUNT]);
+            _freezeText.Visibility = GetCounterVisibility(settings.CounterFreeze, isHover, _lastCounters[CounterKey.FREEZE_COUNT]);
+            _tavernTierText.Visibility = GetCounterVisibility(settings.CounterLeveledUp, isHover, _lastCounters[CounterKey.LEVELED_UP]);
         }
 
         private Visibility GetCounterVisibility(int setting, bool isHover, int value)

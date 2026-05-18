@@ -349,10 +349,23 @@ namespace HDTPlugin
 
         private void UpdateDisplay()
         {
-            double apm = CalculateApm();
-            _pluginContainer.DisplayControl.UpdateCounters(_turnNumber, _unitsPlayed, _tavernSpells, _nonTavernSpells,
-                _buyMinionCount, _buySpellCount, _sellMinionCount, _refreshCount, _freezeCount, _tavernTier, 
-                _lastShopLength, _lastCombatLength, apm);
+            var counters = new GameCounters
+            {
+                Turn = _turnNumber,
+                UnitsPlayed = _unitsPlayed,
+                TavernSpells = _tavernSpells,
+                NonTavernSpells = _nonTavernSpells,
+                BuyMinionCount = _buyMinionCount,
+                BuySpellCount = _buySpellCount,
+                SellMinionCount = _sellMinionCount,
+                RefreshCount = _refreshCount,
+                FreezeCount = _freezeCount,
+                LeveledUp = _tavernTier,
+                ShopLength = _lastShopLength,
+                CombatLength = _lastCombatLength,
+                Apm = CalculateApm()
+            };
+            _pluginContainer.DisplayControl.UpdateCounters(counters);
         }
 
         private double CalculateApm()
