@@ -1,8 +1,12 @@
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using MahApps.Metro.IconPacks;
 using HDTPlugin.Logic;
+using HDTPlugin.Settings;
+using System.Collections.Generic;
+using HDTPlugin.Data;
 
 namespace HDTPlugin.Controls
 {
@@ -14,9 +18,22 @@ namespace HDTPlugin.Controls
         private PackIconMaterial _iconShowAPM;
         private PackIconMaterial _iconShowRank;
         private bool _isLoading = true;
-        private readonly Properties.Settings _settings = Properties.Settings.Default;
+        private readonly AppSettings _settings = AppSettings.Default;
 
-        private readonly string[] _counterNames = { "MinionsPlayed", "TavernSpells", "NonTavernSpells", "CardsBought", "SellMinion", "Refresh", "Freeze", "LeveledUp" };
+        // Map UI names to CounterKey
+        private static readonly Dictionary<string, CounterKey> CounterMap = new Dictionary<string, CounterKey>
+        {
+            { "MinionsPlayed", CounterKey.UNITS_PLAYED },
+            { "TavernSpells", CounterKey.TAVERN_SPELLS },
+            { "NonTavernSpells", CounterKey.NON_TAVERN_SPELLS },
+            { "CardsBought", CounterKey.BUY_CARD_COUNT },
+            { "SellMinion", CounterKey.SELL_MINION_COUNT },
+            { "Refresh", CounterKey.REFRESH_COUNT },
+            { "Freeze", CounterKey.FREEZE_COUNT },
+            { "LeveledUp", CounterKey.LEVELED_UP }
+        };
+        
+        private readonly string[] _counterNames = CounterMap.Keys.ToArray();
 
         public SettingsControl()
         {
@@ -184,32 +201,18 @@ namespace HDTPlugin.Controls
 
         private int GetCounterValue(string counterName)
         {
-            switch (counterName)
+            if (CounterMap.TryGetValue(counterName, out CounterKey key))
             {
-                case "MinionsPlayed": return _settings.CounterMinionsPlayed;
-                case "TavernSpells": return _settings.CounterTavernSpells;
-                case "NonTavernSpells": return _settings.CounterNonTavernSpells;
-                case "CardsBought": return _settings.CounterCardsBought;
-                case "SellMinion": return _settings.CounterSellMinion;
-                case "Refresh": return _settings.CounterRefresh;
-                case "Freeze": return _settings.CounterFreeze;
-                case "LeveledUp": return _settings.CounterLeveledUp;
-                default: return 2;
+                return _settings.CounterVisibility[key];
             }
+            return 2;
         }
 
         private void SetCounterValue(string counterName, int value)
         {
-            switch (counterName)
+            if (CounterMap.TryGetValue(counterName, out CounterKey key))
             {
-                case "MinionsPlayed": _settings.CounterMinionsPlayed = value; break;
-                case "TavernSpells": _settings.CounterTavernSpells = value; break;
-                case "NonTavernSpells": _settings.CounterNonTavernSpells = value; break;
-                case "CardsBought": _settings.CounterCardsBought = value; break;
-                case "SellMinion": _settings.CounterSellMinion = value; break;
-                case "Refresh": _settings.CounterRefresh = value; break;
-                case "Freeze": _settings.CounterFreeze = value; break;
-                case "LeveledUp": _settings.CounterLeveledUp = value; break;
+                _settings.CounterVisibility[key] = value;
             }
         }
 

@@ -6,8 +6,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     MinWidth="225"
-    d:DesignHeight="400" d:DesignWidth="225"
-    MouseLeave="Plugin_MouseLeave">
+    d:DesignHeight="400" d:DesignWidth="225">
     
     <!-- Summary Panel -->
     <Border
@@ -15,9 +14,7 @@
         Background="#1A1A1A"
         BorderBrush="#AAAAAA"
         BorderThickness="1"
-        Padding="8,4,8,8"
-        MouseEnter="SummaryBorder_MouseEnter"
-        MouseLeave="SummaryBorder_MouseLeave">
+        Padding="8,4,8,8">
 
         <Grid>
             <Grid.RowDefinitions>

@@ -7,7 +7,9 @@
     xmlns:controls="clr-namespace:HDTPlugin.Controls"
     xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
     mc:Ignorable="d"
-    MinWidth="225">
+    MinWidth="225"
+    MouseEnter="Plugin_MouseEnter"
+    MouseLeave="Plugin_MouseLeave">
 
     <Grid.Resources>
         <Style x:Key="HeaderButtonStyle" TargetType="Button">

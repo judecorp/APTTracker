@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
+using HDTPlugin.Settings;
 
 namespace HDTPlugin.Logic
 {
@@ -60,7 +61,7 @@ namespace HDTPlugin.Logic
 
         public static Point GetSavedPosition()
         {
-            var settings = Properties.Settings.Default;
+            var settings = AppSettings.Default;
             if (settings.PositionLeftPercent < 0 || settings.PositionTopPercent < 0)
                 return new Point(double.NaN, double.NaN);
 
@@ -78,12 +79,12 @@ namespace HDTPlugin.Logic
             double leftPercent = Canvas.GetLeft(element) / width;
             double topPercent = Canvas.GetTop(element) / height;
 
-            var settings = Properties.Settings.Default;
+            var settings = AppSettings.Default;
             settings.PositionLeftPercent = leftPercent;
             settings.PositionTopPercent = topPercent;
             settings.Save();
         }
 
-        public static bool HasSavedPosition => Properties.Settings.Default.PositionLeftPercent >= 0 && Properties.Settings.Default.PositionTopPercent >= 0;
+        public static bool HasSavedPosition => AppSettings.Default.PositionLeftPercent >= 0 && AppSettings.Default.PositionTopPercent >= 0;
     }
 }

@@ -1,5 +1,6 @@
 using HDTPlugin.Controls;
 using HDTPlugin.Logic;
+using HDTPlugin.Data;
 using Hearthstone_Deck_Tracker.API;
 using Hearthstone_Deck_Tracker.Enums;
 using Hearthstone_Deck_Tracker.Plugins;
@@ -19,6 +20,7 @@ namespace HDTPlugin
     public class HDTBootstrap : IPlugin
     {
         private PluginContainer _pluginContainer;
+        private readonly CounterState _counterState = new CounterState();
         private DebugWindow _debugWindow;
         private bool _isTracking;
         private string _logFilePath;
@@ -52,7 +54,7 @@ namespace HDTPlugin
 
         public void OnLoad()
         {
-            _pluginContainer = new PluginContainer();
+            _pluginContainer = new PluginContainer(_counterState);
             _pluginContainer.Visibility = Visibility.Collapsed;
             Core.OverlayCanvas.Children.Add(_pluginContainer);
 
@@ -349,23 +351,22 @@ namespace HDTPlugin
 
         private void UpdateDisplay()
         {
-            var counters = new GameCounters
-            {
-                Turn = _turnNumber,
-                UnitsPlayed = _unitsPlayed,
-                TavernSpells = _tavernSpells,
-                NonTavernSpells = _nonTavernSpells,
-                BuyMinionCount = _buyMinionCount,
-                BuySpellCount = _buySpellCount,
-                SellMinionCount = _sellMinionCount,
-                RefreshCount = _refreshCount,
-                FreezeCount = _freezeCount,
-                LeveledUp = _tavernTier,
-                ShopLength = _lastShopLength,
-                CombatLength = _lastCombatLength,
-                Apm = CalculateApm()
-            };
-            _pluginContainer.DisplayControl.UpdateCounters(counters);
+            // Sync the runtime state with the latest values
+            _counterState[CounterKey.UNITS_PLAYED] = _unitsPlayed;
+            _counterState[CounterKey.TAVERN_SPELLS] = _tavernSpells;
+            _counterState[CounterKey.NON_TAVERN_SPELLS] = _nonTavernSpells;
+            _counterState[CounterKey.BUY_MINION_COUNT] = _buyMinionCount;
+            _counterState[CounterKey.BUY_SPELL_COUNT] = _buySpellCount;
+            _counterState[CounterKey.SELL_MINION_COUNT] = _sellMinionCount;
+            _counterState[CounterKey.REFRESH_COUNT] = _refreshCount;
+            _counterState[CounterKey.FREEZE_COUNT] = _freezeCount;
+            _counterState[CounterKey.LEVELED_UP] = _tavernTier;
+            
+            _pluginContainer.DisplayControl.SetApm(CalculateApm());
+            _pluginContainer.DisplayControl.SetCombatTime(_lastCombatLength);
+            _pluginContainer.DisplayControl.SetShopTime(_lastShopLength);
+
+            _pluginContainer.DisplayControl.UpdateCounters(_counterState);
         }
 
         private double CalculateApm()

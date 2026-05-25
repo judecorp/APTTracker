@@ -6,22 +6,29 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 using HDTPlugin.Logic;
+using HDTPlugin.Data;
+using HDTPlugin.Controls;
 
 namespace HDTPlugin
 {
     public partial class DebugWindow : Window
     {
-        private readonly GameCounters _gameCounters = new GameCounters();
+        private readonly CounterState _counterState = new CounterState();
+        private readonly Dictionary<CounterKey, TextBlock> _counterLabels = new Dictionary<CounterKey, TextBlock>();
         private InputMoveManager _inputMoveManager;
+        private PluginContainer _pluginContainer;
 
         public DebugWindow()
         {
             InitializeComponent();
+            
+            _pluginContainer = new PluginContainer(_counterState);
+            PluginCanvas.Children.Add(_pluginContainer);
 
-            _gameCounters.InitializeCounters();
+            // No need for GameCounters initialization – CounterState starts at zero for all counters
             CreateCounterControls();
             
-            _inputMoveManager = new InputMoveManager(PluginContainer);
+            _inputMoveManager = new InputMoveManager(_pluginContainer);
             _inputMoveManager.Enable();
             
             LoadBackgroundImage();
@@ -33,8 +40,8 @@ namespace HDTPlugin
         private void SetPluginPosition()
         {
             var position = PluginPosition.GetDefaultPosition();
-            Canvas.SetLeft(PluginContainer, position.X);
-            Canvas.SetTop(PluginContainer, position.Y);
+            Canvas.SetLeft(_pluginContainer, position.X);
+            Canvas.SetTop(_pluginContainer, position.Y);
         }
 
         private void LoadBackgroundImage()
@@ -87,7 +94,7 @@ namespace HDTPlugin
 
         private void RefreshUI(double scaleFactor)
         {
-            PluginContainer.RecalculateScaling();
+            _pluginContainer.RecalculateScaling();
             
             // Scale background from top-right corner
             BackgroundScale.ScaleX = scaleFactor;
@@ -108,33 +115,35 @@ namespace HDTPlugin
                 screenWidth = 1920;  // 1080p
             double offscreen = screenWidth - debugWindowWidth;
             double scaledLeft = (basePosition.X - offscreen);
-            Canvas.SetLeft(PluginContainer, scaledLeft);
-            Canvas.SetTop(PluginContainer, basePosition.Y);
+            Canvas.SetLeft(_pluginContainer, scaledLeft);
+            Canvas.SetTop(_pluginContainer, basePosition.Y);
         }
 
         private void CreateCounterControls()
         {
-            foreach (var counter in _gameCounters.OrderedCounters)
+            foreach (var def in CounterDataProvider.Counters)
             {
+                var key = def.Key;
+                var displayName = def.Value.DisplayName;
                 var grid = new Grid { Margin = new Thickness(0, 5, 0, 0) };
                 grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(120) });
                 grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
 
-                var label = new TextBlock { Text = counter.DisplayName + ":", VerticalAlignment = VerticalAlignment.Center, Foreground = System.Windows.Media.Brushes.White };
+                var label = new TextBlock { Text = displayName + ":", VerticalAlignment = VerticalAlignment.Center, Foreground = System.Windows.Media.Brushes.White };
                 Grid.SetColumn(label, 0);
                 grid.Children.Add(label);
 
                 var stackPanel = new StackPanel { Orientation = Orientation.Horizontal, HorizontalAlignment = HorizontalAlignment.Right };
                 Grid.SetColumn(stackPanel, 1);
 
-                var valueLabel = new TextBlock { Text = counter.Value.ToString(), Width = 30, TextAlignment = TextAlignment.Center, VerticalAlignment = VerticalAlignment.Center, Foreground = System.Windows.Media.Brushes.White };
-                counter.Label = valueLabel;
+                var valueLabel = new TextBlock { Text = _counterState[key].ToString(), Width = 30, TextAlignment = TextAlignment.Center, VerticalAlignment = VerticalAlignment.Center, Foreground = System.Windows.Media.Brushes.White };
+                _counterLabels[key] = valueLabel;
 
-                stackPanel.Children.Add(CreateButton("-10", -10, counter.Key));
-                stackPanel.Children.Add(CreateButton("-1", -1, counter.Key));
+                stackPanel.Children.Add(CreateButton("-10", -10, key));
+                stackPanel.Children.Add(CreateButton("-1", -1, key));
                 stackPanel.Children.Add(valueLabel);
-                stackPanel.Children.Add(CreateButton("+1", 1, counter.Key));
-                stackPanel.Children.Add(CreateButton("+10", 10, counter.Key));
+                stackPanel.Children.Add(CreateButton("+1", 1, key));
+                stackPanel.Children.Add(CreateButton("+10", 10, key));
 
                 grid.Children.Add(stackPanel);
                 DynamicControlsContainer.Children.Add(grid);
@@ -150,24 +159,37 @@ namespace HDTPlugin
 
         private void AdjustCounter(CounterKey key, int delta)
         {
-            _gameCounters.Counters[key].Value = Math.Max(0, _gameCounters.Counters[key].Value + delta);
+            int newValue = Math.Max(0, _counterState[key] + delta);
+            _counterState[key] = newValue;
             UpdateDisplay();
         }
 
         private void UpdateDisplay()
         {
-            foreach (var counter in _gameCounters.OrderedCounters)
+            foreach (var kvp in _counterStateSnapshot())
             {
-                if (counter.Label != null)
-                    counter.Label.Text = counter.Value.ToString();
+                if (_counterLabels.TryGetValue(kvp.Key, out var lbl))
+                    lbl.Text = kvp.Value.ToString();
             }
 
-            PluginContainer.DisplayControl.UpdateCounters(_gameCounters);
+            // Directly update the display control with the current CounterState
+            _pluginContainer.DisplayControl.UpdateCounters(_counterState);
+        }
+
+        // Helper to get a snapshot of the current CounterState values
+        private IReadOnlyDictionary<CounterKey, int> _counterStateSnapshot()
+        {
+            // CounterState already provides Snapshot method
+            return _counterState.Snapshot();
         }
 
         private void BtnReset_Click(object sender, RoutedEventArgs e)
         {
-            _gameCounters.Reset();
+            // Reset all counters to zero (default state)
+            foreach (var key in Enum.GetValues(typeof(CounterKey)))
+            {
+                _counterState[(CounterKey)key] = 0;
+            }
             UpdateDisplay();
         }
     }

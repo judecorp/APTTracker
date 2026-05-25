@@ -2,6 +2,7 @@ using System.Windows;
 using System.Windows.Controls;
 using MahApps.Metro.IconPacks;
 using HDTPlugin.Logic;
+using HDTPlugin.Data;
 
 namespace HDTPlugin.Controls
 {
@@ -19,10 +20,12 @@ namespace HDTPlugin.Controls
         private readonly PackIconMaterial _trophyIcon;
         private readonly PackIconMaterial _helpIcon;
         private readonly PackIconMaterial _backIcon;
+        private readonly CounterState _state;
 
-        public PluginContainer()
+        public PluginContainer(CounterState state)
         {
             InitializeComponent();
+            _state = state;
             
             _displayControl = DisplayPanel;
             _settingsControl = SettingsPanel;
@@ -75,7 +78,7 @@ namespace HDTPlugin.Controls
             _backButton.Margin = new Thickness(4, 2, 0, 0);
         }
 
-public void ShowDisplay()
+        public void ShowDisplay()
         {
             _settingsControl.Visibility = Visibility.Collapsed;
             _achievementsControl.Visibility = Visibility.Collapsed;
@@ -127,7 +130,7 @@ public void ShowDisplay()
             ShowAbout();
         }
 
-private void BackButton_Click(object sender, RoutedEventArgs e)
+        private void BackButton_Click(object sender, RoutedEventArgs e)
         {
             ShowDisplay();
         }
@@ -150,6 +153,15 @@ private void BackButton_Click(object sender, RoutedEventArgs e)
                 if (icon != null)
                     icon.Foreground = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(0x88, 0x88, 0x88));
             }
+        }
+        private void Plugin_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            _displayControl.ExpandCounters();
+        }
+
+        private void Plugin_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            _displayControl.CollapseCounters();
         }
     }
 }

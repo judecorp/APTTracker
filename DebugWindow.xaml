@@ -25,9 +25,7 @@
             </Grid.ColumnDefinitions>
             
             <!-- Plugin Display - positioned as in-game -->
-            <Canvas x:Name="PluginCanvas">
-                <controls:PluginContainer x:Name="PluginContainer"/>
-            </Canvas>
+            <Canvas x:Name="PluginCanvas"/>
             
             <!-- Debug Controls - centered -->
             <Border Grid.Row="1" Grid.Column="1" 

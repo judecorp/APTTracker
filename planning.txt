@@ -1,0 +1,27 @@
+settings
+achievements/effects
+	ice cold (freeze 10 times)
+	double level (level twice)
+	triple level (level thrice)
+	bloodbath (play 15 bloodgems)
+	business enthusiast (buy, play, and sell 20 minions)
+	witchcraft (play 20 spells)
+	picky (refresh 20 times)
+rank images
+stats
+	best APM
+	
+about
+
+
+nagware video series
+
+ability to receive donations
+
+
+
+
+______
+level up not in aggregate counter
+discover
+choose one

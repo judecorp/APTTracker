@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace HDTPlugin.Data
 {
-    public static enum CounterKey
+    public enum CounterKey
     {
         UNITS_PLAYED,
         TAVERN_SPELLS,
@@ -44,6 +44,7 @@ namespace HDTPlugin.Data
         public string DisplayName { get; set; }
         public bool DefaultVisibility { get; set; } = true;
         public Color Color { get; set; }
+        public bool IncludeInSummary { get; set; } = true;
         public ParsingDetails ParsingDetails { get; set; }
     }
 
@@ -53,9 +54,10 @@ namespace HDTPlugin.Data
             {
                 { 
                     CounterKey.UNITS_PLAYED,
-                    new CounterData { DisplayName = "Minions Played",
+                    new CounterData {
+                        DisplayName = "Minions Played",
                         Color = Color.LightGreen,
-                        ParsingDetails = new HDTAPIDetails { CardType = "Minion" }
+                        ParsingDetails = new APIParsingDetails { CardType = "Minion" }
                     } 
                 },
                 {
@@ -63,7 +65,7 @@ namespace HDTPlugin.Data
                     new CounterData {
                         DisplayName = "Tavern Spells",
                         Color = Color.LightBlue,
-                        ParsingDetails = new HDTAPIDetails { CardType = "Battleground_Spell" }
+                        ParsingDetails = new APIParsingDetails { CardType = "Battleground_Spell" }
                     }
                 },
                 {
@@ -71,7 +73,7 @@ namespace HDTPlugin.Data
                     new CounterData {
                         DisplayName = "Non-Tavern Spells",
                         Color = Color.LightYellow,
-                        ParsingDetails = new HDTAPIDetails { CardType = "Spell" }
+                        ParsingDetails = new APIParsingDetails { CardType = "Spell" }
                     }
                 },
                 {
@@ -80,6 +82,7 @@ namespace HDTPlugin.Data
                         DisplayName = "Buy Minion",
                         Color = Color.LightCoral,
                         DefaultVisibility = false,
+                        IncludeInSummary = false,
                         ParsingDetails = new LogParsingDetails { CardId = "TB_BaconShop_DragBuy" }
                     }
                 },
@@ -89,6 +92,7 @@ namespace HDTPlugin.Data
                         DisplayName = "Buy Spell",
                         Color = Color.LightPink,
                         DefaultVisibility = false,
+                        IncludeInSummary = false,
                         ParsingDetails = new LogParsingDetails { CardId = "TB_BaconShop_DragBuy_Spell" }
                     }
                 },
