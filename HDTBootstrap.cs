@@ -57,6 +57,7 @@ namespace HDTPlugin
             _pluginContainer = new PluginContainer(_counterState);
             _pluginContainer.Visibility = Visibility.Collapsed;
             Core.OverlayCanvas.Children.Add(_pluginContainer);
+            Hearthstone_Deck_Tracker.Utility.Extensions.OverlayExtensions.SetIsOverlayHitTestVisible(_pluginContainer, true);
 
             Point position;
             if (PluginPosition.HasSavedPosition && PluginPosition.IsOverlayAvailable)
