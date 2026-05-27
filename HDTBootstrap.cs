@@ -23,6 +23,7 @@ namespace HDTPlugin
         private readonly CounterState _counterState = new CounterState();
         private DebugWindow _debugWindow;
         private bool _isTracking;
+        private bool _isInCombat;
         private string _logFilePath;
         private StreamWriter _logWriter;
         private InputMoveManager _inputMoveManager;
@@ -43,7 +44,6 @@ namespace HDTPlugin
         private int _lastShopLength;
         private int _lastCombatLength;
         private int _currentTimeout;
-        private DispatcherTimer _apmTimer;
 
         public string Author => "Author";
         public string ButtonText => "BG Action Tracker";
@@ -88,9 +88,6 @@ namespace HDTPlugin
 
             LogEvents.OnPowerLogLine.Add(OnPowerLogLine);
             _logWriter.WriteLine($"[{DateTime.Now}] Subscribed to OnPowerLogLine");
-
-            _apmTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
-            _apmTimer.Tick += ApmTimer_Tick;
         }
 
         public void OnUnload()
@@ -147,16 +144,18 @@ namespace HDTPlugin
                         // Even turn = shop phase, odd turn = combat phase
                         if (newTurn % 2 == 0)
                         {
-                            // Starting shop phase - reset shop length, keep combat length
-                            _lastShopLength = 0;
-                            _lastCombatLength = Math.Max(0, _currentTimeout - elapsedSeconds);
+                            // Starting combat phase - show previous shop length, calculate combat
+                            _isInCombat = true;
+                            //_lastShopLength = elapsedSeconds;
+
                             _logWriter.WriteLine($"[{DateTime.Now}] SHOP TURN {newTurn} STARTED - Combat from turn {newTurn - 1}: {_lastCombatLength}s (timeout: {_currentTimeout}s)");
                         }
                         else
                         {
-                            // Starting combat phase - show previous shop length, calculate combat
-                            _lastShopLength = elapsedSeconds;
-                            _lastCombatLength = Math.Max(0, _currentTimeout - _lastShopLength);
+                            // Starting shop phase - reset shop length, keep combat length
+                            _lastShopLength = 0;
+                            _lastCombatLength = elapsedSeconds;
+                            _isInCombat = false;
                             _logWriter.WriteLine($"[{DateTime.Now}] COMBAT TURN {newTurn} STARTED - Shop from turn {newTurn - 1}: {_lastShopLength}s, Combat: {_lastCombatLength}s (timeout: {_currentTimeout}s)");
                         }
                     }
@@ -255,9 +254,21 @@ namespace HDTPlugin
                 }
             }
 
-            // Update APM display during active turn
-            if (_isTracking)
-                UpdateDisplay();
+            //TEMPORARY:
+            if(_isInCombat)
+            {
+                _lastCombatLength = (int)(DateTime.Now - _turnStartTime).TotalSeconds;
+            }
+            else
+            {
+                _lastShopLength = (int)(DateTime.Now - _turnStartTime).TotalSeconds;
+            }
+
+            if (_isTracking && !_isInCombat)
+            {
+                _pluginContainer.DisplayControl.SetApm(CalculateApm());
+            }
+            UpdateDisplay();
         }
         public void OnButtonPress()
         {
@@ -279,14 +290,14 @@ namespace HDTPlugin
                 return;
 
             _isTracking = true;
+            _isInCombat = false;
             _turnNumber = 0;
             _turnStartTime = DateTime.MinValue;
             _lastShopLength = 0;
             _lastCombatLength = 0;
             _currentTimeout = 0;
             ResetCounters();
-            _pluginContainer.DisplayControl.Visibility = Visibility.Visible;
-            _apmTimer.Start();
+            _pluginContainer.Visibility = Visibility.Visible;
             Point position;
             if (PluginPosition.HasSavedPosition && PluginPosition.IsOverlayAvailable)
                 position = PluginPosition.GetSavedPosition();
@@ -301,14 +312,15 @@ namespace HDTPlugin
         private void GameEnd()
         {
             _isTracking = false;
-            _apmTimer.Stop();
-            _pluginContainer.DisplayControl.Visibility = Visibility.Collapsed;
+            _pluginContainer.Visibility = Visibility.Collapsed;
         }
 
         private void TurnStart(ActivePlayer player)
         {
-            if (!_isTracking || player != ActivePlayer.Player)
+            if (player != ActivePlayer.Player)
+            {
                 return;
+            }
 
             ResetCounters(); // Resets ALL counters for the turn
             _turnNumber++;
@@ -361,8 +373,7 @@ namespace HDTPlugin
             _counterState[CounterKey.REFRESH_COUNT] = _refreshCount;
             _counterState[CounterKey.FREEZE_COUNT] = _freezeCount;
             _counterState[CounterKey.LEVELED_UP] = _tavernTier;
-            
-            _pluginContainer.DisplayControl.SetApm(CalculateApm());
+
             _pluginContainer.DisplayControl.SetCombatTime(_lastCombatLength);
             _pluginContainer.DisplayControl.SetShopTime(_lastShopLength);
 
@@ -382,12 +393,6 @@ namespace HDTPlugin
                 _buyMinionCount + _buySpellCount + _sellMinionCount + _refreshCount + _freezeCount + _tavernTier;
 
             return Math.Round(totalActions * 60.0 / elapsed.TotalSeconds, 2);
-        }
-
-        private void ApmTimer_Tick(object sender, EventArgs e)
-        {
-            if (_isTracking)
-                UpdateDisplay();
         }
     }
 }

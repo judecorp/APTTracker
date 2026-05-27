@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using System.Windows.Media.Animation;
 using HDTPlugin.Logic;
 using HDTPlugin.Data;
@@ -27,6 +28,7 @@ namespace HDTPlugin.Controls
         private readonly TextBlock _combatShopSlash;
         private StackPanel _combatShopTimePanel;
         private StackPanel _apmPanel;
+        private StackPanel _countersPanel;
 
         private readonly Dictionary<CounterKey, TextBlock> _textBlocks = new Dictionary<CounterKey, TextBlock>();
 
@@ -54,18 +56,37 @@ namespace HDTPlugin.Controls
             _combatShopSlash = CombatShopSlash;
             _combatShopTimePanel = CombatShopTimePanel;
             _apmPanel = ApmPanel;
+            _countersPanel = CountersPanel;
 
-            _textBlocks[CounterKey.UNITS_PLAYED] = UnitsText;
-            _textBlocks[CounterKey.TAVERN_SPELLS] = TavernSpellsText;
-            _textBlocks[CounterKey.NON_TAVERN_SPELLS] = NonTavernSpellsText;
-            _textBlocks[CounterKey.BUY_CARD_COUNT] = CardsBoughtText; // Map combined counter
-            _textBlocks[CounterKey.SELL_MINION_COUNT] = SellMinionText;
-            _textBlocks[CounterKey.REFRESH_COUNT] = RefreshText;
-            _textBlocks[CounterKey.FREEZE_COUNT] = FreezeText;
-            _textBlocks[CounterKey.LEVELED_UP] = TavernTierText;
-
+            CreateCounterControls();
+            
             ApplyScaling();
             ApplyVisibilitySettings();
+        }
+
+        private void CreateCounterControls()
+        {
+            foreach (var def in CounterDataProvider.Counters)
+            {
+                var key = def.Key;
+                var data = def.Value;
+                
+                var textBlock = new TextBlock
+                {
+                    FontSize = UIScaler.GetBodyFontSize(),
+                    TextAlignment = TextAlignment.Center,
+                    Margin = new Thickness(0),
+                    Foreground = ToWpfBrush(data.Color)
+                };
+                
+                _textBlocks[key] = textBlock;
+                _countersPanel.Children.Add(textBlock);
+            }
+        }
+
+        private static SolidColorBrush ToWpfBrush(System.Drawing.Color color)
+        {
+            return new SolidColorBrush(Color.FromArgb(color.A, color.R, color.G, color.B));
         }
 
         public void ApplyVisibilitySettings()
@@ -78,6 +99,7 @@ namespace HDTPlugin.Controls
             _apmPanel.Visibility = settings.ShowAPM ? Visibility.Visible : Visibility.Collapsed;
             _rankImage.Visibility = settings.ShowRank ? Visibility.Visible : Visibility.Collapsed;
             _rankLabel.Visibility = settings.ShowRank ? Visibility.Visible : Visibility.Collapsed;
+            ApplyCounterVisibility();
         }
 
         public void RecalculateScaling()
