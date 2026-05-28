@@ -43,25 +43,25 @@
             <TextBlock Text="Show:" FontSize="14" FontWeight="Bold" Foreground="White" Margin="0,0,0,8"/>
             
             <!-- Combat Time -->
-            <StackPanel Orientation="Horizontal" Margin="0,2" Cursor="Hand" MouseLeftButtonDown="ShowToggle_Click" Tag="ShowCombatTime" MouseEnter="ShowToggle_MouseEnter" MouseLeave="ShowToggle_MouseLeave">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" Background="Transparent" Margin="0,2" Cursor="Hand" MouseLeftButtonDown="ShowToggle_Click" Tag="ShowCombatTime" MouseEnter="ShowToggle_MouseEnter" MouseLeave="ShowToggle_MouseLeave">
                 <TextBlock Text="Combat Time" Foreground="White" VerticalAlignment="Center"/>
                 <iconPacks:PackIconMaterial x:Name="IconShowCombatTime" Kind="Check" Width="12" Height="12" Margin="6,0,0,0" VerticalAlignment="Center" Foreground="#888888"/>
             </StackPanel>
             
             <!-- Shop Time -->
-            <StackPanel Orientation="Horizontal" Margin="0,2" Cursor="Hand" MouseLeftButtonDown="ShowToggle_Click" Tag="ShowShopTime" MouseEnter="ShowToggle_MouseEnter" MouseLeave="ShowToggle_MouseLeave">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" Background="Transparent" Margin="0,2" Cursor="Hand" MouseLeftButtonDown="ShowToggle_Click" Tag="ShowShopTime" MouseEnter="ShowToggle_MouseEnter" MouseLeave="ShowToggle_MouseLeave">
                 <TextBlock Text="Shop Time" Foreground="White" VerticalAlignment="Center"/>
                 <iconPacks:PackIconMaterial x:Name="IconShowShopTime" Kind="Check" Width="12" Height="12" Margin="6,0,0,0" VerticalAlignment="Center" Foreground="#888888"/>
             </StackPanel>
             
             <!-- APM -->
-            <StackPanel Orientation="Horizontal" Margin="0,2" Cursor="Hand" MouseLeftButtonDown="ShowToggle_Click" Tag="ShowAPM" MouseEnter="ShowToggle_MouseEnter" MouseLeave="ShowToggle_MouseLeave">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" Background="Transparent" Margin="0,2" Cursor="Hand" MouseLeftButtonDown="ShowToggle_Click" Tag="ShowAPM" MouseEnter="ShowToggle_MouseEnter" MouseLeave="ShowToggle_MouseLeave">
                 <TextBlock Text="APM" Foreground="White" VerticalAlignment="Center"/>
                 <iconPacks:PackIconMaterial x:Name="IconShowAPM" Kind="Check" Width="12" Height="12" Margin="6,0,0,0" VerticalAlignment="Center" Foreground="#888888"/>
             </StackPanel>
             
             <!-- Rank -->
-            <StackPanel Orientation="Horizontal" Margin="0,2" Cursor="Hand" MouseLeftButtonDown="ShowToggle_Click" Tag="ShowRank" MouseEnter="ShowToggle_MouseEnter" MouseLeave="ShowToggle_MouseLeave">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" Background="Transparent" Margin="0,2" Cursor="Hand" MouseLeftButtonDown="ShowToggle_Click" Tag="ShowRank" MouseEnter="ShowToggle_MouseEnter" MouseLeave="ShowToggle_MouseLeave">
                 <TextBlock Text="Rank" Foreground="White" VerticalAlignment="Center"/>
                 <iconPacks:PackIconMaterial x:Name="IconShowRank" Kind="Check" Width="12" Height="12" Margin="6,0,0,0" VerticalAlignment="Center" Foreground="#888888"/>
             </StackPanel>
@@ -71,22 +71,22 @@
             <!-- Individual Counter Section -->
             <TextBlock Text="Individual Counters:" FontSize="12" FontWeight="Bold" Foreground="White" Margin="0,4,0,4"/>
             
-            <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+            <StackPanel Orientation="Vertical" Margin="0,0,0,8">
                 <Button x:Name="BtnAllAlways" FontSize="11" Padding="6,2" Margin="0,0,4,0" Click="BtnAllAlways_Click" MouseEnter="BtnAllAlways_MouseEnter" MouseLeave="BtnAllAlways_MouseLeave">
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="All: Always" VerticalAlignment="Center" Foreground="#888888"/>
+                        <TextBlock Text="All: Always Show" VerticalAlignment="Center" Foreground="#888888"/>
                         <iconPacks:PackIconMaterial Kind="Eye" Width="14" Height="14" Margin="4,0,0,0" VerticalAlignment="Center" Foreground="#888888"/>
                     </StackPanel>
                 </Button>
                 <Button x:Name="BtnAllHover" FontSize="11" Padding="6,2" Margin="0,0,4,0" Click="BtnAllHover_Click" MouseEnter="BtnAllHover_MouseEnter" MouseLeave="BtnAllHover_MouseLeave">
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="All: Hover" VerticalAlignment="Center" Foreground="#888888"/>
+                        <TextBlock Text="All: Show on Hover" VerticalAlignment="Center" Foreground="#888888"/>
                         <iconPacks:PackIconMaterial Kind="CursorDefault" Width="14" Height="14" Margin="4,0,0,0" VerticalAlignment="Center" Foreground="#888888"/>
                     </StackPanel>
                 </Button>
                 <Button x:Name="BtnAllNever" FontSize="11" Padding="6,2" Click="BtnAllNever_Click" MouseEnter="BtnAllNever_MouseEnter" MouseLeave="BtnAllNever_MouseLeave">
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="All: Never" VerticalAlignment="Center" Foreground="#888888"/>
+                        <TextBlock Text="All: Never Show" VerticalAlignment="Center" Foreground="#888888"/>
                         <iconPacks:PackIconMaterial Kind="Cancel" Width="14" Height="14" Margin="4,0,0,0" VerticalAlignment="Center" Foreground="#888888"/>
                     </StackPanel>
                 </Button>
