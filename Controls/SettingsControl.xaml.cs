@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -24,8 +25,13 @@ namespace HDTPlugin.Controls
         private PackIconMaterial _iconShowShopTime;
         private PackIconMaterial _iconShowAPM;
         private PackIconMaterial _iconShowRank;
+        private TextBlock _textShowCombatTime;
+        private TextBlock _textShowShopTime;
+        private TextBlock _textShowAPM;
+        private TextBlock _textShowRank;
         private bool _isLoading = true;
         private readonly AppSettings _settings = AppSettings.Default;
+        private StackPanel _allButtonsPanel;
         private StackPanel _counterControlsPanel;
 
         // Track created buttons for each counter
@@ -33,70 +39,131 @@ namespace HDTPlugin.Controls
         private readonly Dictionary<CounterKey, Button> _hoverButtons = new Dictionary<CounterKey, Button>();
         private readonly Dictionary<CounterKey, Button> _neverButtons = new Dictionary<CounterKey, Button>();
 
-        public SettingsControl()
-        {
-            InitializeComponent();
-            _scrollViewer = SettingsScrollViewer;
-            _iconShowCombatTime = IconShowCombatTime;
-            _iconShowShopTime = IconShowShopTime;
-            _iconShowAPM = IconShowAPM;
-            _iconShowRank = IconShowRank;
-            _counterControlsPanel = CounterControlsPanel;
-            
-            CreateCounterControls();
-            LoadSettings();
-            _isLoading = false;
-        }
+public SettingsControl()
+         {
+             InitializeComponent();
+             _scrollViewer = SettingsScrollViewer;
+             _iconShowCombatTime = IconShowCombatTime;
+             _iconShowShopTime = IconShowShopTime;
+             _iconShowAPM = IconShowAPM;
+             _iconShowRank = IconShowRank;
+             _textShowCombatTime = TextShowCombatTime;
+             _textShowShopTime = TextShowShopTime;
+             _textShowAPM = TextShowAPM;
+             _textShowRank = TextShowRank;
+             _counterControlsPanel = CounterControlsPanel;
+             _allButtonsPanel = AllButtonsPanel;
+             
+             CreateAllButtons();
+             CreateCounterControls();
+             LoadSettings();
+             _isLoading = false;
+         }
 
-        private void CreateCounterControls()
-        {
-            foreach (var kvp in CounterDataProvider.Counters)
-            {
-                CounterKey key = kvp.Key;
-                string displayName = kvp.Value.DisplayName;
+private void CreateCounterControls()
+         {
+             foreach (var kvp in CounterDataProvider.Counters)
+             {
+                 CounterKey key = kvp.Key;
+                 string displayName = kvp.Value.DisplayName;
 
-                var grid = new Grid { Margin = new Thickness(0, 2, 0, 0) };
-                grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
-                grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(0, GridUnitType.Auto) });
-                grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(0, GridUnitType.Auto) });
-                grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(0, GridUnitType.Auto) });
+                 var grid = new Grid { Margin = new Thickness(0, 2, 0, 0) };
+                 grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+                 grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(0, GridUnitType.Auto) });
+                 grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(0, GridUnitType.Auto) });
+                 grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(0, GridUnitType.Auto) });
 
-                var textBlock = new TextBlock
-                {
-                    Text = displayName,
-                    Foreground = Brushes.White,
-                    VerticalAlignment = VerticalAlignment.Center
-                };
-                Grid.SetColumn(textBlock, 0);
-                grid.Children.Add(textBlock);
+                 var textBlock = new TextBlock
+                 {
+                     Text = displayName,
+                     Foreground = Brushes.White,
+                     VerticalAlignment = VerticalAlignment.Center
+                 };
+                 Grid.SetColumn(textBlock, 0);
+                 grid.Children.Add(textBlock);
 
-                var alwaysBtn = CreateCounterButton("Eye", key, 2, 0);
-                var hoverBtn = CreateCounterButton("CursorDefault", key, 1, 1);
-                var neverBtn = CreateCounterButton("Cancel", key, 0, 2);
+                 var alwaysBtn = CreateCounterButton("Eye", key, 2, 0);
+                 var hoverBtn = CreateCounterButton("CursorDefault", key, 1, 1);
+                 var neverBtn = CreateCounterButton("Cancel", key, 0, 2);
 
-                _alwaysButtons[key] = alwaysBtn;
-                _hoverButtons[key] = hoverBtn;
-                _neverButtons[key] = neverBtn;
+                 _alwaysButtons[key] = alwaysBtn;
+                 _hoverButtons[key] = hoverBtn;
+                 _neverButtons[key] = neverBtn;
 
-                grid.Children.Add(alwaysBtn);
-                grid.Children.Add(hoverBtn);
-                grid.Children.Add(neverBtn);
+                 grid.Children.Add(alwaysBtn);
+                 grid.Children.Add(hoverBtn);
+                 grid.Children.Add(neverBtn);
 
-                _counterControlsPanel.Children.Add(grid);
-            }
-        }
+                 _counterControlsPanel.Children.Add(grid);
+             }
+         }
+
+         private void CreateAllButtons()
+         {
+             var alwaysBtn = CreateAllButton("All: Always Show", "Eye", 2);
+             var hoverBtn = CreateAllButton("All: Show on Hover", "CursorDefault", 1);
+             var neverBtn = CreateAllButton("All: Never Show", "Cancel", 0);
+
+             _allButtonsPanel.Children.Add(alwaysBtn);
+             _allButtonsPanel.Children.Add(hoverBtn);
+             _allButtonsPanel.Children.Add(neverBtn);
+         }
+
+         private Button CreateAllButton(string text, string iconKind, int value)
+         {
+             var icon = new PackIconMaterial
+             {
+                 Kind = (PackIconMaterialKind)System.Enum.Parse(typeof(PackIconMaterialKind), iconKind),
+                 Width = 14,
+                 Height = 14,
+                 Foreground = new SolidColorBrush(Color.FromRgb(0x88, 0x88, 0x88))
+             };
+
+             var textBlock = new TextBlock
+             {
+                 Text = text,
+                 Foreground = new SolidColorBrush(Color.FromRgb(0x88, 0x88, 0x88)),
+                 VerticalAlignment = VerticalAlignment.Center
+             };
+
+             Action<bool> setHover = isHover =>
+             {
+                 textBlock.Foreground = isHover ? Brushes.White : new SolidColorBrush(Color.FromRgb(0x88, 0x88, 0x88));
+                 icon.Foreground = isHover ? Brushes.White : new SolidColorBrush(Color.FromRgb(0x88, 0x88, 0x88));
+             };
+
+             var panel = new StackPanel { Orientation = Orientation.Horizontal };
+             panel.Children.Add(textBlock);
+             panel.Children.Add(icon);
+
+             var btn = new Button
+             {
+                 Content = panel,
+                 Background = new SolidColorBrush(Color.FromRgb(0x33, 0x33, 0x33)),
+                 BorderThickness = new Thickness(0),
+                 Padding = new Thickness(8, 4, 8, 4),
+                 Margin = new Thickness(0, 0, 4, 0),
+                 Tag = value
+             };
+
+             btn.Click += (s, e) =>
+             {
+                 foreach (var key in CounterDataProvider.Counters.Keys)
+                 {
+                     SetCounterValue(key, value);
+                     SetCounterButtonColors(key, value);
+                 }
+                 _settings.Save();
+             };
+
+             btn.MouseEnter += (s, e) => setHover(true);
+             btn.MouseLeave += (s, e) => setHover(false);
+
+             return btn;
+         }
 
         private Button CreateCounterButton(string iconKind, CounterKey key, int value, int column)
         {
-            var btn = new Button
-            {
-                Width = 24,
-                Height = 24,
-                Margin = new Thickness(2),
-                Style = (Style)FindResource("IconButtonStyle"),
-                Tag = new { Key = key, Value = value }
-            };
-            
             var icon = new PackIconMaterial
             {
                 Kind = (PackIconMaterialKind)System.Enum.Parse(typeof(PackIconMaterialKind), iconKind),
@@ -104,7 +171,29 @@ namespace HDTPlugin.Controls
                 Height = 12,
                 Foreground = new SolidColorBrush(Color.FromRgb(0x88, 0x88, 0x88))
             };
-            btn.Content = icon;
+
+            var border = new Border
+            {
+                BorderThickness = new Thickness(0),
+                BorderBrush = new SolidColorBrush(Color.FromRgb(0x33, 0x33, 0x33)),
+                Child = icon,
+                Width = 24,
+                Height = 24
+            };
+
+            var btn = new Button
+            {
+                Width = 24,
+                Height = 24,
+                Margin = new Thickness(2),
+                Style = (Style)FindResource("IconButtonStyle"),
+                Tag = new CounterTag(key, value),
+                Content = border
+            };
+
+            Action<bool> setIconHover = isHover => icon.Foreground = isHover ? Brushes.White : new SolidColorBrush(Color.FromRgb(0x88, 0x88, 0x88));
+            btn.MouseEnter += (s, e) => setIconHover(true);
+            btn.MouseLeave += (s, e) => setIconHover(false);
 
             switch (value)
             {
@@ -125,23 +214,25 @@ namespace HDTPlugin.Controls
 
         private void LoadSettings()
         {
-            UpdateShowToggle(_iconShowCombatTime, _settings.ShowCombatTime);
-            UpdateShowToggle(_iconShowShopTime, _settings.ShowShopTime);
-            UpdateShowToggle(_iconShowAPM, _settings.ShowAPM);
-            UpdateShowToggle(_iconShowRank, _settings.ShowRank);
+            UpdateShowToggle(_iconShowCombatTime, _settings.ShowCombatTime, _textShowCombatTime);
+            UpdateShowToggle(_iconShowShopTime, _settings.ShowShopTime, _textShowShopTime);
+            UpdateShowToggle(_iconShowAPM, _settings.ShowAPM, _textShowAPM);
+            UpdateShowToggle(_iconShowRank, _settings.ShowRank, _textShowRank);
             UpdateCounterButtons();
         }
 
-        private void UpdateShowToggle(PackIconMaterial icon, bool isChecked)
+        private void UpdateShowToggle(PackIconMaterial icon, bool isChecked, TextBlock textBlock = null)
         {
             if (isChecked)
             {
                 icon.Visibility = Visibility.Visible;
                 icon.Kind = PackIconMaterialKind.Check;
+                if (textBlock != null) textBlock.TextDecorations = TextDecorations.Underline;
             }
             else
             {
                 icon.Visibility = Visibility.Collapsed;
+                if (textBlock != null) textBlock.TextDecorations = null;
             }
         }
 
@@ -153,6 +244,7 @@ namespace HDTPlugin.Controls
             {
                 bool newValue = true;
                 PackIconMaterial icon = null;
+                TextBlock textBlock = null;
 
                 switch (tag)
                 {
@@ -160,25 +252,29 @@ namespace HDTPlugin.Controls
                         _settings.ShowCombatTime = !_settings.ShowCombatTime;
                         newValue = _settings.ShowCombatTime;
                         icon = _iconShowCombatTime;
+                        textBlock = _textShowCombatTime;
                         break;
                     case "ShowShopTime":
                         _settings.ShowShopTime = !_settings.ShowShopTime;
                         newValue = _settings.ShowShopTime;
                         icon = _iconShowShopTime;
+                        textBlock = _textShowShopTime;
                         break;
                     case "ShowAPM":
                         _settings.ShowAPM = !_settings.ShowAPM;
                         newValue = _settings.ShowAPM;
                         icon = _iconShowAPM;
+                        textBlock = _textShowAPM;
                         break;
                     case "ShowRank":
                         _settings.ShowRank = !_settings.ShowRank;
                         newValue = _settings.ShowRank;
                         icon = _iconShowRank;
+                        textBlock = _textShowRank;
                         break;
                 }
 
-                UpdateShowToggle(icon, newValue);
+                UpdateShowToggle(icon, newValue, textBlock);
                 _settings.Save();
             }
         }
@@ -189,28 +285,34 @@ namespace HDTPlugin.Controls
             {
                 bool isChecked = false;
                 PackIconMaterial icon = null;
+                TextBlock textBlock = null;
 
                 switch (tag)
                 {
                     case "ShowCombatTime":
                         isChecked = _settings.ShowCombatTime;
                         icon = _iconShowCombatTime;
+                        textBlock = _textShowCombatTime;
                         break;
                     case "ShowShopTime":
                         isChecked = _settings.ShowShopTime;
                         icon = _iconShowShopTime;
+                        textBlock = _textShowShopTime;
                         break;
                     case "ShowAPM":
                         isChecked = _settings.ShowAPM;
                         icon = _iconShowAPM;
+                        textBlock = _textShowAPM;
                         break;
                     case "ShowRank":
                         isChecked = _settings.ShowRank;
                         icon = _iconShowRank;
+                        textBlock = _textShowRank;
                         break;
                 }
 
                 UpdateShowToggleHover(icon, isChecked, true);
+                if (textBlock != null) textBlock.FontWeight = FontWeights.Bold;
             }
         }
 
@@ -220,28 +322,34 @@ namespace HDTPlugin.Controls
             {
                 bool isChecked = false;
                 PackIconMaterial icon = null;
+                TextBlock textBlock = null;
 
                 switch (tag)
                 {
                     case "ShowCombatTime":
                         isChecked = _settings.ShowCombatTime;
                         icon = _iconShowCombatTime;
+                        textBlock = _textShowCombatTime;
                         break;
                     case "ShowShopTime":
                         isChecked = _settings.ShowShopTime;
                         icon = _iconShowShopTime;
+                        textBlock = _textShowShopTime;
                         break;
                     case "ShowAPM":
                         isChecked = _settings.ShowAPM;
                         icon = _iconShowAPM;
+                        textBlock = _textShowAPM;
                         break;
                     case "ShowRank":
                         isChecked = _settings.ShowRank;
                         icon = _iconShowRank;
+                        textBlock = _textShowRank;
                         break;
                 }
 
                 UpdateShowToggleHover(icon, isChecked, false);
+                if (textBlock != null) textBlock.FontWeight = FontWeights.Normal;
             }
         }
 
@@ -282,12 +390,21 @@ namespace HDTPlugin.Controls
 
         private void SetCounterButtonColors(CounterKey key, int value)
         {
-            if (_alwaysButtons.TryGetValue(key, out Button alwaysBtn))
-                alwaysBtn.Background = value == 2 ? new SolidColorBrush(Color.FromRgb(0x4C, 0xAF, 0x50)) : new SolidColorBrush(Color.FromRgb(0x33, 0x33, 0x33));
-            if (_hoverButtons.TryGetValue(key, out Button hoverBtn))
-                hoverBtn.Background = value == 1 ? new SolidColorBrush(Color.FromRgb(0xFF, 0x98, 0x00)) : new SolidColorBrush(Color.FromRgb(0x33, 0x33, 0x33));
-            if (_neverButtons.TryGetValue(key, out Button neverBtn))
-                neverBtn.Background = value == 0 ? new SolidColorBrush(Color.FromRgb(0xF4, 0x43, 0x36)) : new SolidColorBrush(Color.FromRgb(0x33, 0x33, 0x33));
+            if (_alwaysButtons.TryGetValue(key, out Button alwaysBtn) && alwaysBtn.Content is Border alwaysBorder)
+            {
+                alwaysBorder.BorderBrush = value == 2 ? new SolidColorBrush(Color.FromRgb(0x4C, 0xAF, 0x50)) : new SolidColorBrush(Color.FromRgb(0x33, 0x33, 0x33));
+                alwaysBorder.BorderThickness = value == 2 ? new Thickness(1) : new Thickness(0);
+            }
+            if (_hoverButtons.TryGetValue(key, out Button hoverBtn) && hoverBtn.Content is Border hoverBorder)
+            {
+                hoverBorder.BorderBrush = value == 1 ? new SolidColorBrush(Color.FromRgb(0xFF, 0x98, 0x00)) : new SolidColorBrush(Color.FromRgb(0x33, 0x33, 0x33));
+                hoverBorder.BorderThickness = value == 1 ? new Thickness(1) : new Thickness(0);
+            }
+            if (_neverButtons.TryGetValue(key, out Button neverBtn) && neverBtn.Content is Border neverBorder)
+            {
+                neverBorder.BorderBrush = value == 0 ? new SolidColorBrush(Color.FromRgb(0xF4, 0x43, 0x36)) : new SolidColorBrush(Color.FromRgb(0x33, 0x33, 0x33));
+                neverBorder.BorderThickness = value == 0 ? new Thickness(1) : new Thickness(0);
+            }
         }
 
         private void BtnCounterAlways_Click(object sender, RoutedEventArgs e)
@@ -310,144 +427,70 @@ namespace HDTPlugin.Controls
             }
         }
 
-        private void BtnCounterNever_Click(object sender, RoutedEventArgs e)
-        {
-            if (sender is Button btn && btn.Tag is CounterTag tag)
-            {
-                SetCounterValue(tag.Key, 0);
-                SetCounterButtonColors(tag.Key, 0);
-                SaveSettings();
-            }
-        }
+private void BtnCounterNever_Click(object sender, RoutedEventArgs e)
+         {
+             if (sender is Button btn && btn.Tag is CounterTag tag)
+             {
+                 SetCounterValue(tag.Key, 0);
+                 SetCounterButtonColors(tag.Key, 0);
+                 SaveSettings();
+             }
+         }
 
-        private void BtnAllAlways_Click(object sender, RoutedEventArgs e)
-        {
-            foreach (var key in CounterDataProvider.Counters.Keys)
-            {
-                SetCounterValue(key, 2);
-                SetCounterButtonColors(key, 2);
-            }
-            SaveSettings();
-        }
+         private void SaveSettings()
+         {
+             _settings.Save();
+         }
 
-        private void BtnAllHover_Click(object sender, RoutedEventArgs e)
-        {
-            foreach (var key in CounterDataProvider.Counters.Keys)
-            {
-                SetCounterValue(key, 1);
-                SetCounterButtonColors(key, 1);
-            }
-            SaveSettings();
-        }
+         public void RecalculateScaling()
+         {
+             Width = UIScaler.GetMinWidth();
+             MaxHeight = UIScaler.GetSettingsMaxHeight();
+             if (_scrollViewer != null)
+             {
+                 _scrollViewer.MaxHeight = UIScaler.GetSettingsMaxHeight();
+             }
+             ScaleFonts();
+         }
 
-        private void BtnAllNever_Click(object sender, RoutedEventArgs e)
-        {
-            foreach (var key in CounterDataProvider.Counters.Keys)
-            {
-                SetCounterValue(key, 0);
-                SetCounterButtonColors(key, 0);
-            }
-            SaveSettings();
-        }
+         private void ScaleFonts()
+         {
+             double headerFontSize = UIScaler.GetSettingsFontSize();
+             double bodyFontSize = headerFontSize * 0.9;
+             double buttonSize = UIScaler.GetSettingsButtonSize();
 
-        private void SaveSettings()
-        {
-            _settings.Save();
-        }
+             if (_scrollViewer?.Content is StackPanel stackPanel)
+             {
+                 ScaleFontsRecursive(stackPanel, headerFontSize, bodyFontSize, buttonSize);
+             }
+         }
 
-        public void RecalculateScaling()
-        {
-            Width = UIScaler.GetMinWidth();
-            MaxHeight = UIScaler.GetSettingsMaxHeight();
-            if (_scrollViewer != null)
-            {
-                _scrollViewer.MaxHeight = UIScaler.GetSettingsMaxHeight();
-            }
-            ScaleFonts();
-        }
+         private void ScaleFontsRecursive(DependencyObject parent, double headerSize, double bodySize, double buttonSize)
+         {
+             for (int i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)
+             {
+                 var child = VisualTreeHelper.GetChild(parent, i);
 
-        private void SetAllButtonHover(Button button, bool isHover)
-        {
-            if (button?.Content is StackPanel panel)
-            {
-                foreach (var child in panel.Children)
-                {
-                    if (child is TextBlock textBlock)
-                        textBlock.Foreground = isHover ? Brushes.White : new SolidColorBrush(Color.FromRgb(0x88, 0x88, 0x88));
-                    else if (child is PackIconMaterial icon)
-                        icon.Foreground = isHover ? Brushes.White : new SolidColorBrush(Color.FromRgb(0x88, 0x88, 0x88));
-                }
-            }
-        }
+                 if (child is TextBlock textBlock)
+                 {
+                     if (textBlock.FontWeight == FontWeights.Bold)
+                         textBlock.FontSize = headerSize;
+                     else
+                         textBlock.FontSize = bodySize;
+                 }
+                 else if (child is CheckBox checkBox)
+                 {
+                     checkBox.FontSize = bodySize * 0.9;
+                 }
+                 else if (child is Button button && button.Content is Border)
+                 {
+                     button.FontSize = bodySize * 0.8;
+                     button.Width = buttonSize;
+                     button.Height = buttonSize;
+                 }
 
-        private void BtnAllAlways_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
-        {
-            if (sender is Button btn) SetAllButtonHover(btn, true);
-        }
-
-        private void BtnAllAlways_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
-        {
-            if (sender is Button btn) SetAllButtonHover(btn, false);
-        }
-
-        private void BtnAllHover_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
-        {
-            if (sender is Button btn) SetAllButtonHover(btn, true);
-        }
-
-        private void BtnAllHover_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
-        {
-            if (sender is Button btn) SetAllButtonHover(btn, false);
-        }
-
-        private void BtnAllNever_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
-        {
-            if (sender is Button btn) SetAllButtonHover(btn, true);
-        }
-
-        private void BtnAllNever_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
-        {
-            if (sender is Button btn) SetAllButtonHover(btn, false);
-        }
-
-        private void ScaleFonts()
-        {
-            double headerFontSize = UIScaler.GetSettingsFontSize();
-            double bodyFontSize = headerFontSize * 0.9;
-            double buttonSize = UIScaler.GetSettingsButtonSize();
-
-            if (_scrollViewer?.Content is StackPanel stackPanel)
-            {
-                ScaleFontsRecursive(stackPanel, headerFontSize, bodyFontSize, buttonSize);
-            }
-        }
-
-        private void ScaleFontsRecursive(DependencyObject parent, double headerSize, double bodySize, double buttonSize)
-        {
-            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)
-            {
-                var child = VisualTreeHelper.GetChild(parent, i);
-
-                if (child is TextBlock textBlock)
-                {
-                    if (textBlock.FontWeight == FontWeights.Bold)
-                        textBlock.FontSize = headerSize;
-                    else
-                        textBlock.FontSize = bodySize;
-                }
-                else if (child is CheckBox checkBox)
-                {
-                    checkBox.FontSize = bodySize * 0.9;
-                }
-                else if (child is Button button)
-                {
-                    button.FontSize = bodySize * 0.8;
-                    button.Width = buttonSize;
-                    button.Height = buttonSize;
-                }
-
-                ScaleFontsRecursive(child, headerSize, bodySize, buttonSize);
-            }
-        }
-    }
-}
+                 ScaleFontsRecursive(child, headerSize, bodySize, buttonSize);
+             }
+         }
+     }
+ }

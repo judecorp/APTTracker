@@ -147,6 +147,9 @@
     <Page Include="DebugWindow.xaml">
       <SubType>Designer</SubType>
     </Page>
+	  <Page Include="Themes\ScrollBars.xaml">
+		  <SubType>Designer</SubType>
+	  </Page>
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
