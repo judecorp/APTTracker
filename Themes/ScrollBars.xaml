@@ -4,44 +4,48 @@
 
     <Style TargetType="ScrollBar">
 
-        <Setter Property="Width"
-                Value="4"/>
+<Setter Property="Width" Value="4"/>
+        <Setter Property="MinWidth" Value="4"/>
+        <Setter Property="MinHeight" Value="4"/>
 
         <Setter Property="Template">
 
             <Setter.Value>
 
-                <ControlTemplate TargetType="ScrollBar">
+				<ControlTemplate TargetType="ScrollBar">
 
-                    <Grid Background="Transparent">
+					<Grid Background="Transparent">
 
-                        <Track Name="PART_Track"
-                               IsDirectionReversed="true">
+						<Track Name="PART_Track" Width="{TemplateBinding Width}" Margin="0" IsDirectionReversed="True">
 
-                            <Track.Thumb>
+							<Track.Thumb>
 
-                                <Thumb>
+								<Thumb Width="{TemplateBinding Width}" Padding="0">
 
-                                    <Thumb.Template>
+									<Thumb.Template>
 
-                                        <ControlTemplate TargetType="Thumb">
+										<ControlTemplate TargetType="Thumb">
 
-                                            <Border Background="#888"
-                                                    CornerRadius="4"/>
+<Border x:Name="border" Background="#888"/>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter TargetName="border" Property="Background" Value="#fff"/>
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
 
-                                        </ControlTemplate>
+										</ControlTemplate>
 
-                                    </Thumb.Template>
+									</Thumb.Template>
 
-                                </Thumb>
+								</Thumb>
 
-                            </Track.Thumb>
+							</Track.Thumb>
 
-                        </Track>
+						</Track>
 
-                    </Grid>
+					</Grid>
 
-                </ControlTemplate>
+				</ControlTemplate>
 
             </Setter.Value>
 

@@ -2,6 +2,8 @@ using Hearthstone_Deck_Tracker;
 using System;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
+using System.Windows.Controls.Primitives;
 using Core = Hearthstone_Deck_Tracker.API.Core;
 using DrawingPoint = System.Drawing.Point;
 
@@ -122,7 +124,24 @@ namespace HDTPlugin.Logic
             try
             {
                 var pos = control.PointFromScreen(new System.Windows.Point(p.X, p.Y));
-                return pos.X >= 0 && pos.X <= control.ActualWidth && pos.Y >= 0 && pos.Y <= control.ActualHeight;
+                // Basic bounds check
+                if (pos.X < 0 || pos.X > control.ActualWidth || pos.Y < 0 || pos.Y > control.ActualHeight)
+                    return false;
+
+                // Hit‑test the point inside the element
+                var hit = System.Windows.Media.VisualTreeHelper.HitTest(control, new System.Windows.Point(pos.X, pos.Y))?.VisualHit;
+
+                // Walk up the visual tree to detect Buttons, ScrollBar parts, etc.
+                while (hit != null)
+                {
+                    if (hit is System.Windows.Controls.Primitives.ButtonBase ||
+                        hit is System.Windows.Controls.Primitives.Thumb ||
+                         hit is System.Windows.Controls.Primitives.ScrollBar)
+                        return false; // exempt from dragging
+                    hit = System.Windows.Media.VisualTreeHelper.GetParent(hit) as System.Windows.DependencyObject;
+                }
+
+                return true;
             }
             catch
             {

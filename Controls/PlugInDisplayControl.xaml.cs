@@ -92,14 +92,34 @@ namespace HDTPlugin.Controls
         public void ApplyVisibilitySettings()
         {
             var settings = AppSettings.Default;
-            _combatShopTimePanel.Visibility = settings.ShowCombatTime || settings.ShowShopTime ? Visibility.Visible : Visibility.Collapsed;
-            _combatTimeText.Visibility = settings.ShowCombatTime ? Visibility.Visible : Visibility.Collapsed;
-            _combatShopSlash.Visibility = settings.ShowCombatTime && settings.ShowShopTime ? Visibility.Visible : Visibility.Collapsed;
-            _shopTimeText.Visibility = settings.ShowShopTime ? Visibility.Visible : Visibility.Collapsed;
-            _apmPanel.Visibility = settings.ShowAPM ? Visibility.Visible : Visibility.Collapsed;
-            _rankImage.Visibility = settings.ShowRank ? Visibility.Visible : Visibility.Collapsed;
-            _rankLabel.Visibility = settings.ShowRank ? Visibility.Visible : Visibility.Collapsed;
+
+            var combatTimeVis = GetShowVisibility(settings.ShowCombatTimeVisibility, _isHovering);
+            var shopTimeVis   = GetShowVisibility(settings.ShowShopTimeVisibility,   _isHovering);
+            var apmVis        = GetShowVisibility(settings.ShowAPMVisibility,        _isHovering);
+            var rankVis       = GetShowVisibility(settings.ShowRankVisibility,       _isHovering);
+
+            _combatTimeText.Visibility  = combatTimeVis;
+            _shopTimeText.Visibility    = shopTimeVis;
+            // The slash is only visible when both times are visible
+            _combatShopSlash.Visibility = combatTimeVis == Visibility.Visible && shopTimeVis == Visibility.Visible
+                ? Visibility.Visible : Visibility.Collapsed;
+            // The container panel is visible when at least one time element is visible
+            _combatShopTimePanel.Visibility = combatTimeVis == Visibility.Visible || shopTimeVis == Visibility.Visible
+                ? Visibility.Visible : Visibility.Collapsed;
+
+            _apmPanel.Visibility  = apmVis;
+            _rankImage.Visibility = rankVis;
+            _rankLabel.Visibility = rankVis;
+
             ApplyCounterVisibility();
+        }
+
+        // Mirrors GetCounterVisibility but for the Show* settings (no counter value threshold).
+        private static Visibility GetShowVisibility(int setting, bool isHover)
+        {
+            if (setting == 2) return Visibility.Visible;               // Always
+            if (setting == 1 && isHover) return Visibility.Visible;   // Hover
+            return Visibility.Collapsed;                               // Never, or hover setting when not hovering
         }
 
         public void RecalculateScaling()
@@ -218,13 +238,13 @@ namespace HDTPlugin.Controls
         public void ExpandCounters()
         {
             _isHovering = true;
-            ApplyCounterVisibility();
+            ApplyVisibilitySettings();
         }
 
         public void CollapseCounters()
         {
             _isHovering = false;
-            ApplyCounterVisibility();
+            ApplyVisibilitySettings();
         }
 
         private void ApplyCounterVisibility()

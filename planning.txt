@@ -1,5 +1,5 @@
-settings
-achievements/effects
+P0 settings
+P1 achievements/effects
 	ice cold (freeze 10 times)
 	double level (level twice)
 	triple level (level thrice)
@@ -7,21 +7,23 @@ achievements/effects
 	business enthusiast (buy, play, and sell 20 minions)
 	witchcraft (play 20 spells)
 	picky (refresh 20 times)
-rank images
-stats
+P0 rank images
+P0 stats
 	best APM
 	
-about
+P0 about
 
 
-nagware video series
+P0 nagware video series
 
-ability to receive donations
+P0 ability to receive donations
 
 
 
 
 ______
-level up not in aggregate counter
 discover
 choose one
+make it so that plugin cannot be moved offscreen. (should also check and reset on resolution change)
+
+look at: settingsControl, DebugWindow, and HDTBootstrap for refactor
