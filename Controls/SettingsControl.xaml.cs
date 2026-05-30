@@ -82,11 +82,12 @@ namespace HDTPlugin.Controls
                 Margin              = new Thickness(0, 0, 4, 0)
             };
 
-            Action<bool> hover = on =>
+Action<bool> hover = on =>
             {
-                var fg = on ? Brushes.White : new SolidColorBrush(ColorGrey);
-                text.Foreground = fg;
-                icon.Foreground = fg;
+                // Text should turn white on hover, regardless of selection state
+                text.Foreground = on ? Brushes.White : new SolidColorBrush(ColorGrey);
+                // Icon remains grey (handled separately)
+                // No change to icon.Foreground here
             };
 
             var panel = new StackPanel { Orientation = Orientation.Horizontal };
@@ -247,7 +248,16 @@ namespace HDTPlugin.Controls
             };
 
             btn.Click      += (s, e) => onClick(tag, value);
-            btn.MouseEnter += (s, e) => icon.Foreground = Brushes.White;
+            btn.MouseEnter += (s, e) =>
+            {
+                // Determine if this button is the currently selected one by checking border thickness
+                bool isSelected = false;
+                if (btn.Content is Border b)
+                {
+                    isSelected = b.BorderThickness.Left > 0;
+                }
+                icon.Foreground = isSelected ? new SolidColorBrush(ColorGrey) : Brushes.White;
+            };
             btn.MouseLeave += (s, e) => icon.Foreground = new SolidColorBrush(ColorGrey);
 
             return btn;
@@ -272,9 +282,7 @@ namespace HDTPlugin.Controls
                     b.BorderThickness = selected ? new Thickness(1) : new Thickness(0);
                     b.BorderBrush     = new SolidColorBrush(StateColor(stateValues[i]));
                     if (b.Child is PackIconMaterial ico)
-                        ico.Foreground = selected
-                            ? new SolidColorBrush(StateColor(stateValues[i]))
-                            : new SolidColorBrush(ColorGrey);
+                        ico.Foreground = new SolidColorBrush(ColorGrey);
                 }
             }
         }
