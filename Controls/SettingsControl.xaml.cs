@@ -60,11 +60,63 @@ namespace HDTPlugin.Controls
             _allButtonsPanel.Children.Add(CreateAllButton("Set All to Always Show", "Eye",           2));
             _allButtonsPanel.Children.Add(CreateAllButton("Set All to Show on Hover", "CursorDefault", 1));
             _allButtonsPanel.Children.Add(CreateAllButton("Set All to Never Show",   "Cancel",        0));
+            // Add Set All to Defaults button
+            var text = new TextBlock
+            {
+                Text                = "Set All to Defaults",
+                Foreground          = new SolidColorBrush(ColorGrey),
+                VerticalAlignment   = VerticalAlignment.Center,
+                Margin              = new Thickness(0, 0, 4, 0)
+            };
+            
+            // Invisible icon placeholder
+            var iconBorder = new Border
+            {
+                BorderThickness = new Thickness(0),
+                Width           = 16, 
+                Height          = 16
+            };
+
+            var panel = new StackPanel { Orientation = Orientation.Horizontal };
+            panel.Children.Add(text);
+            panel.Children.Add(iconBorder);
+
+            var defaultsBtn = new Button
+            {
+                Content                 = panel,
+                Style                   = (Style)FindResource("IconButtonStyle"),
+                HorizontalContentAlignment = HorizontalAlignment.Left,
+                HorizontalAlignment = HorizontalAlignment.Left,
+                Width                   = Double.NaN,
+                Margin                  = new Thickness(0, 0, 0, 8),
+                Padding                 = new Thickness(4, 2, 4, 2)
+            };
+            defaultsBtn.Click += SetAllDefaults_Click;
+            defaultsBtn.MouseEnter += (s, e) => text.Foreground = Brushes.White;
+            defaultsBtn.MouseLeave += (s, e) => text.Foreground = new SolidColorBrush(ColorGrey);
+            _allButtonsPanel.Children.Add(defaultsBtn);
         }
+
+        private void SetAllDefaults_Click(object sender, RoutedEventArgs e)
+        {
+            // Reset counters to their defined default visibility
+            foreach (var kvp in CounterDataProvider.Counters)
+            {
+                var key = kvp.Key;
+                var defaultVis = kvp.Value.DefaultVisibility ? 2 : 0; // 2 = Always, 0 = Never
+                _settings.CounterVisibility[key] = defaultVis;
+                ApplyRowButtons(key.ToString(), defaultVis);
+            }
+            // Reset show rows to always (2) as before
+            foreach (var row in ShowRows)
+                SetShowSetting(row.Tag, 2, persist: false);
+            _settings.Save();
+        }
+
 
         private Button CreateAllButton(string label, string iconKind, int value)
         {
-            var icon = MakeIcon(iconKind, ColorGrey, 14);
+            var icon = MakeIcon(iconKind, ColorGrey, 12);
 
             var iconBorder = new Border
             {
@@ -96,10 +148,15 @@ Action<bool> hover = on =>
 
             var btn = new Button
             {
-                Content         = panel,
-                Style           = (Style)FindResource("IconButtonStyle"),
-                BorderThickness = new Thickness(0),
-                Tag             = value
+                Content                 = panel,
+                Style                   = (Style)FindResource("IconButtonStyle"),
+                BorderThickness         = new Thickness(0),
+                Tag                     = value,
+                HorizontalContentAlignment = HorizontalAlignment.Left,
+                HorizontalAlignment = HorizontalAlignment.Left,
+                Width                   = Double.NaN, // size to content
+                Margin                  = new Thickness(0, 0, 0, 8),
+                Padding                 = new Thickness(4, 2, 4, 2)
             };
 
             btn.Click += (s, e) =>

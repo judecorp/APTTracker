@@ -49,7 +49,8 @@
         <StackPanel>
             <!-- Show Section header + Set All buttons (populated in code) -->
             <TextBlock Text="Show:" FontSize="14" FontWeight="Bold" Foreground="White" Margin="0,0,0,8"/>
-            <StackPanel x:Name="AllButtonsPanel" Orientation="Vertical" HorizontalAlignment="Left" Margin="0,0,0,8"/>
+
+            <StackPanel x:Name="AllButtonsPanel" Orientation="Vertical" HorizontalAlignment="Left"/>
 
             <!-- Show rows (Combat Time, Shop Time, APM, Rank) populated in code -->
             <StackPanel x:Name="ShowControlsPanel"/>
