@@ -225,7 +225,7 @@ namespace HDTPlugin.Controls
             {
                 _previousRankIndex = rankIndex;
                 var rankInfo = RankSystem.GetRank(totalActions);
-                _rankLabel.Text = $"Rank: {rankInfo.Label}";
+                _rankLabel.Text = $"{rankInfo.Label}";
 
                 var image = RankSystem.GetRankImage(totalActions);
                 if (image != null)

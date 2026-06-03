@@ -89,6 +89,8 @@ namespace HDTPlugin
 
             LogEvents.OnPowerLogLine.Add(OnPowerLogLine);
             _logWriter.WriteLine($"[{DateTime.Now}] Subscribed to OnPowerLogLine");
+
+            _pluginContainer.RecalculateScaling();
         }
 
         public void OnUnload()

@@ -1,5 +1,13 @@
+using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media.Imaging;
+using HDTPlugin.Logic;
+using HDTPlugin.Data;
+using HDTPlugin.Controls;
 
 namespace HDTPlugin.Logic
 {
@@ -13,32 +21,31 @@ namespace HDTPlugin.Logic
     {
         private static readonly List<RankInfo> Ranks = new List<RankInfo>
         {
-            new RankInfo { Label = "Asleep", ImagePath = "pack://application:,,,/img/rank_00.png" },
-            new RankInfo { Label = "Barely Awake", ImagePath = "pack://application:,,,/img/rank_01.png" },
-            new RankInfo { Label = "Waking Up", ImagePath = "pack://application:,,,/img/rank_02.png" },
-            new RankInfo { Label = "Morning Coffee", ImagePath = "pack://application:,,,/img/rank_03.png" },
-            new RankInfo { Label = "Awake", ImagePath = "pack://application:,,,/img/rank_04.png" },
-            new RankInfo { Label = "Alert", ImagePath = "pack://application:,,,/img/rank_05.png" },
-            new RankInfo { Label = "Focused", ImagePath = "pack://application:,,,/img/rank_06.png" },
-            new RankInfo { Label = "Sharp", ImagePath = "pack://application:,,,/img/rank_07.png" },
-            new RankInfo { Label = "In the Zone", ImagePath = "pack://application:,,,/img/rank_08.png" },
-            new RankInfo { Label = "Peak Performance", ImagePath = "pack://application:,,,/img/rank_09.png" },
-            new RankInfo { Label = "Unstoppable", ImagePath = "pack://application:,,,/img/rank_10.png" },
-            new RankInfo { Label = "Mastermind", ImagePath = "pack://application:,,,/img/rank_11.png" },
-            new RankInfo { Label = "Tactician", ImagePath = "pack://application:,,,/img/rank_12.png" },
-            new RankInfo { Label = "Strategist", ImagePath = "pack://application:,,,/img/rank_13.png" },
-            new RankInfo { Label = "Grandmaster", ImagePath = "pack://application:,,,/img/rank_14.png" },
-            new RankInfo { Label = "Legendary", ImagePath = "pack://application:,,,/img/rank_15.png" },
+            new RankInfo { Label = "Sleeping Skeleton", ImagePath = "sleeping_skeleton.png" },
+            new RankInfo { Label = "Newborn Baby", ImagePath = "newborn_baby.png" },
+            new RankInfo { Label = "Special Friend", ImagePath = "special_friend.png" },
+            new RankInfo { Label = "Bunny", ImagePath = "bunny.png" },
+            new RankInfo { Label = "Tortoise", ImagePath = "tortoise.png" },
+            new RankInfo { Label = "Eraserhead Baby", ImagePath = "eraserhead_baby.png" },
+            new RankInfo { Label = "Garry Kasparov", ImagePath = "garry_kasparov.png" },
+            new RankInfo { Label = "Dog", ImagePath = "dog.png" },
+            new RankInfo { Label = "Blizzard Employee", ImagePath = "blizzard_employee.png" },
+            new RankInfo { Label = "Jeefs", ImagePath = "jeefs.png" },
+            new RankInfo { Label = "Bob", ImagePath = "bob.png" },
+            new RankInfo { Label = "Giga Chad", ImagePath = "giga_chad.png" },
+            new RankInfo { Label = "Hacker", ImagePath = "hacker.png" },
+            new RankInfo { Label = "Jesus H. Christ", ImagePath = "jesus_h_christ.png" },
+
         };
 
-        public const int MaxRankIndex = 15;
+        public const int MaxRankIndex = 13;
         public const int ActionsPerRank = 10;
         public const int MaxActions = 150;
 
         public static int GetRankIndex(int totalActions)
         {
             if (totalActions <= 0) return 0;
-            int index = (totalActions - 1) / ActionsPerRank;
+            int index = totalActions / ActionsPerRank;
             if (index > MaxRankIndex) index = MaxRankIndex;
             return index;
         }
@@ -58,9 +65,13 @@ namespace HDTPlugin.Logic
         {
             try
             {
+                var appDir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+                var hdtDir = Path.Combine(appDir, "HearthstoneDeckTracker");
+                var imagePath = Path.Combine(hdtDir, "img", GetRank(totalActions).ImagePath);
+
                 var bi = new BitmapImage();
                 bi.BeginInit();
-                bi.UriSource = new System.Uri(GetRank(totalActions).ImagePath, System.UriKind.Absolute);
+                bi.UriSource = new Uri(imagePath, System.UriKind.Absolute);
                 bi.CacheOption = BitmapCacheOption.OnLoad;
                 bi.EndInit();
                 bi.Freeze();
