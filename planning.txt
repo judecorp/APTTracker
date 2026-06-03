@@ -8,6 +8,7 @@ P1 achievements/effects
 	witchcraft (play 20 spells)
 	picky (refresh 20 times)
 P0 rank images
+p1 rank gifs
 P0 stats
 	best APM
 	

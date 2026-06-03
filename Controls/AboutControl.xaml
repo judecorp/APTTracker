@@ -14,9 +14,9 @@
         <StackPanel Margin="0,24,0,0">
             <TextBlock Text="About" FontSize="14" FontWeight="Bold" Foreground="White" Margin="0,0,0,16"/>
             
-            <TextBlock Text="BG Action Tracker" FontSize="14" Foreground="White" Margin="0,0,0,8"/>
+            <TextBlock Text="APT Tracker" FontSize="14" Foreground="White" Margin="0,0,0,8"/>
             <TextBlock Text="Version 1.0.0" FontSize="12" Foreground="#888888" Margin="0,0,0,8"/>
-            <TextBlock Text="Tracks your Battlegrounds actions to help improve your gameplay." FontSize="12" Foreground="#888888" TextWrapping="Wrap" Margin="0,0,0,16"/>
+            <TextBlock Text="Created and maintained by JudeCorp. " FontSize="12" Foreground="#888888" TextWrapping="Wrap" Margin="0,0,0,16"/>
         </StackPanel>
     </ScrollViewer>
 </Border>
