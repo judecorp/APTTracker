@@ -11,10 +11,14 @@
     Padding="8">
 
     <ScrollViewer x:Name="AchievementsScrollViewer" VerticalScrollBarVisibility="Auto">
-        <StackPanel Margin="0,24,0,0">
-            <TextBlock Text="Achievements &amp; Stats" FontSize="14" FontWeight="Bold" Foreground="White" Margin="0,0,0,16"/>
-            
-            <TextBlock Text="Coming Soon!" FontSize="14" Foreground="#888888" HorizontalAlignment="Center" Margin="0,20,0,0"/>
+        <StackPanel Margin="0,8,0,0">
+            <TextBlock Text="Highest APT:" FontSize="14" FontWeight="Bold" Foreground="White" Margin="0,0,0,0"/>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <TextBlock x:Name="HighestAptTextBlock" Text="0" 
+                            FontSize="42"
+                            FontWeight="UltraBold"
+                            Foreground="Gold" Margin="0,0,0,0"/>
+            </StackPanel>
         </StackPanel>
     </ScrollViewer>
 </Border>

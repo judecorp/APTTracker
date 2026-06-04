@@ -53,6 +53,12 @@ namespace HDTPlugin.Controls
             Width = UIScaler.GetMinWidth();
         }
 
+        // Expose a refresh for achievement stats (e.g., highest APT)
+        public void RefreshAchievements()
+        {
+            _achievementsControl?.RefreshHighestApt();
+        }
+
         private void ApplyButtonScaling()
         {
             double iconSize = UIScaler.GetSettingsButtonSize();

@@ -6,6 +6,7 @@
 
 using System.Collections.Generic;
 using System.Drawing;
+using HDTPlugin.Settings;
 
 namespace HDTPlugin.Data
 {
@@ -61,5 +62,10 @@ namespace HDTPlugin.Data
         {
             return new Dictionary<CounterKey, int>(_values);
         }
+
+        /// <summary>
+        /// Highest Actions‑Per‑Turn ever recorded (read‑only shortcut into persisted settings).
+        /// </summary>
+        public int HighestApt => AppSettings.Default.HighestApt;
     }
 }

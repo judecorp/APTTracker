@@ -133,6 +133,9 @@ namespace HDTPlugin.Settings
         // --- Dynamic Counter Visibility Setting ---
         public Dictionary<CounterKey, int> CounterVisibility { get; set; }
 
+        // Highest Actions‑Per‑Turn ever achieved (persisted)
+        public int HighestApt { get; set; } = 0;
+
         // --- Serialization/Deserialization ---
         public void Save()
         {

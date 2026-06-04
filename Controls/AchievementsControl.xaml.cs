@@ -1,17 +1,20 @@
 using System.Windows;
 using System.Windows.Controls;
 using HDTPlugin.Logic;
+using HDTPlugin.Settings;
 
 namespace HDTPlugin.Controls
 {
     public partial class AchievementsControl : Border
     {
         private ScrollViewer _scrollViewer;
+        private TextBlock _highestAptText;
 
         public AchievementsControl()
         {
             InitializeComponent();
             _scrollViewer = AchievementsScrollViewer;
+            _highestAptText = (TextBlock)FindName("HighestAptTextBlock");
         }
 
         public void RecalculateScaling()
@@ -21,6 +24,14 @@ namespace HDTPlugin.Controls
             if (_scrollViewer != null)
             {
                 _scrollViewer.MaxHeight = UIScaler.GetSettingsMaxHeight();
+            }
+        }
+
+        public void RefreshHighestApt()
+        {
+            if (_highestAptText != null)
+            {
+                _highestAptText.Text = $"{AppSettings.Default.HighestApt}";
             }
         }
     }

@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using HDTPlugin.Settings;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
@@ -325,7 +326,23 @@ namespace HDTPlugin
                 return;
             }
 
-            ResetCounters(); // Resets ALL counters for the turn
+            // Before resetting counters, capture the APT of the just‑finished turn
+            int totalActions = 0;
+            foreach (CounterKey key in Enum.GetValues(typeof(CounterKey)))
+            {
+                if (CounterDataProvider.Counters[key].IncludeInSummary)
+                {
+                    totalActions += _counterState[key];
+                }
+            }
+            // Record highest APT if this turn beats the record
+            if (totalActions > AppSettings.Default.HighestApt)
+            {
+                AppSettings.Default.HighestApt = totalActions;
+                AppSettings.Default.Save();
+            }
+
+            ResetCounters(); // Resets ALL counters for the new turn
             _turnNumber++;
             UpdateDisplay();
         }
@@ -381,6 +398,7 @@ namespace HDTPlugin
             _pluginContainer.DisplayControl.SetShopTime(_lastShopLength);
 
             _pluginContainer.DisplayControl.UpdateCounters(_counterState);
+            _pluginContainer.RefreshAchievements();
         }
 
         private double CalculateApm()
