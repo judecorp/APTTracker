@@ -1,4 +1,4 @@
-P0 settings
+x P0 settings
 P1 achievements/effects
 	ice cold (freeze 10 times)
 	double level (level twice)
@@ -7,17 +7,17 @@ P1 achievements/effects
 	business enthusiast (buy, play, and sell 20 minions)
 	witchcraft (play 20 spells)
 	picky (refresh 20 times)
-P0 rank images
+x P0 rank images
 p1 rank gifs
-P0 stats
+x P0 stats
 	best APM
 	
-P0 about
+() P0 about
 
 
-P0 nagware video series
+P1 nagware video series
 
-P0 ability to receive donations
+() P0 ability to receive donations
 
 
 

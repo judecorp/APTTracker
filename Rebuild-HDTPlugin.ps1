@@ -34,17 +34,7 @@ if (Test-Path "debugSettings.json") {
     Write-Host "Copied debugSettings.json"
 }
 
-# Copy img folder to HDT app folder
 $hdtDir = "$env:LOCALAPPDATA\HearthstoneDeckTracker"
-if (Test-Path "img") {
-    $imgDest = Join-Path $hdtDir "img"
-    if (!(Test-Path $imgDest)) {
-        New-Item -ItemType Directory -Path $imgDest -Force | Out-Null
-    }
-    Copy-Item "img\*" $imgDest -Force
-    Write-Host "Copied img folder to $imgDest"
-}
-
 # Restart HDT
 Write-Host "Starting HearthstoneDeckTracker..."
 Start-Process "$hdtDir\HearthstoneDeckTracker.exe"

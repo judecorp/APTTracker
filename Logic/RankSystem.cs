@@ -65,19 +65,9 @@ namespace HDTPlugin.Logic
         {
             try
             {
-                var appDir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-                var hdtDir = Path.Combine(appDir, "HearthstoneDeckTracker");
-                var imagePath = Path.Combine(hdtDir, "img", GetRank(totalActions).ImagePath);
-
-                var bi = new BitmapImage();
-                bi.BeginInit();
-                bi.UriSource = new Uri(imagePath, System.UriKind.Absolute);
-                bi.CacheOption = BitmapCacheOption.OnLoad;
-                bi.EndInit();
-                bi.Freeze();
-                return bi;
+                return new BitmapImage(new Uri($"pack://application:,,,/HDTPlugin;component/img/{GetRank(totalActions).ImagePath}"));
             }
-            catch
+            catch(Exception)
             {
                 return null;
             }

@@ -147,9 +147,9 @@
     <Page Include="DebugWindow.xaml">
       <SubType>Designer</SubType>
     </Page>
-	  <Page Include="Themes\ScrollBars.xaml">
-		  <SubType>Designer</SubType>
-	  </Page>
+    <Page Include="Themes\ScrollBars.xaml">
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
@@ -159,12 +159,7 @@
     <Content Include="libs\HearthDb.dll" />
     <Content Include="libs\HearthstoneDeckTracker.exe" />
     <None Include="packages.config" />
-    <Resource Include="img\hsplugin.png" />
-    <None Include="img\hsplugin.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-
-
+    <Resource Include="img\*.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

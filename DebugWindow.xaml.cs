@@ -31,7 +31,6 @@ namespace HDTPlugin
             _inputMoveManager = new InputMoveManager(_pluginContainer);
             _inputMoveManager.Enable();
             
-            LoadBackgroundImage();
             SetPluginPosition();
             RefreshUI(1.0);
             UpdateDisplay();
@@ -42,33 +41,6 @@ namespace HDTPlugin
             var position = PluginPosition.GetDefaultPosition();
             Canvas.SetLeft(_pluginContainer, position.X);
             Canvas.SetTop(_pluginContainer, position.Y);
-        }
-
-        private void LoadBackgroundImage()
-        {
-            try
-            {
-                var appDir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-                var hdtDir = Path.Combine(appDir, "HearthstoneDeckTracker");
-                var imagePath = Path.Combine(hdtDir, "img", "hsplugin.png");
-                if (File.Exists(imagePath))
-                {
-                    var bitmap = new BitmapImage();
-                    bitmap.BeginInit();
-                    bitmap.UriSource = new Uri(imagePath, UriKind.Absolute);
-                    bitmap.CacheOption = BitmapCacheOption.OnLoad;
-                    bitmap.EndInit();
-                    BackgroundImage.Source = bitmap;
-                }
-                else
-                {
-                    System.Diagnostics.Debug.WriteLine("Image not found at: " + imagePath);
-                }
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine("Failed to load background image: " + ex.Message);
-            }
         }
 
         private void Btn1080p_Click(object sender, RoutedEventArgs e)

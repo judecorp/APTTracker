@@ -227,10 +227,10 @@ namespace HDTPlugin.Controls
                 var rankInfo = RankSystem.GetRank(totalActions);
                 _rankLabel.Text = $"{rankInfo.Label}";
 
-                var image = RankSystem.GetRankImage(totalActions);
-                if (image != null)
+                var imagePath = RankSystem.GetRankImage(totalActions);
+                if (imagePath != null)
                 {
-                    _rankImage.Source = image;
+                    _rankImage.Source = imagePath;
                 }
             }
         }

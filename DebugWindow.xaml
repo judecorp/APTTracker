@@ -6,7 +6,7 @@
         Height="600" Width="1280"
         WindowStartupLocation="CenterScreen">
     <Grid>
-        <Image x:Name="BackgroundImage" Stretch="UniformToFill" RenderTransformOrigin="1,0">
+        <Image x:Name="BackgroundImage" Stretch="UniformToFill" RenderTransformOrigin="1,0" Source="img/hsplugin.png">
             <Image.RenderTransform>
                 <ScaleTransform x:Name="BackgroundScale" ScaleX="1" ScaleY="1"/>
             </Image.RenderTransform>
