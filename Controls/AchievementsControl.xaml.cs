@@ -1,9 +1,9 @@
 using System.Windows;
 using System.Windows.Controls;
-using HDTPlugin.Logic;
-using HDTPlugin.Settings;
+using APTTracker.Logic;
+using APTTracker.Settings;
 
-namespace HDTPlugin.Controls
+namespace APTTracker.Controls
 {
     public partial class AchievementsControl : Border
     {

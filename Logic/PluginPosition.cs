@@ -2,15 +2,15 @@ using System;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
-using HDTPlugin.Settings;
+using APTTracker.Settings;
 
-namespace HDTPlugin.Logic
+namespace APTTracker.Logic
 {
     public static class PluginPosition
     {
         private static readonly string LogPath = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-            "HDTPlugin", "position.log");
+            "APTTracker", "position.log");
 
         private static void Log(string message)
         {

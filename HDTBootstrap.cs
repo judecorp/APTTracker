@@ -1,6 +1,6 @@
-using HDTPlugin.Controls;
-using HDTPlugin.Logic;
-using HDTPlugin.Data;
+using APTTracker.Controls;
+using APTTracker.Logic;
+using APTTracker.Data;
 using Hearthstone_Deck_Tracker.API;
 using Hearthstone_Deck_Tracker.Enums;
 using Hearthstone_Deck_Tracker.Plugins;
@@ -9,14 +9,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Text.RegularExpressions;
-using HDTPlugin.Settings;
+using APTTracker.Settings;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
 using Card = Hearthstone_Deck_Tracker.Hearthstone.Card;
 using Core = Hearthstone_Deck_Tracker.API.Core;
 
-namespace HDTPlugin
+namespace APTTracker
 {
     public class HDTBootstrap : IPlugin
     {
@@ -46,11 +46,13 @@ namespace HDTPlugin
         private int _lastCombatLength;
         private int _currentTimeout;
 
-        public string Author => "Author";
+        public string Author => "JudeCorp";
         public string ButtonText => "BG Action Tracker";
         public string Description => "Tracks actions per turn in Battlegrounds";
         public string Name => "BG Action Tracker";
-        public Version Version => Assembly.GetExecutingAssembly().GetName().Version;
+        public Version Version => new Version(Assembly.GetExecutingAssembly()
+        .GetCustomAttribute<AssemblyInformationalVersionAttribute>()
+        ?.InformationalVersion);
         public MenuItem MenuItem => null;
 
         public void OnLoad()
@@ -77,7 +79,7 @@ namespace HDTPlugin
             ResetCounters();
 
             // Initialize PowerLog line logging
-            var logDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "HDTPlugin");
+            var logDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "APTTracker");
             Directory.CreateDirectory(logDir);
             _logFilePath = Path.Combine(logDir, "PowerLogLines.log");
             _logWriter = new StreamWriter(_logFilePath, false) { AutoFlush = true };
@@ -158,7 +160,10 @@ namespace HDTPlugin
                         {
                             // Starting shop phase - reset shop length, keep combat length
                             _lastShopLength = 0;
-                            _lastCombatLength = elapsedSeconds;
+                            if (_turnStartTime != DateTime.MinValue)
+                            {
+                                _lastCombatLength = elapsedSeconds;
+                            }
                             _isInCombat = false;
                             _logWriter.WriteLine($"[{DateTime.Now}] COMBAT TURN {newTurn} STARTED - Shop from turn {newTurn - 1}: {_lastShopLength}s, Combat: {_lastCombatLength}s (timeout: {_currentTimeout}s)");
                         }

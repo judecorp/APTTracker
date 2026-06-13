@@ -4,7 +4,7 @@ using System.Windows;
 using System.Windows.Controls;
 using Core = Hearthstone_Deck_Tracker.API.Core;
 
-namespace HDTPlugin.Logic
+namespace APTTracker.Logic
 {
     public enum ResolutionTier
     {
@@ -17,7 +17,7 @@ namespace HDTPlugin.Logic
     {
         private static readonly string LogPath = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-            "HDTPlugin", "uiscaler.log");
+            "APTTracker", "uiscaler.log");
 
         public static ResolutionTier CurrentTier = ResolutionTier.HD1080p;
 

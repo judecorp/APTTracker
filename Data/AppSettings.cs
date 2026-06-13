@@ -1,4 +1,4 @@
-using HDTPlugin.Data;
+using APTTracker.Data;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -7,13 +7,13 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using Newtonsoft.Json;
 
-namespace HDTPlugin.Settings
+namespace APTTracker.Settings
 {
     public class AppSettings : INotifyPropertyChanged
     {
         private static readonly string SettingsFilePath = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-            "HDTPlugin", // Application-specific folder
+            "APTTracker", // Application-specific folder
             "settings.json"
         );
 
@@ -30,7 +30,7 @@ namespace HDTPlugin.Settings
                 foreach (var kvp in CounterDataProvider.Counters)
                 {
                     // Map bool DefaultVisibility to int (1 for true, 0 for false)
-                    CounterVisibility[kvp.Key] = kvp.Value.DefaultVisibility ? 1 : 0;
+                    CounterVisibility[kvp.Key] = kvp.Value.DefaultVisibility;
                 }
             }
         }

@@ -4,12 +4,12 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
-using HDTPlugin.Logic;
-using HDTPlugin.Data;
-using HDTPlugin.Settings;
+using APTTracker.Logic;
+using APTTracker.Data;
+using APTTracker.Settings;
 using System.Linq;
 
-namespace HDTPlugin.Controls
+namespace APTTracker.Controls
 {
     public partial class PlugInDisplayControl : StackPanel
     {
@@ -22,7 +22,7 @@ namespace HDTPlugin.Controls
         private readonly TextBlock _rankLabel;
         private readonly Border _summaryBorder;
         private readonly Border _countersBorder;
-        private readonly Border _counterBorder;
+        private readonly StackPanel _counterBorder;
         private readonly TextBlock _apmLabel;
         private readonly TextBlock _combatShopTimeLabel;
         private readonly TextBlock _combatShopSlash;
@@ -119,7 +119,7 @@ namespace HDTPlugin.Controls
         {
             if (setting == 2) return Visibility.Visible;               // Always
             if (setting == 1 && isHover) return Visibility.Visible;   // Hover
-            return Visibility.Collapsed;                               // Never, or hover setting when not hovering
+            return Visibility.Collapsed;                               // Never
         }
 
         public void RecalculateScaling()
@@ -199,6 +199,16 @@ namespace HDTPlugin.Controls
             }
 
             _previousTotalActions = totalActions;
+
+            if (totalActions > AppSettings.Default.HighestApt)
+            {
+                Trophy1.Visibility = Visibility.Visible;
+                Trophy2.Visibility = Visibility.Visible;
+            } else
+            {
+                Trophy1.Visibility = Visibility.Collapsed;
+                Trophy2.Visibility = Visibility.Collapsed;
+            }
 
             foreach (var kvp in _textBlocks)
             {

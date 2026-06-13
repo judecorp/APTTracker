@@ -6,9 +6,9 @@
 
 using System.Collections.Generic;
 using System.Drawing;
-using HDTPlugin.Settings;
+using APTTracker.Settings;
 
-namespace HDTPlugin.Data
+namespace APTTracker.Data
 {
     /// <summary>
     /// Runtime state for all counters. Values are mutable and independent of the

@@ -1,10 +1,10 @@
 using System.Windows;
 using System.Windows.Controls;
 using MahApps.Metro.IconPacks;
-using HDTPlugin.Logic;
-using HDTPlugin.Data;
+using APTTracker.Logic;
+using APTTracker.Data;
 
-namespace HDTPlugin.Controls
+namespace APTTracker.Controls
 {
     public partial class PluginContainer : Grid
     {

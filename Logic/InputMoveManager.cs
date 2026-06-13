@@ -7,7 +7,7 @@ using System.Windows.Controls.Primitives;
 using Core = Hearthstone_Deck_Tracker.API.Core;
 using DrawingPoint = System.Drawing.Point;
 
-namespace HDTPlugin.Logic
+namespace APTTracker.Logic
 {
     public class InputMoveManager
     {

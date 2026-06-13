@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HDTPlugin.Data
+namespace APTTracker.Data
 {
     public enum CounterKey
     {
@@ -42,7 +42,7 @@ namespace HDTPlugin.Data
     public class CounterData
     {
         public string DisplayName { get; set; }
-        public bool DefaultVisibility { get; set; } = true;
+        public int DefaultVisibility { get; set; } = 2; // 0 = hidden, 1 = hover, 2 = always
         public Color Color { get; set; }
         public bool IncludeInSummary { get; set; } = true;
         public ParsingDetails ParsingDetails { get; set; }
@@ -81,7 +81,7 @@ namespace HDTPlugin.Data
                     new CounterData {
                         DisplayName = "Buy Minion",
                         Color = Color.LightCoral,
-                        DefaultVisibility = false,
+                        DefaultVisibility = 0,
                         IncludeInSummary = false,
                         ParsingDetails = new LogParsingDetails { CardId = "TB_BaconShop_DragBuy" }
                     }
@@ -91,7 +91,7 @@ namespace HDTPlugin.Data
                     new CounterData {
                         DisplayName = "Buy Spell",
                         Color = Color.LightPink,
-                        DefaultVisibility = false,
+                        DefaultVisibility = 0,
                         IncludeInSummary = false,
                         ParsingDetails = new LogParsingDetails { CardId = "TB_BaconShop_DragBuy_Spell" }
                     }

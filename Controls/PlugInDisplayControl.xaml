@@ -1,9 +1,10 @@
 <StackPanel
-    x:Class="HDTPlugin.Controls.PlugInDisplayControl"
+    x:Class="APTTracker.Controls.PlugInDisplayControl"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
     mc:Ignorable="d"
     MinWidth="225"
     d:DesignHeight="400" d:DesignWidth="225">
@@ -58,7 +59,8 @@
                     </Grid.RowDefinitions>
 
                     <!-- Total Actions Counter -->
-                    <Border x:Name="CounterBorder" Grid.Row="0" MinWidth="90" Height="40" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                    <StackPanel x:Name="CounterBorder" Grid.Row="0" Orientation="Horizontal" Height="40" HorizontalAlignment="Center" VerticalAlignment="Stretch">
+                        <iconPacks:PackIconMaterial x:Name="Trophy1" Kind="Trophy" Visibility="Collapsed" Height="10" Foreground="Gold" VerticalAlignment="Bottom" Margin="0,0,0,6.5"/>
                         <TextBlock
                             x:Name="SummaryCounter"
                             FontSize="42"
@@ -67,8 +69,9 @@
                             Margin="0,-16,0,-8"
                             Text="41"
                             TextAlignment="Center"
-                            VerticalAlignment="Center" />
-                    </Border>
+                            VerticalAlignment="Center"/>
+                        <iconPacks:PackIconMaterial x:Name="Trophy2" Kind="Trophy" Visibility="Collapsed" Height="10" Foreground="Gold" VerticalAlignment="Bottom" Margin="0,0,0,6.5"/>
+                    </StackPanel>
 
                     <StackPanel Grid.Row="1" >
                         <!-- C/S Time -->

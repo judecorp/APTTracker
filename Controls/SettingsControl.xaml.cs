@@ -3,12 +3,12 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using MahApps.Metro.IconPacks;
-using HDTPlugin.Logic;
-using HDTPlugin.Settings;
+using APTTracker.Logic;
+using APTTracker.Settings;
 using System.Collections.Generic;
-using HDTPlugin.Data;
+using APTTracker.Data;
 
-namespace HDTPlugin.Controls
+namespace APTTracker.Controls
 {
     public partial class SettingsControl : Border
     {
@@ -103,7 +103,7 @@ namespace HDTPlugin.Controls
             foreach (var kvp in CounterDataProvider.Counters)
             {
                 var key = kvp.Key;
-                var defaultVis = kvp.Value.DefaultVisibility ? 2 : 0; // 2 = Always, 0 = Never
+                var defaultVis = kvp.Value.DefaultVisibility;
                 _settings.CounterVisibility[key] = defaultVis;
                 ApplyRowButtons(key.ToString(), defaultVis);
             }

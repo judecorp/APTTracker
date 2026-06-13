@@ -5,11 +5,11 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
-using HDTPlugin.Logic;
-using HDTPlugin.Data;
-using HDTPlugin.Controls;
+using APTTracker.Logic;
+using APTTracker.Data;
+using APTTracker.Controls;
 
-namespace HDTPlugin.Logic
+namespace APTTracker.Logic
 {
     public class RankInfo
     {
@@ -65,7 +65,7 @@ namespace HDTPlugin.Logic
         {
             try
             {
-                return new BitmapImage(new Uri($"pack://application:,,,/HDTPlugin;component/img/{GetRank(totalActions).ImagePath}"));
+                return new BitmapImage(new Uri($"pack://application:,,,/APTTracker;component/img/{GetRank(totalActions).ImagePath}"));
             }
             catch(Exception)
             {

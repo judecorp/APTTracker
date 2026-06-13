@@ -5,11 +5,11 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
-using HDTPlugin.Logic;
-using HDTPlugin.Data;
-using HDTPlugin.Controls;
+using APTTracker.Logic;
+using APTTracker.Data;
+using APTTracker.Controls;
 
-namespace HDTPlugin
+namespace APTTracker
 {
     public partial class DebugWindow : Window
     {

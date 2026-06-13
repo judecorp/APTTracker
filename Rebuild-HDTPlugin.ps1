@@ -13,12 +13,12 @@ if ($hdtProcess) {
 # Build the project
 Write-Host "Building HDTPlugin..."
 Set-Location $PSScriptRoot
-msbuild HDTPlugin.csproj /p:Configuration=Debug /t:Rebuild
+msbuild APTTracker.csproj /p:Configuration=Debug /t:Rebuild
 
 # Copy to plugins folder
 $pluginsPath = "$env:APPDATA\HearthstoneDeckTracker\Plugins"
-$targetDll = Join-Path $pluginsPath "HDTPlugin.dll"
-Copy-Item "bin\Debug\HDTPlugin.dll" $targetDll -Force
+$targetDll = Join-Path $pluginsPath "APTTracker.dll"
+Copy-Item "bin\Debug\APTTracker.dll" $targetDll -Force
 Write-Host "Copied to $targetDll"
 
 $hdtDir = "$env:LOCALAPPDATA\HearthstoneDeckTracker"

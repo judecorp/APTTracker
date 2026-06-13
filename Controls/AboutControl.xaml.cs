@@ -1,10 +1,11 @@
+using APTTracker.Logic;
+using System.Diagnostics;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
-using HDTPlugin.Logic;
-using System.Diagnostics;
 using System.Windows.Navigation;
 
-namespace HDTPlugin.Controls
+namespace APTTracker.Controls
 {
     public partial class AboutControl : Border
     {
@@ -14,6 +15,12 @@ namespace HDTPlugin.Controls
         {
             InitializeComponent();
             _scrollViewer = AboutScrollViewer;
+
+            var version = Assembly.GetExecutingAssembly()
+                .GetCustomAttribute<AssemblyInformationalVersionAttribute>()
+                ?.InformationalVersion ?? "Unknown";
+
+            VersionText.Text = $"APTTracker v{version}";
         }
 
         public void RecalculateScaling()
