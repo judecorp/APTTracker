@@ -146,7 +146,7 @@ namespace APTTracker
                     {
                         var duration = DateTime.Now - _turnStartTime;
                         int elapsedSeconds = (int)duration.TotalSeconds;
-                        
+
                         // Even turn = shop phase, odd turn = combat phase
                         if (newTurn % 2 == 0)
                         {
@@ -235,9 +235,12 @@ namespace APTTracker
         }
 
         private ResolutionTier _lastTier;
-        
+
         public void OnUpdate()
         {
+            if (_isTracking == null)
+                return;
+
             if (_pluginContainer == null)
                 return;
 
@@ -264,7 +267,7 @@ namespace APTTracker
             }
 
             //TEMPORARY:
-            if(_isInCombat)
+            if (_isInCombat)
             {
                 _lastCombatLength = (int)(DateTime.Now - _turnStartTime).TotalSeconds;
             }
