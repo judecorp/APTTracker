@@ -30,17 +30,7 @@ namespace APTTracker
         private InputMoveManager _inputMoveManager;
 
         // Shop action counters for verification
-        private int _buyMinionCount;
-        private int _buySpellCount;
-        private int _sellMinionCount;
-        private int _refreshCount;
-        private int _freezeCount;
-        private int _tavernTier;
-
         private int _turnNumber;
-        private int _unitsPlayed;
-        private int _tavernSpells;
-        private int _nonTavernSpells;
         private DateTime _turnStartTime;
         private int _lastShopLength;
         private int _lastCombatLength;
@@ -120,6 +110,18 @@ namespace APTTracker
             }
         }
 
+        private CounterKey? GetCounterKeyFromCardId(string cardId)
+        {
+            foreach (var kvp in CounterDataProvider.Counters)
+            {
+                if (kvp.Value.ParsingDetails is LogParsingDetails logDetails && cardId.StartsWith(logDetails.CardId))
+                {
+                    return kvp.Key;
+                }
+            }
+            return null;
+        }
+
         private void OnPowerLogLine(string line)
         {
             if (_logWriter == null) return;
@@ -194,42 +196,11 @@ namespace APTTracker
             if (playerMatch.Success) playerId = int.Parse(playerMatch.Groups[1].Value);
 
             // Identify shop action based on cardId
-            if (cardId == "TB_BaconShop_DragBuy")
+            var counterKey = GetCounterKeyFromCardId(cardId);
+            if (counterKey.HasValue)
             {
-                _buyMinionCount++;
-                _logWriter.WriteLine($"[{DateTime.Now}] BUY MINION: {entityName} (Player: {playerId})");
-                UpdateDisplay();
-            }
-            else if (cardId == "TB_BaconShop_DragBuy_Spell")
-            {
-                _buySpellCount++;
-                _logWriter.WriteLine($"[{DateTime.Now}] BUY SPELL: {entityName} (Player: {playerId})");
-                UpdateDisplay();
-            }
-            else if (cardId == "TB_BaconShop_DragSell")
-            {
-                _sellMinionCount++;
-                _logWriter.WriteLine($"[{DateTime.Now}] SELL MINION: {entityName} (Player: {playerId})");
-                UpdateDisplay();
-            }
-            else if (cardId == "TB_BaconShop_8p_Reroll_Button")
-            {
-                _refreshCount++;
-                _logWriter.WriteLine($"[{DateTime.Now}] REFRESH: {entityName} (Player: {playerId})");
-                UpdateDisplay();
-            }
-            else if (cardId == "TB_BaconShopLockAll_Button")
-            {
-                _freezeCount++;
-                _logWriter.WriteLine($"[{DateTime.Now}] FREEZE: {entityName} (Player: {playerId})");
-                UpdateDisplay();
-            }
-            // Check for Tavern Tier upgrade (TB_BaconShopTechUp0X_Button)
-            else if (cardId.StartsWith("TB_BaconShopTechUp"))
-            {
-                // Increment level up counter (player pressed tavern up button)
-                _tavernTier++;
-                _logWriter.WriteLine($"[{DateTime.Now}] LEVELED UP: {entityName} (Count: {_tavernTier})");
+                _counterState[counterKey.Value]++;
+                _logWriter.WriteLine($"[{DateTime.Now}] ACTION: {CounterDataProvider.Counters[counterKey.Value].DisplayName} ({entityName}) (Player: {playerId})");
                 UpdateDisplay();
             }
         }
@@ -238,7 +209,7 @@ namespace APTTracker
 
         public void OnUpdate()
         {
-            if (_isTracking == null)
+            if (!_isTracking)
                 return;
 
             if (_pluginContainer == null)
@@ -355,53 +326,41 @@ namespace APTTracker
             UpdateDisplay();
         }
 
+        private CounterKey? GetCounterKeyFromCardType(string cardType)
+        {
+            foreach (var kvp in CounterDataProvider.Counters)
+            {
+                if (kvp.Value.ParsingDetails is APIParsingDetails apiDetails && apiDetails.CardType == cardType)
+                {
+                    return kvp.Key;
+                }
+            }
+            return null;
+        }
+
         private void OnCardPlayed(Card card)
         {
             if (!_isTracking)
                 return;
 
-            switch (card.Type)
+            var counterKey = GetCounterKeyFromCardType(card.Type);
+            if (counterKey.HasValue)
             {
-                case "Battleground_Spell":
-                    _tavernSpells++;
-                    break;
-                case "Spell":
-                    _nonTavernSpells++;
-                    break;
-                case "Minion":
-                    _unitsPlayed++;
-                    break;
+                _counterState[counterKey.Value]++;
+                UpdateDisplay();
             }
-
-            UpdateDisplay();
         }
 
         private void ResetCounters()
         {
-            _unitsPlayed = 0;
-            _tavernSpells = 0;
-            _nonTavernSpells = 0;
-            _buyMinionCount = 0;
-            _buySpellCount = 0;
-            _sellMinionCount = 0;
-            _refreshCount = 0;
-            _freezeCount = 0;
-            _tavernTier = 0; // Start at 0 (no level ups yet this turn)
+            foreach (var key in CounterDataProvider.Counters.Keys)
+            {
+                _counterState[key] = 0;
+            }
         }
 
         private void UpdateDisplay()
         {
-            // Sync the runtime state with the latest values
-            _counterState[CounterKey.UNITS_PLAYED] = _unitsPlayed;
-            _counterState[CounterKey.TAVERN_SPELLS] = _tavernSpells;
-            _counterState[CounterKey.NON_TAVERN_SPELLS] = _nonTavernSpells;
-            _counterState[CounterKey.BUY_MINION_COUNT] = _buyMinionCount;
-            _counterState[CounterKey.BUY_SPELL_COUNT] = _buySpellCount;
-            _counterState[CounterKey.SELL_MINION_COUNT] = _sellMinionCount;
-            _counterState[CounterKey.REFRESH_COUNT] = _refreshCount;
-            _counterState[CounterKey.FREEZE_COUNT] = _freezeCount;
-            _counterState[CounterKey.LEVELED_UP] = _tavernTier;
-
             _pluginContainer.DisplayControl.SetCombatTime(_lastCombatLength);
             _pluginContainer.DisplayControl.SetShopTime(_lastShopLength);
 
@@ -418,8 +377,14 @@ namespace APTTracker
             if (elapsed.TotalSeconds < 1)
                 return 0;
 
-            int totalActions = _unitsPlayed + _tavernSpells + _nonTavernSpells +
-                _buyMinionCount + _buySpellCount + _sellMinionCount + _refreshCount + _freezeCount + _tavernTier;
+            int totalActions = 0;
+            foreach (CounterKey key in Enum.GetValues(typeof(CounterKey)))
+            {
+                if (CounterDataProvider.Counters[key].IncludeInSummary)
+                {
+                    totalActions += _counterState[key];
+                }
+            }
 
             return Math.Round(totalActions * 60.0 / elapsed.TotalSeconds, 2);
         }
