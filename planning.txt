@@ -1,4 +1,3 @@
-x P0 settings
 P1 achievements/effects
 	ice cold (freeze 10 times)
 	double level (level twice)
@@ -7,26 +6,30 @@ P1 achievements/effects
 	business enthusiast (buy, play, and sell 20 minions)
 	witchcraft (play 20 spells)
 	picky (refresh 20 times)
-x P0 rank images
 p1 rank gifs
-x P0 stats
-	best APM
-	
-(x) P0 about
-
-
 P1 nagware video series
 
-(x) P0 ability to receive donations
-
-(x) P0 proper packaging for release
-
-
-
-
 ______
-discover
-choose one
 make it so that plugin cannot be moved offscreen. (should also check and reset on resolution change)
+_______
+2026-09-29
 
-look at: settingsControl, DebugWindow, and HDTBootstrap for refactor
+New TODOs:
+
+default counter visibility
+resolution fixes (4k)
+work while spectating
+
+hero power
+choose one
+discover
+??
+
+figure out how to release
+	- make readme
+	- GitHub release
+	- make GitHub public
+
+DONE:
+	- performance bug fix
+	- refactor HDTBootstrap to use CounterData/CounterState
