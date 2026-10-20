@@ -1,15 +1,16 @@
 using APTTracker.Controls;
-using APTTracker.Logic;
 using APTTracker.Data;
+using APTTracker.Logic;
+using APTTracker.Settings;
 using Hearthstone_Deck_Tracker.API;
 using Hearthstone_Deck_Tracker.Enums;
 using Hearthstone_Deck_Tracker.Plugins;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.PerformanceData;
 using System.IO;
 using System.Reflection;
 using System.Text.RegularExpressions;
-using APTTracker.Settings;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
@@ -23,18 +24,18 @@ namespace APTTracker
         private PluginContainer _pluginContainer;
         private readonly CounterState _counterState = new CounterState();
         private DebugWindow _debugWindow;
-        private bool _isTracking;
-        private bool _isInCombat;
+        private bool _isTracking = false;
+        private bool _isInCombat = false;
         private string _logFilePath;
         private StreamWriter _logWriter;
         private InputMoveManager _inputMoveManager;
 
         // Shop action counters for verification
-        private int _turnNumber;
-        private DateTime _turnStartTime;
-        private int _lastShopLength;
-        private int _lastCombatLength;
-        private int _currentTimeout;
+        private int _turnNumber = 0;
+        private DateTime _turnStartTime = DateTime.MinValue;
+        private int _lastShopLength = 0;
+        private int _lastCombatLength = 0;
+        private int _currentTimeout = 0;
 
         public string Author => "JudeCorp";
         public string ButtonText => "BG Action Tracker";
@@ -48,7 +49,7 @@ namespace APTTracker
         public void OnLoad()
         {
             _pluginContainer = new PluginContainer(_counterState);
-            _pluginContainer.Visibility = Visibility.Collapsed;
+            _pluginContainer.Visibility = Visibility.Visible;
             Core.OverlayCanvas.Children.Add(_pluginContainer);
             Hearthstone_Deck_Tracker.Utility.Extensions.OverlayExtensions.SetIsOverlayHitTestVisible(_pluginContainer, true);
 
@@ -79,9 +80,10 @@ namespace APTTracker
             GameEvents.OnGameEnd.Add(GameEnd);
             GameEvents.OnTurnStart.Add(TurnStart);
             GameEvents.OnPlayerPlay.Add(OnCardPlayed);
+            GameEvents.OnPlayerHeroPower.Add(OnHeroPower);
 
             LogEvents.OnPowerLogLine.Add(OnPowerLogLine);
-            _logWriter.WriteLine($"[{DateTime.Now}] Subscribed to OnPowerLogLine");
+            LogEvents.OnPowerGamestateLogLine.Add(OnPowerGamestateLogLine);
 
             _pluginContainer.RecalculateScaling();
         }
@@ -114,7 +116,34 @@ namespace APTTracker
         {
             foreach (var kvp in CounterDataProvider.Counters)
             {
-                if (kvp.Value.ParsingDetails is LogParsingDetails logDetails && cardId.StartsWith(logDetails.CardId))
+                if (kvp.Value.ParsingDetails is LogParsingDetails logDetails && logDetails.MatchStrategy == MatchStrategy.STARTS_WITH && cardId.StartsWith(logDetails.CardId))
+                {
+                    return kvp.Key;
+                }
+                else if(kvp.Value.ParsingDetails is LogParsingDetails exactLogDetails && exactLogDetails.MatchStrategy == MatchStrategy.EXACT && cardId == exactLogDetails.CardId)
+                {
+                    return kvp.Key;
+                }
+            }
+            return null;
+        }
+        private CounterKey? GetCounterKeyFromCardType(string cardType)
+        {
+            foreach (var kvp in CounterDataProvider.Counters)
+            {
+                if (kvp.Value.ParsingDetails is APIParsingDetails apiDetails && apiDetails.CardType == cardType)
+                {
+                    return kvp.Key;
+                }
+            }
+            return null;
+        }
+
+        private CounterKey? GetCounterKeyFromCardTag(Card card)
+        {
+            foreach (var kvp in CounterDataProvider.Counters)
+            {
+                if (kvp.Value.ParsingDetails is TagParsingDetails tagDetails && card.HasTag(tagDetails.GameTag))
                 {
                     return kvp.Key;
                 }
@@ -124,8 +153,6 @@ namespace APTTracker
 
         private void OnPowerLogLine(string line)
         {
-            if (_logWriter == null) return;
-
             // Track TIMEOUT value (allocated shop time)
             if (line.Contains("TAG_CHANGE Entity=SLOSK#1451 tag=TIMEOUT value="))
             {
@@ -156,7 +183,7 @@ namespace APTTracker
                             _isInCombat = true;
                             //_lastShopLength = elapsedSeconds;
 
-                            _logWriter.WriteLine($"[{DateTime.Now}] SHOP TURN {newTurn} STARTED - Combat from turn {newTurn - 1}: {_lastCombatLength}s (timeout: {_currentTimeout}s)");
+                            //_logWriter.WriteLine($"[{DateTime.Now}] SHOP TURN {newTurn} STARTED - Combat from turn {newTurn - 1}: {_lastCombatLength}s (timeout: {_currentTimeout}s)");
                         }
                         else
                         {
@@ -167,7 +194,7 @@ namespace APTTracker
                                 _lastCombatLength = elapsedSeconds;
                             }
                             _isInCombat = false;
-                            _logWriter.WriteLine($"[{DateTime.Now}] COMBAT TURN {newTurn} STARTED - Shop from turn {newTurn - 1}: {_lastShopLength}s, Combat: {_lastCombatLength}s (timeout: {_currentTimeout}s)");
+                            //_logWriter.WriteLine($"[{DateTime.Now}] COMBAT TURN {newTurn} STARTED - Shop from turn {newTurn - 1}: {_lastShopLength}s, Combat: {_lastCombatLength}s (timeout: {_currentTimeout}s)");
                         }
                     }
                     _turnStartTime = DateTime.Now;
@@ -200,8 +227,22 @@ namespace APTTracker
             if (counterKey.HasValue)
             {
                 _counterState[counterKey.Value]++;
-                _logWriter.WriteLine($"[{DateTime.Now}] ACTION: {CounterDataProvider.Counters[counterKey.Value].DisplayName} ({entityName}) (Player: {playerId})");
+                //_logWriter.WriteLine($"[{DateTime.Now}] ACTION: {CounterDataProvider.Counters[counterKey.Value].DisplayName} ({entityName}) (Player: {playerId})");
                 UpdateDisplay();
+            }
+        }
+
+        private void OnPowerGamestateLogLine(string line)
+        {
+            if (line.Contains("m_chosenEntities"))
+            {
+                foreach (var kvp in CounterDataProvider.Counters)
+                {
+                    if (kvp.Value.ParsingDetails is GameStateCounter)
+                    {
+                        _counterState[kvp.Key]++;
+                    }
+                }
             }
         }
 
@@ -269,7 +310,7 @@ namespace APTTracker
 
         private void GameStart()
         {
-            if (Core.Game.CurrentGameMode != GameMode.Battlegrounds)
+            if (Core.Game.CurrentGameMode != GameMode.Battlegrounds && Core.Game.CurrentGameMode != GameMode.Spectator)
                 return;
 
             _isTracking = true;
@@ -326,18 +367,6 @@ namespace APTTracker
             UpdateDisplay();
         }
 
-        private CounterKey? GetCounterKeyFromCardType(string cardType)
-        {
-            foreach (var kvp in CounterDataProvider.Counters)
-            {
-                if (kvp.Value.ParsingDetails is APIParsingDetails apiDetails && apiDetails.CardType == cardType)
-                {
-                    return kvp.Key;
-                }
-            }
-            return null;
-        }
-
         private void OnCardPlayed(Card card)
         {
             if (!_isTracking)
@@ -348,6 +377,27 @@ namespace APTTracker
             {
                 _counterState[counterKey.Value]++;
                 UpdateDisplay();
+            }
+
+            var tagCounterKey = GetCounterKeyFromCardTag(card);
+            if (tagCounterKey.HasValue)
+            {
+                _counterState[tagCounterKey.Value]++;
+                UpdateDisplay();
+            }
+        }
+
+        private void OnHeroPower()
+        {
+            if (!_isTracking)
+                return;
+
+            foreach (var kvp in CounterDataProvider.Counters)
+            {
+                if (kvp.Value.ParsingDetails is HeroPowerCounter)
+                {
+                    _counterState[kvp.Key]++;
+                }
             }
         }
 

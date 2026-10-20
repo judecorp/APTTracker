@@ -20,6 +20,17 @@ namespace APTTracker.Data
         REFRESH_COUNT,
         FREEZE_COUNT,
         LEVELED_UP,
+        CHOOSE_ONE_COUNT,
+        DISCOVER_COUNT,
+        ACTIVATE_COUNT,
+        HERO_POWER,
+    }
+
+    public enum MatchStrategy
+    {
+        EXACT,
+        STARTS_WITH,
+        IGNORE
     }
 
     public abstract class ParsingDetails { }
@@ -27,6 +38,9 @@ namespace APTTracker.Data
     public class LogParsingDetails : ParsingDetails
     {
         public string CardId { get; set; }
+        public MatchStrategy MatchStrategy { get; set; } = MatchStrategy.EXACT;
+        public string Zone { get; set; } = Constants.HAND_ZONE;
+        public MatchStrategy ZoneMatchStrategy { get; set; } = MatchStrategy.IGNORE;
     }
 
     public class APIParsingDetails : ParsingDetails
@@ -34,9 +48,22 @@ namespace APTTracker.Data
         public string CardType { get; set; }
     }
 
+    public class TagParsingDetails : ParsingDetails
+    {
+        public GameTag GameTag { get; set; }
+    }
+
     public class SumCounter : ParsingDetails
     {
         public List<CounterKey> CountersToSum { get; set; }
+    }
+
+    public class GameStateCounter : ParsingDetails
+    {
+    }
+
+    public class HeroPowerCounter : ParsingDetails
+    {
     }
 
     public class CounterData
@@ -125,7 +152,7 @@ namespace APTTracker.Data
                     new CounterData {
                         DisplayName = "Leveled Up",
                         Color = Color.LightGoldenrodYellow,
-                        ParsingDetails = new LogParsingDetails { CardId = "TB_BaconShopTechUp" }
+                        ParsingDetails = new LogParsingDetails { CardId = "TB_BaconShopTechUp", MatchStrategy = MatchStrategy.STARTS_WITH }
                     }
                 },
                 {
@@ -136,6 +163,41 @@ namespace APTTracker.Data
                         ParsingDetails = new SumCounter { CountersToSum = new List<CounterKey> { CounterKey.BUY_MINION_COUNT, CounterKey.BUY_SPELL_COUNT } }
                     }
                 },
+                {
+                    CounterKey.CHOOSE_ONE_COUNT,
+                    new CounterData {
+                        DisplayName = "Choose One",
+                        Color = Color.DarkSeaGreen,
+                        DefaultVisibility = 0,
+                        ParsingDetails = new TagParsingDetails { GameTag = GameTag.CHOOSE_ONE }
+                    }
+                },
+                {
+                    CounterKey.DISCOVER_COUNT,
+                    new CounterData {
+                        DisplayName = "Discover",
+                        Color = Color.Bisque,
+                        DefaultVisibility = 0,
+                        ParsingDetails = new GameStateCounter{ }
+                    }
+                },
+                {
+                    CounterKey.ACTIVATE_COUNT,
+                    new CounterData {
+                        DisplayName = "Activate",
+                        Color = Color.Cornsilk,
+                        DefaultVisibility = 0,
+                        ParsingDetails = new LogParsingDetails{ CardId = "", MatchStrategy = MatchStrategy.IGNORE, Zone = Constants.PLAY_ZONE }
+                    }
+                },
+                {
+                    CounterKey.HERO_POWER,
+                    new CounterData {
+                        DisplayName = "Hero Power",
+                        Color = Color.Gainsboro,
+                        ParsingDetails = new HeroPowerCounter { }
+                    }
+                }
             };
     }
 }

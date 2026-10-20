@@ -18,11 +18,9 @@ New TODOs:
 
 default counter visibility
 resolution fixes (4k)
-work while spectating
 
-hero power
-choose one
-discover
+discard
+activate
 ??
 
 figure out how to release
@@ -31,5 +29,9 @@ figure out how to release
 	- make GitHub public
 
 DONE:
+	- hero power (can use API event)
 	- performance bug fix
 	- refactor HDTBootstrap to use CounterData/CounterState
+	- choose one
+	- discover
+	- work while spectating

@@ -62,10 +62,5 @@ namespace APTTracker.Data
         {
             return new Dictionary<CounterKey, int>(_values);
         }
-
-        /// <summary>
-        /// Highest Actions‑Per‑Turn ever recorded (read‑only shortcut into persisted settings).
-        /// </summary>
-        public int HighestApt => AppSettings.Default.HighestApt;
     }
 }
