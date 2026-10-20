@@ -49,7 +49,11 @@ namespace APTTracker
         public void OnLoad()
         {
             _pluginContainer = new PluginContainer(_counterState);
+#if DEBUG
             _pluginContainer.Visibility = Visibility.Visible;
+#else
+            _pluginContainer.Visibility = Visibility.Collapsed;
+#endif
             Core.OverlayCanvas.Children.Add(_pluginContainer);
             Hearthstone_Deck_Tracker.Utility.Extensions.OverlayExtensions.SetIsOverlayHitTestVisible(_pluginContainer, true);
 
@@ -250,6 +254,7 @@ namespace APTTracker
 
         public void OnUpdate()
         {
+#if !DEBUG
             if (!_isTracking)
                 return;
 
@@ -258,6 +263,7 @@ namespace APTTracker
 
             if (_debugWindow != null && _debugWindow.IsLoaded)
                 return;
+#endif
 
             UIScaler.DetectResolutionTier();
             if (UIScaler.CurrentTier != _lastTier)

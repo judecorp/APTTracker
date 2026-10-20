@@ -63,9 +63,9 @@ namespace APTTracker.Logic
             double width = window?.ActualWidth ?? 1920;
 
             ResolutionTier newTier;
-            if (width >= 3840)
+            if (width >= 3839)
                 newTier = ResolutionTier.UHD4K;
-            else if (width >= 2560)
+            else if (width >= 2559)
                 newTier = ResolutionTier.QHD1440p;
             else
                 newTier = ResolutionTier.HD1080p;

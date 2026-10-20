@@ -1,5 +1,10 @@
 # Rebuild-HDTPlugin.ps1
 
+param(
+    [Parameter()][ValidateSet("Debug","Release")]
+    [string]$Configuration = "Debug"
+)
+
 $ErrorActionPreference = "Stop"
 
 # Stop HDT if running
@@ -11,14 +16,15 @@ if ($hdtProcess) {
 }
 
 # Build the project
-Write-Host "Building HDTPlugin..."
+Write-Host "Building HDTPlugin ($Configuration)..."
 Set-Location $PSScriptRoot
-msbuild APTTracker.csproj /p:Configuration=Debug /t:Rebuild
+msbuild APTTracker.csproj /p:Configuration=$Configuration /t:Rebuild
 
 # Copy to plugins folder
 $pluginsPath = "$env:APPDATA\HearthstoneDeckTracker\Plugins"
 $targetDll = Join-Path $pluginsPath "APTTracker.dll"
-Copy-Item "bin\Debug\APTTracker.dll" $targetDll -Force
+$sourceDll = Join-Path "bin\$Configuration" "APTTracker.dll"
+Copy-Item $sourceDll $targetDll -Force
 Write-Host "Copied to $targetDll"
 
 $hdtDir = "$env:LOCALAPPDATA\HearthstoneDeckTracker"
