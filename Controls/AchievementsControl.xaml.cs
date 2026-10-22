@@ -17,16 +17,6 @@ namespace APTTracker.Controls
             _highestAptText = (TextBlock)FindName("HighestAptTextBlock");
         }
 
-        public void RecalculateScaling()
-        {
-            Width = UIScaler.GetMinWidth();
-            MaxHeight = UIScaler.GetSettingsMaxHeight();
-            if (_scrollViewer != null)
-            {
-                _scrollViewer.MaxHeight = UIScaler.GetSettingsMaxHeight();
-            }
-        }
-
         public void RefreshHighestApt()
         {
             if (_highestAptText != null)

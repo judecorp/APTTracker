@@ -27,6 +27,8 @@ public partial class SettingsControl : Border
         private StackPanel _showControlsPanel;
         private StackPanel _counterControlsPanel;
         private StackPanel _allButtonsPanel;
+        private Slider _scaleSlider;
+        private TextBlock _scaleValueText;
 
         // ── show-row definitions ────────────────────────────────────────────
         private static readonly (string Tag, string Label)[] ShowRows =
@@ -44,6 +46,16 @@ public partial class SettingsControl : Border
             _showControlsPanel   = ShowControlsPanel;
             _counterControlsPanel = CounterControlsPanel;
             _allButtonsPanel     = AllButtonsPanel;
+            _scaleSlider         = ScaleSlider;
+            _scaleValueText      = ScaleValueText;
+
+            // Setup scaling slider
+            _scaleSlider.Value = UIStateManager.Instance.ManualScale;
+            _scaleSlider.ValueChanged += (s, e) => {
+                UIStateManager.Instance.ManualScale = _scaleSlider.Value;
+                _scaleValueText.Text = $"{UIStateManager.Instance.ManualScale:F1}";
+            };
+            _scaleValueText.Text = $"{UIStateManager.Instance.ManualScale:F1}";
 
             CreateAllButtons();
             CreateShowRows();
@@ -359,41 +371,6 @@ Action<bool> hover = on =>
             // Counter rows
             foreach (var kvp in CounterDataProvider.Counters)
                 ApplyRowButtons(kvp.Key.ToString(), _settings.CounterVisibility[kvp.Key]);
-        }
-
-        // ════════════════════════════════════════════════════════════════════
-        // SCALING
-        // ════════════════════════════════════════════════════════════════════
-
-        public void RecalculateScaling()
-        {
-            Width     = UIScaler.GetMinWidth();
-            MaxHeight = UIScaler.GetSettingsMaxHeight();
-            if (_scrollViewer != null)
-                _scrollViewer.MaxHeight = UIScaler.GetSettingsMaxHeight();
-            ScaleFonts();
-        }
-
-        private void ScaleFonts()
-        {
-            double header     = UIScaler.GetSettingsFontSize();
-            double body       = header * 0.9;
-            double buttonSize = UIScaler.GetSettingsButtonSize();
-
-            if (_scrollViewer?.Content is StackPanel sp)
-                ScaleFontsRecursive(sp, header, body, buttonSize);
-        }
-
-        private void ScaleFontsRecursive(DependencyObject parent, double header, double body, double btnSize)
-        {
-            for (int i = 0; i < System.Windows.Media.VisualTreeHelper.GetChildrenCount(parent); i++)
-            {
-                var child = System.Windows.Media.VisualTreeHelper.GetChild(parent, i);
-                if      (child is TextBlock tb) tb.FontSize = tb.FontWeight == FontWeights.Bold ? header : body;
-                else if (child is CheckBox cb)  cb.FontSize = body * 0.9;
-                else if (child is Button b && b.Content is Border) b.FontSize = body * 0.8;
-                ScaleFontsRecursive(child, header, body, btnSize);
-            }
         }
 
         // ════════════════════════════════════════════════════════════════════

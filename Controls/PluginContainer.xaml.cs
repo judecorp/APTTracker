@@ -27,6 +27,17 @@ namespace APTTracker.Controls
             InitializeComponent();
             _state = state;
             
+            // Bind to UIStateManager
+            UIStateManager.Instance.PropertyChanged += (s, e) => {
+                if (e.PropertyName == nameof(UIStateManager.TotalScale))
+                {
+                    ContainerScale.ScaleX = UIStateManager.Instance.TotalScale;
+                    ContainerScale.ScaleY = UIStateManager.Instance.TotalScale;
+                }
+            };
+            ContainerScale.ScaleX = UIStateManager.Instance.TotalScale;
+            ContainerScale.ScaleY = UIStateManager.Instance.TotalScale;
+            
             _displayControl = DisplayPanel;
             _settingsControl = SettingsPanel;
             _achievementsControl = AchievementsPanel;
@@ -43,45 +54,10 @@ namespace APTTracker.Controls
 
         public PlugInDisplayControl DisplayControl => _displayControl;
 
-        public void RecalculateScaling()
-        {
-            _displayControl.RecalculateScaling();
-            _settingsControl.RecalculateScaling();
-            _achievementsControl.RecalculateScaling();
-            _aboutControl.RecalculateScaling();
-            ApplyButtonScaling();
-            Width = UIScaler.GetMinWidth();
-        }
-
         // Expose a refresh for achievement stats (e.g., highest APT)
         public void RefreshAchievements()
         {
             _achievementsControl?.RefreshHighestApt();
-        }
-
-        private void ApplyButtonScaling()
-        {
-            double iconSize = UIScaler.GetSettingsButtonSize();
-            double iconPaddingSize = UIScaler.GetSettingsButtonPaddingSize();
-
-
-            // Scale icon sizes based on resolution
-            _helpIcon.Width = iconSize;
-            _helpIcon.Height = iconSize;
-            _trophyIcon.Width = iconSize;
-            _trophyIcon.Height = iconSize;
-            _settingsIcon.Width = iconSize;
-            _settingsIcon.Height = iconSize;
-            _backIcon.Width = iconSize;
-            _backIcon.Height = iconSize;
-            
-            // Align margins to match XAML styling
-            _aboutButton.Margin = new Thickness(0, 0, iconPaddingSize, 0);
-            _achievementsButton.Margin = new Thickness(0, 0, iconPaddingSize, 0);
-            _settingsButton.Margin = new Thickness(0, 0, 0, 0);
-            
-            // Back button matches XAML styling
-            _backButton.Margin = new Thickness(4, 2, 0, 0);
         }
 
         public void ShowDisplay()

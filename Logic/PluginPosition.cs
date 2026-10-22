@@ -28,23 +28,14 @@ namespace APTTracker.Logic
 
         public static Point GetDefaultPosition()
         {
-            var tier = UIScaler.CurrentTier;
-
-            Point pos;
-            if (tier == ResolutionTier.UHD4K)
-                pos = new Point(2680, 0);
-            else if (tier == ResolutionTier.QHD1440p)
-                pos = new Point(1792, 0);
-            else
-                pos = new Point(1344, 0);
-
-            return pos;
+            return GetPosition(0.7, 0.0);
         }
 
         public static Point GetPosition(double leftPercent, double topPercent)
         {
-            double width = UIScaler.GetWindowWidth();
-            double height = UIScaler.GetWindowHeight();
+            var window = Application.Current?.MainWindow;
+            double width = window?.ActualWidth ?? 1920;
+            double height = window?.ActualHeight ?? 1080;
 
             return new Point(width * leftPercent, height * topPercent);
         }
@@ -57,7 +48,7 @@ namespace APTTracker.Logic
             Canvas.SetLeft(element, pos.X);
         }
 
-        public static bool IsOverlayAvailable => UIScaler.GetWindowWidth() > 0 && UIScaler.GetWindowHeight() > 0;
+        public static bool IsOverlayAvailable => (Application.Current?.MainWindow?.ActualWidth ?? 0) > 0;
 
         public static Point GetSavedPosition()
         {
@@ -70,8 +61,9 @@ namespace APTTracker.Logic
          
         public static void SavePosition(FrameworkElement element)
         {
-            double width = UIScaler.GetWindowWidth();
-            double height = UIScaler.GetWindowHeight();
+            var window = Application.Current?.MainWindow;
+            double width = window?.ActualWidth ?? 1920;
+            double height = window?.ActualHeight ?? 1080;
 
             if (width <= 0 || height <= 0)
                 return;

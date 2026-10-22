@@ -35,33 +35,11 @@ namespace APTTracker.Settings
             }
         }
 
-        // --- Existing Settings Properties (mirroring Settings.Designer.cs) ---
-        private double _scale = 100.0;
+        private double _scale = 1.0;
         public double Scale
         {
             get => _scale;
             set => SetProperty(ref _scale, value);
-        }
-
-        private double _opacity = 100.0;
-        public double Opacity
-        {
-            get => _opacity;
-            set => SetProperty(ref _opacity, value);
-        }
-
-        private double _top = 100.0;
-        public double Top
-        {
-            get => _top;
-            set => SetProperty(ref _top, value);
-        }
-
-        private double _left = 100.0;
-        public double Left
-        {
-            get => _left;
-            set => SetProperty(ref _left, value);
         }
 
         private double _positionLeftPercent = -1.0;
@@ -76,32 +54,6 @@ namespace APTTracker.Settings
         {
             get => _positionTopPercent;
             set => SetProperty(ref _positionTopPercent, value);
-        }
-
-        // NOTE: These legacy bools are kept for compatibility with existing UI. They will be superseded by the three‑state visibility settings.
-        private bool _showCombatTime = true;
-        public bool ShowCombatTime
-        {
-            get => _showCombatTime;
-            set => SetProperty(ref _showCombatTime, value);
-        }
-        private bool _showShopTime = true;
-        public bool ShowShopTime
-        {
-            get => _showShopTime;
-            set => SetProperty(ref _showShopTime, value);
-        }
-        private bool _showAPM = true;
-        public bool ShowAPM
-        {
-            get => _showAPM;
-            set => SetProperty(ref _showAPM, value);
-        }
-        private bool _showRank = true;
-        public bool ShowRank
-        {
-            get => _showRank;
-            set => SetProperty(ref _showRank, value);
         }
 
         // New three‑state visibility settings (0 = Never, 1 = Hover, 2 = Always). Default is Hover.

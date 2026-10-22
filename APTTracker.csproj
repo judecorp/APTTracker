@@ -130,7 +130,7 @@
     </Compile>
     <Compile Include="Logic\InputMoveManager.cs" />
     <Compile Include="Logic\PluginPosition.cs" />
-    <Compile Include="Logic\UIScaler.cs" />
+	<Compile Include="Logic\UIStateManager.cs" />
     <Compile Include="Logic\RankSystem.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -23,15 +23,7 @@ namespace APTTracker.Controls
             VersionText.Text = $"APTTracker v{version}";
         }
 
-        public void RecalculateScaling()
-        {
-            Width = UIScaler.GetMinWidth();
-            MaxHeight = UIScaler.GetSettingsMaxHeight();
-            if (_scrollViewer != null)
-            {
-                _scrollViewer.MaxHeight = UIScaler.GetSettingsMaxHeight();
-            }
-        }
+
 
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
         {
@@ -39,8 +31,9 @@ namespace APTTracker.Controls
             {
                 Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri) { UseShellExecute = true });
             }
+
             catch { }
-            e.Handled = true;
-        }
+                e.Handled = true;
+            }
     }
 }

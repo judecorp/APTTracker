@@ -45,46 +45,35 @@ namespace APTTracker
 
         private void Btn1080p_Click(object sender, RoutedEventArgs e)
         {
-            UIScaler.SetResolutionTier(Logic.ResolutionTier.HD1080p);
+            UIStateManager.Instance.AutoScale = 1.0;
             TxtCurrentTier.Text = "Current: 1080p";
             RefreshUI(1.0);
         }
 
         private void Btn1440p_Click(object sender, RoutedEventArgs e)
         {
-            UIScaler.SetResolutionTier(Logic.ResolutionTier.QHD1440p);
+            UIStateManager.Instance.AutoScale = 1.33;
             TxtCurrentTier.Text = "Current: 1440p";
             RefreshUI(1.33);
         }
 
         private void Btn4K_Click(object sender, RoutedEventArgs e)
         {
-            UIScaler.SetResolutionTier(Logic.ResolutionTier.UHD4K);
+            UIStateManager.Instance.AutoScale = 2.0;
             TxtCurrentTier.Text = "Current: 4K";
             RefreshUI(2.0);
         }
 
         private void RefreshUI(double scaleFactor)
         {
-            _pluginContainer.RecalculateScaling();
-            
             // Scale background from top-right corner
             BackgroundScale.ScaleX = scaleFactor;
             BackgroundScale.ScaleY = scaleFactor;
             
             // In debug window, shift left by offscreen pixels, then scale
-            // 4K: screenWidth=3840, visible=1920, offscreen=1920
-            // 1440p: screenWidth=2560, visible=1920, offscreen=640
-            // 1080p: screenWidth=1920, visible=1920, offscreen=0
             var basePosition = Logic.PluginPosition.GetDefaultPosition();
             double debugWindowWidth = 1920.0;
-            double screenWidth;
-            if (scaleFactor > 1.5)
-                screenWidth = 3840;  // 4K
-            else if (scaleFactor > 1.0)
-                screenWidth = 2560;  // 1440p
-            else
-                screenWidth = 1920;  // 1080p
+            double screenWidth = scaleFactor > 1.5 ? 3840 : (scaleFactor > 1.0 ? 2560 : 1920);
             double offscreen = screenWidth - debugWindowWidth;
             double scaledLeft = (basePosition.X - offscreen);
             Canvas.SetLeft(_pluginContainer, scaledLeft);

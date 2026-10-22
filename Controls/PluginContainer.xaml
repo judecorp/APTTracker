@@ -11,6 +11,10 @@
     MouseEnter="Plugin_MouseEnter"
     MouseLeave="Plugin_MouseLeave">
 
+    <Grid.RenderTransform>
+        <ScaleTransform x:Name="ContainerScale" ScaleX="1" ScaleY="1" CenterX="0" CenterY="0"/>
+    </Grid.RenderTransform>
+
     <Grid.Resources>
         <ResourceDictionary
 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -47,20 +51,20 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
         
         <!-- Navigation Buttons Overlay (always visible) -->
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,2,4,0" Panel.ZIndex="100">
-            <Button x:Name="AboutButton" Click="AboutButton_Click" Style="{StaticResource HeaderButtonStyle}" Margin="0,0,4,0" MouseEnter="HeaderButton_MouseEnter" MouseLeave="HeaderButton_MouseLeave" Tag="HelpIcon">
-                <iconPacks:PackIconMaterial x:Name="HelpIcon" Kind="HelpCircle" Foreground="#888888"/>
+            <Button x:Name="AboutButton" Click="AboutButton_Click" Style="{StaticResource HeaderButtonStyle}" Margin="0,0,2,0" MouseEnter="HeaderButton_MouseEnter" MouseLeave="HeaderButton_MouseLeave" Tag="HelpIcon">
+                <iconPacks:PackIconMaterial x:Name="HelpIcon" Kind="HelpCircle" Foreground="#888888" Width="12" Height="12"/>
             </Button>
-            <Button x:Name="AchievementsButton" Click="AchievementsButton_Click" Style="{StaticResource HeaderButtonStyle}" Margin="0,0,4,0" MouseEnter="HeaderButton_MouseEnter" MouseLeave="HeaderButton_MouseLeave" Tag="TrophyIcon">
-                <iconPacks:PackIconMaterial x:Name="TrophyIcon" Kind="Trophy" Foreground="#888888"/>
+            <Button x:Name="AchievementsButton" Click="AchievementsButton_Click" Style="{StaticResource HeaderButtonStyle}" Margin="0,0,2,0" MouseEnter="HeaderButton_MouseEnter" MouseLeave="HeaderButton_MouseLeave" Tag="TrophyIcon">
+                <iconPacks:PackIconMaterial x:Name="TrophyIcon" Kind="Trophy" Foreground="#888888" Width="12" Height="12"/>
             </Button>
             <Button x:Name="SettingsButton" Click="SettingsButton_Click" Style="{StaticResource HeaderButtonStyle}" Margin="0" MouseEnter="HeaderButton_MouseEnter" MouseLeave="HeaderButton_MouseLeave" Tag="SettingsIcon">
-                <iconPacks:PackIconMaterial x:Name="SettingsIcon" Kind="Cog" Foreground="#888888"/>
+                <iconPacks:PackIconMaterial x:Name="SettingsIcon" Kind="Cog" Foreground="#888888" Width="12" Height="12"/>
             </Button>
         </StackPanel>
         
         <!-- Back Button (visible when in any non-display mode) -->
         <Button x:Name="BackButton" Click="BackButton_Click" Style="{StaticResource HeaderButtonStyle}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="4,2,0,0" Panel.ZIndex="100" Visibility="Collapsed" MouseEnter="HeaderButton_MouseEnter" MouseLeave="HeaderButton_MouseLeave" Tag="BackIcon">
-            <iconPacks:PackIconMaterial x:Name="BackIcon" Kind="ArrowLeft" Foreground="#888888"/>
+            <iconPacks:PackIconMaterial x:Name="BackIcon" Kind="ArrowLeft" Foreground="#888888" Width="12" Height="12"/>
         </Button>
     </Grid>
 </Grid>

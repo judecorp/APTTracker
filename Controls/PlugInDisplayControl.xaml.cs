@@ -60,7 +60,6 @@ namespace APTTracker.Controls
 
             CreateCounterControls();
             
-            ApplyScaling();
             ApplyVisibilitySettings();
         }
 
@@ -73,7 +72,7 @@ namespace APTTracker.Controls
                 
                 var textBlock = new TextBlock
                 {
-                    FontSize = UIScaler.GetBodyFontSize(),
+                    FontSize = 14,
                     TextAlignment = TextAlignment.Center,
                     Margin = new Thickness(0),
                     Foreground = ToWpfBrush(data.Color)
@@ -122,35 +121,6 @@ namespace APTTracker.Controls
             return Visibility.Collapsed;                               // Never
         }
 
-        public void RecalculateScaling()
-        {
-            ApplyScaling();
-        }
-
-        public void ApplyScaling()
-        {
-            _summaryCounter.FontSize = UIScaler.GetSummaryFontSize();
-            _rankLabel.FontSize = UIScaler.GetHeaderFontSize();
-            _apmText.FontSize = UIScaler.GetBodyFontSize();
-            _apmLabel.FontSize = UIScaler.GetBodyFontSize();
-            _combatTimeText.FontSize = UIScaler.GetBodyFontSize();
-            _shopTimeText.FontSize = UIScaler.GetBodyFontSize();
-            _combatShopTimeLabel.FontSize = UIScaler.GetBodyFontSize();
-            _combatShopSlash.FontSize = UIScaler.GetBodyFontSize();
-
-            foreach(var textBlock in _textBlocks.Values)
-            {
-                textBlock.FontSize = UIScaler.GetBodyFontSize();
-            }
-
-            _rankImage.Width = UIScaler.GetRankBorderSize();
-            _rankImage.Height = UIScaler.GetRankBorderSize();
-
-            _counterBorder.Height = UIScaler.GetCounterHeight();
-
-            MinWidth = UIScaler.GetMinWidth();
-        }
-
         public void SetApm(double apm)
         {
             _apmText.Text = $"{apm:F2}";
@@ -180,8 +150,7 @@ namespace APTTracker.Controls
                 }
             }
 
-            double baseFontSize = UIScaler.GetSummaryFontSize();
-            double targetFontSize = baseFontSize + (totalActions > 0 ? PulseIncrease : 0);
+            double targetFontSize = 42 + (totalActions > 0 ? PulseIncrease : 0);
             _summaryCounter.FontSize = targetFontSize;
             _summaryCounter.Text = $"{totalActions}";
 

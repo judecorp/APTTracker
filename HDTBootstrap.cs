@@ -88,8 +88,6 @@ namespace APTTracker
 
             LogEvents.OnPowerLogLine.Add(OnPowerLogLine);
             LogEvents.OnPowerGamestateLogLine.Add(OnPowerGamestateLogLine);
-
-            _pluginContainer.RecalculateScaling();
         }
 
         public void OnUnload()
@@ -250,8 +248,6 @@ namespace APTTracker
             }
         }
 
-        private ResolutionTier _lastTier;
-
         public void OnUpdate()
         {
 #if !DEBUG
@@ -264,25 +260,6 @@ namespace APTTracker
             if (_debugWindow != null && _debugWindow.IsLoaded)
                 return;
 #endif
-
-            UIScaler.DetectResolutionTier();
-            if (UIScaler.CurrentTier != _lastTier)
-            {
-                _lastTier = UIScaler.CurrentTier;
-                _pluginContainer.RecalculateScaling();
-                if (!PluginPosition.HasSavedPosition)
-                {
-                    var position = PluginPosition.GetDefaultPosition();
-                    Canvas.SetTop(_pluginContainer, position.Y);
-                    Canvas.SetLeft(_pluginContainer, position.X);
-                }
-                else if (PluginPosition.IsOverlayAvailable)
-                {
-                    var position = PluginPosition.GetSavedPosition();
-                    Canvas.SetTop(_pluginContainer, position.Y);
-                    Canvas.SetLeft(_pluginContainer, position.X);
-                }
-            }
 
             //TEMPORARY:
             if (_isInCombat)
