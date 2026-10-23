@@ -18,7 +18,10 @@ if ($hdtProcess) {
 # Build the project
 Write-Host "Building HDTPlugin ($Configuration)..."
 Set-Location $PSScriptRoot
-msbuild APTTracker.csproj /p:Configuration=$Configuration /t:Rebuild
+dotnet build APTTracker.csproj --configuration $Configuration --no-incremental
+if ($LASTEXITCODE -ne 0) {
+    throw "Build failed (exit code $LASTEXITCODE). Plugin deployment and host restart were skipped."
+}
 
 # Copy to plugins folder
 $pluginsPath = "$env:APPDATA\HearthstoneDeckTracker\Plugins"
