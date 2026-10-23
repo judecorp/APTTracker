@@ -3,6 +3,7 @@ using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using APTTracker.Settings;
+using Core = Hearthstone_Deck_Tracker.API.Core;
 
 namespace APTTracker.Logic
 {
@@ -33,11 +34,21 @@ namespace APTTracker.Logic
 
         public static Point GetPosition(double leftPercent, double topPercent)
         {
-            var window = Application.Current?.MainWindow;
-            double width = window?.ActualWidth ?? 1920;
-            double height = window?.ActualHeight ?? 1080;
+            var size = GetViewportSize();
+            return new Point(size.Width * leftPercent, size.Height * topPercent);
+        }
 
-            return new Point(width * leftPercent, height * topPercent);
+        private static Size GetViewportSize()
+        {
+            var window = Application.Current?.MainWindow;
+            double width = Core.OverlayCanvas?.ActualWidth ?? 0;
+            double height = Core.OverlayCanvas?.ActualHeight ?? 0;
+            if (width <= 0) width = window?.ActualWidth ?? 0;
+            if (height <= 0) height = window?.ActualHeight ?? 0;
+            if (width <= 0) width = SystemParameters.PrimaryScreenWidth;
+            if (height <= 0) height = SystemParameters.PrimaryScreenHeight;
+
+            return new Size(width, height);
         }
 
         public static void UpdatePosition(FrameworkElement element, double leftPercent, double topPercent)
@@ -61,9 +72,9 @@ namespace APTTracker.Logic
          
         public static void SavePosition(FrameworkElement element)
         {
-            var window = Application.Current?.MainWindow;
-            double width = window?.ActualWidth ?? 1920;
-            double height = window?.ActualHeight ?? 1080;
+            var size = GetViewportSize();
+            double width = size.Width;
+            double height = size.Height;
 
             if (width <= 0 || height <= 0)
                 return;

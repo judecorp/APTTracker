@@ -319,7 +319,11 @@ namespace APTTracker
         private void GameEnd()
         {
             _isTracking = false;
+#if DEBUG
+            _pluginContainer.Visibility = Visibility.Visible;
+#else
             _pluginContainer.Visibility = Visibility.Collapsed;
+#endif
         }
 
         private void TurnStart(ActivePlayer player)

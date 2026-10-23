@@ -23,6 +23,7 @@ namespace APTTracker.Logic
         {
             get => _manualScale;
             set { 
+                value = AppSettings.ClampScale(value);
                 if (_manualScale != value) {
                     _manualScale = value;
                     UpdateTotalScale();
@@ -59,7 +60,6 @@ namespace APTTracker.Logic
         private UIStateManager()
         {
             _manualScale = AppSettings.Default.Scale;
-            if (_manualScale <= 0) _manualScale = 1.0;
             
             UpdateAutoScale();
             

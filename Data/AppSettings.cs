@@ -35,11 +35,19 @@ namespace APTTracker.Settings
             }
         }
 
+        public const double MinimumScale = 0.5;
+        public const double MaximumScale = 2.0;
+
+        public static double ClampScale(double value)
+        {
+            return double.IsNaN(value) ? 1.0 : Math.Max(MinimumScale, Math.Min(MaximumScale, value));
+        }
+
         private double _scale = 1.0;
         public double Scale
         {
             get => _scale;
-            set => SetProperty(ref _scale, value);
+            set => SetProperty(ref _scale, ClampScale(value));
         }
 
         private double _positionLeftPercent = -1.0;
@@ -56,26 +64,26 @@ namespace APTTracker.Settings
             set => SetProperty(ref _positionTopPercent, value);
         }
 
-        // New three‑state visibility settings (0 = Never, 1 = Hover, 2 = Always). Default is Hover.
-        private int _showCombatTimeVisibility = 1;
+        // Three-state visibility settings (0 = Never, 1 = Hover, 2 = Always).
+        private int _showCombatTimeVisibility = 2;
         public int ShowCombatTimeVisibility
         {
             get => _showCombatTimeVisibility;
             set => SetProperty(ref _showCombatTimeVisibility, value);
         }
-        private int _showShopTimeVisibility = 1;
+        private int _showShopTimeVisibility = 2;
         public int ShowShopTimeVisibility
         {
             get => _showShopTimeVisibility;
             set => SetProperty(ref _showShopTimeVisibility, value);
         }
-        private int _showAPMVisibility = 1;
+        private int _showAPMVisibility = 2;
         public int ShowAPMVisibility
         {
             get => _showAPMVisibility;
             set => SetProperty(ref _showAPMVisibility, value);
         }
-        private int _showRankVisibility = 1;
+        private int _showRankVisibility = 2;
         public int ShowRankVisibility
         {
             get => _showRankVisibility;

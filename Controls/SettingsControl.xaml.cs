@@ -1,6 +1,8 @@
 using System;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
+using System.Windows.Input;
 using System.Windows.Media;
 using MahApps.Metro.IconPacks;
 using APTTracker.Logic;
@@ -61,6 +63,61 @@ public partial class SettingsControl : Border
             CreateShowRows();
             CreateCounterRows();
             LoadSettings();
+        }
+
+        private void ScaleSlider_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            // Keep IsMoveToPointEnabled disabled: its class handler consumes the
+            // track click before this handler can capture the mouse for dragging.
+            var slider = (Slider)sender;
+            var track = slider.Template.FindName("PART_Track", slider) as Track;
+            if (track?.Thumb == null || track.Thumb.IsMouseOver)
+                return;
+
+            slider.Focus();
+            if (!slider.CaptureMouse())
+                return;
+
+            e.Handled = true;
+            UpdateScaleFromPointer(slider, track, e);
+        }
+
+        private void ScaleSlider_PreviewMouseMove(object sender, MouseEventArgs e)
+        {
+            var slider = (Slider)sender;
+            if (!slider.IsMouseCaptured)
+                return;
+
+            if (e.LeftButton != MouseButtonState.Pressed)
+            {
+                slider.ReleaseMouseCapture();
+                return;
+            }
+
+            var track = slider.Template.FindName("PART_Track", slider) as Track;
+            if (track != null)
+                UpdateScaleFromPointer(slider, track, e);
+            e.Handled = true;
+        }
+
+        private void ScaleSlider_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            var slider = (Slider)sender;
+            if (!slider.IsMouseCaptured)
+                return;
+
+            slider.ReleaseMouseCapture();
+            e.Handled = true;
+        }
+
+        private static void UpdateScaleFromPointer(Slider slider, Track track, MouseEventArgs e)
+        {
+            double value = track.ValueFromPoint(e.GetPosition(track));
+            if (double.IsNaN(value) || double.IsInfinity(value))
+                return;
+
+            slider.Value = Math.Max(slider.Minimum, Math.Min(slider.Maximum, value));
+
         }
 
         // ════════════════════════════════════════════════════════════════════

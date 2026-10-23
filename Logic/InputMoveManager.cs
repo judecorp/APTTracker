@@ -135,6 +135,7 @@ namespace APTTracker.Logic
                 while (hit != null)
                 {
                     if (hit is System.Windows.Controls.Primitives.ButtonBase ||
+                        hit is Slider ||
                         hit is System.Windows.Controls.Primitives.Thumb ||
                          hit is System.Windows.Controls.Primitives.ScrollBar)
                         return false; // exempt from dragging

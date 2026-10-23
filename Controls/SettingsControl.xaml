@@ -5,6 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+    xmlns:settings="clr-namespace:APTTracker.Settings"
     mc:Ignorable="d"
     Background="#1A1A1A"
     BorderBrush="#AAAAAA"
@@ -49,7 +50,12 @@
         <StackPanel>
             <TextBlock Text="UI Scaling:" FontSize="14" FontWeight="Bold" Foreground="White" Margin="0,0,0,8"/>
             <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
-                <Slider x:Name="ScaleSlider" Minimum="0.5" Maximum="2.0" Width="150" VerticalAlignment="Center"/>
+                <Slider x:Name="ScaleSlider" Minimum="{x:Static settings:AppSettings.MinimumScale}" Maximum="{x:Static settings:AppSettings.MaximumScale}"
+                        SmallChange="0.1" LargeChange="0.1" IsMoveToPointEnabled="False"
+                        PreviewMouseLeftButtonDown="ScaleSlider_PreviewMouseLeftButtonDown"
+                        PreviewMouseMove="ScaleSlider_PreviewMouseMove"
+                        PreviewMouseLeftButtonUp="ScaleSlider_PreviewMouseLeftButtonUp"
+                        Width="150" VerticalAlignment="Center"/>
                 <TextBlock x:Name="ScaleValueText" Foreground="White" Margin="8,0,0,0" VerticalAlignment="Center"/>
             </StackPanel>
             
