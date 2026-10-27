@@ -104,8 +104,7 @@ namespace APTTracker.Logic
                     if (canvas != null)
                     {
                         var canvasPos = canvas.PointFromScreen(new System.Windows.Point(pos.X, pos.Y));
-                        Canvas.SetLeft(_element, canvasPos.X - _offsetX);
-                        Canvas.SetTop(_element, canvasPos.Y - _offsetY);
+                        PluginPosition.SetPosition(_element, canvasPos.X - _offsetX, canvasPos.Y - _offsetY);
                     }
                 }
                 catch

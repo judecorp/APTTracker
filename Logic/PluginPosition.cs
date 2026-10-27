@@ -1,5 +1,4 @@
 using System;
-using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using APTTracker.Settings;
@@ -9,37 +8,20 @@ namespace APTTracker.Logic
 {
     public static class PluginPosition
     {
-        private static readonly string LogPath = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-            "APTTracker", "position.log");
-
-        private static void Log(string message)
+        public static void RestorePosition(FrameworkElement element)
         {
-            try
-            {
-                string dir = Path.GetDirectoryName(LogPath);
-                if (dir != null)
-                {
-                    Directory.CreateDirectory(dir);
-                    File.AppendAllText(LogPath, $"[{DateTime.Now:HH:mm:ss}] {message}\n");
-                }
-            }
-            catch { }
+            // Clamping must not overwrite the preferred position: resizing back restores it.
+            var settings = AppSettings.Default;
+            UpdatePosition(element,
+                HasSavedPosition ? settings.PositionLeftPercent : 0.7,
+                HasSavedPosition ? settings.PositionTopPercent : 0.0);
         }
 
-        public static Point GetDefaultPosition()
+        private static Size GetViewportSize(FrameworkElement element = null)
         {
-            return GetPosition(0.7, 0.0);
-        }
+            if (element?.Parent is Canvas canvas)
+                return new Size(canvas.ActualWidth, canvas.ActualHeight);
 
-        public static Point GetPosition(double leftPercent, double topPercent)
-        {
-            var size = GetViewportSize();
-            return new Point(size.Width * leftPercent, size.Height * topPercent);
-        }
-
-        private static Size GetViewportSize()
-        {
             var window = Application.Current?.MainWindow;
             double width = Core.OverlayCanvas?.ActualWidth ?? 0;
             double height = Core.OverlayCanvas?.ActualHeight ?? 0;
@@ -53,26 +35,25 @@ namespace APTTracker.Logic
 
         public static void UpdatePosition(FrameworkElement element, double leftPercent, double topPercent)
         {
-            var pos = GetPosition(leftPercent, topPercent);
-            Log($"Setting Left={pos.X}, Top={pos.Y}");
+            var size = GetViewportSize(element);
+            var pos = new Point(size.Width * leftPercent, size.Height * topPercent);
+            SetPosition(element, pos.X, pos.Y);
+        }
+
+        public static void SetPosition(FrameworkElement element, double left, double top)
+        {
+            var size = GetViewportSize(element);
+            var bounds = element.RenderTransform.TransformBounds(new Rect(element.RenderSize));
+            var pos = new Point(
+                Math.Max(0, Math.Min(left, Math.Max(0, size.Width - bounds.Right))),
+                Math.Max(0, Math.Min(top, Math.Max(0, size.Height - bounds.Bottom))));
             Canvas.SetTop(element, pos.Y);
             Canvas.SetLeft(element, pos.X);
         }
 
-        public static bool IsOverlayAvailable => (Application.Current?.MainWindow?.ActualWidth ?? 0) > 0;
-
-        public static Point GetSavedPosition()
-        {
-            var settings = AppSettings.Default;
-            if (settings.PositionLeftPercent < 0 || settings.PositionTopPercent < 0)
-                return new Point(double.NaN, double.NaN);
-
-            return GetPosition(settings.PositionLeftPercent, settings.PositionTopPercent);
-        }
-         
         public static void SavePosition(FrameworkElement element)
         {
-            var size = GetViewportSize();
+            var size = GetViewportSize(element);
             double width = size.Width;
             double height = size.Height;
 

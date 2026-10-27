@@ -31,53 +31,7 @@ namespace APTTracker
             _inputMoveManager = new InputMoveManager(_pluginContainer);
             _inputMoveManager.Enable();
             
-            SetPluginPosition();
-            RefreshUI(1.0);
             UpdateDisplay();
-        }
-
-        private void SetPluginPosition()
-        {
-            var position = PluginPosition.GetDefaultPosition();
-            Canvas.SetLeft(_pluginContainer, position.X);
-            Canvas.SetTop(_pluginContainer, position.Y);
-        }
-
-        private void Btn1080p_Click(object sender, RoutedEventArgs e)
-        {
-            UIStateManager.Instance.AutoScale = 1.0;
-            TxtCurrentTier.Text = "Current: 1080p";
-            RefreshUI(1.0);
-        }
-
-        private void Btn1440p_Click(object sender, RoutedEventArgs e)
-        {
-            UIStateManager.Instance.AutoScale = 1.33;
-            TxtCurrentTier.Text = "Current: 1440p";
-            RefreshUI(1.33);
-        }
-
-        private void Btn4K_Click(object sender, RoutedEventArgs e)
-        {
-            UIStateManager.Instance.AutoScale = 2.0;
-            TxtCurrentTier.Text = "Current: 4K";
-            RefreshUI(2.0);
-        }
-
-        private void RefreshUI(double scaleFactor)
-        {
-            // Scale background from top-right corner
-            BackgroundScale.ScaleX = scaleFactor;
-            BackgroundScale.ScaleY = scaleFactor;
-            
-            // In debug window, shift left by offscreen pixels, then scale
-            var basePosition = Logic.PluginPosition.GetDefaultPosition();
-            double debugWindowWidth = 1920.0;
-            double screenWidth = scaleFactor > 1.5 ? 3840 : (scaleFactor > 1.0 ? 2560 : 1920);
-            double offscreen = screenWidth - debugWindowWidth;
-            double scaledLeft = (basePosition.X - offscreen);
-            Canvas.SetLeft(_pluginContainer, scaledLeft);
-            Canvas.SetTop(_pluginContainer, basePosition.Y);
         }
 
         private void CreateCounterControls()

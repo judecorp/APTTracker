@@ -57,14 +57,7 @@ namespace APTTracker
             Core.OverlayCanvas.Children.Add(_pluginContainer);
             Hearthstone_Deck_Tracker.Utility.Extensions.OverlayExtensions.SetIsOverlayHitTestVisible(_pluginContainer, true);
 
-            Point position;
-            if (PluginPosition.HasSavedPosition && PluginPosition.IsOverlayAvailable)
-                position = PluginPosition.GetSavedPosition();
-            else
-                position = PluginPosition.GetDefaultPosition();
-
-            Canvas.SetTop(_pluginContainer, position.Y);
-            Canvas.SetLeft(_pluginContainer, position.X);
+            PluginPosition.RestorePosition(_pluginContainer);
 
             // Initialize input move manager for dragging functionality
             _inputMoveManager = new InputMoveManager(_pluginContainer);
@@ -305,14 +298,7 @@ namespace APTTracker
             _currentTimeout = 0;
             ResetCounters();
             _pluginContainer.Visibility = Visibility.Visible;
-            Point position;
-            if (PluginPosition.HasSavedPosition && PluginPosition.IsOverlayAvailable)
-                position = PluginPosition.GetSavedPosition();
-            else
-                position = PluginPosition.GetDefaultPosition();
-
-            Canvas.SetTop(_pluginContainer, position.Y);
-            Canvas.SetLeft(_pluginContainer, position.X);
+            PluginPosition.RestorePosition(_pluginContainer);
             UpdateDisplay();
         }
 

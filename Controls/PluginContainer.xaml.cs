@@ -3,6 +3,7 @@ using System.Windows.Controls;
 using MahApps.Metro.IconPacks;
 using APTTracker.Logic;
 using APTTracker.Data;
+using System.Windows.Threading;
 
 namespace APTTracker.Controls
 {
@@ -21,11 +22,52 @@ namespace APTTracker.Controls
         private readonly PackIconMaterial _helpIcon;
         private readonly PackIconMaterial _backIcon;
         private readonly CounterState _state;
+        private Canvas _positionCanvas;
+        private bool _positionUpdatePending;
+
+        private void QueuePositionUpdate()
+        {
+            if (_positionCanvas == null || _positionUpdatePending)
+                return;
+
+            _positionUpdatePending = true;
+            Dispatcher.BeginInvoke(DispatcherPriority.Loaded, new System.Action(() =>
+            {
+                _positionUpdatePending = false;
+                if (_positionCanvas == null || _positionCanvas.ActualWidth <= 0 || _positionCanvas.ActualHeight <= 0)
+                    return;
+
+                PluginPosition.RestorePosition(this);
+            }));
+        }
+
+        private void PositionSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            QueuePositionUpdate();
+        }
+
+        private void PositionLoaded(object sender, RoutedEventArgs e)
+        {
+            _positionCanvas = Parent as Canvas;
+            if (_positionCanvas != null)
+                _positionCanvas.SizeChanged += PositionSizeChanged;
+            QueuePositionUpdate();
+        }
+
+        private void PositionUnloaded(object sender, RoutedEventArgs e)
+        {
+            if (_positionCanvas != null)
+                _positionCanvas.SizeChanged -= PositionSizeChanged;
+            _positionCanvas = null;
+        }
 
         public PluginContainer(CounterState state)
         {
             InitializeComponent();
             _state = state;
+            Loaded += PositionLoaded;
+            Unloaded += PositionUnloaded;
+            SizeChanged += PositionSizeChanged;
             
             // Bind to UIStateManager
             UIStateManager.Instance.PropertyChanged += (s, e) => {
@@ -33,6 +75,7 @@ namespace APTTracker.Controls
                 {
                     ContainerScale.ScaleX = UIStateManager.Instance.TotalScale;
                     ContainerScale.ScaleY = UIStateManager.Instance.TotalScale;
+                    QueuePositionUpdate();
                 }
             };
             ContainerScale.ScaleX = UIStateManager.Instance.TotalScale;
