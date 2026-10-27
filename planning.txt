@@ -7,7 +7,6 @@ P1 achievements/effects
 	witchcraft (play 20 spells)
 	picky (refresh 20 times)
 p1 rank gifs
-P1 nagware video series
 
 ______
 make it so that plugin cannot be moved offscreen. (should also check and reset on resolution change)
