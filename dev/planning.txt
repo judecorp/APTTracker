@@ -1,36 +1,28 @@
-P1 achievements/effects
-	ice cold (freeze 10 times)
-	double level (level twice)
-	triple level (level thrice)
-	bloodbath (play 15 bloodgems)
-	business enthusiast (buy, play, and sell 20 minions)
-	witchcraft (play 20 spells)
-	picky (refresh 20 times)
-p1 rank gifs
+Bug fixes:
+	- phantom spell at start of game in aberration lobbies
+	- hero choice counts as discover
+	- default values for APM, shop time, and combat time
 
-______
-make it so that plugin cannot be moved offscreen. (should also check and reset on resolution change)
-_______
-2026-09-29
+Spectate feature:
+	- need to identify battlegrounds game mode while spectating
+	- do not update highest APT while spectating
+	- test spectating... do all tracker features work while spectating?
 
-New TODOs:
+Action tracking specificity...:
+	- auto choose one vs manual choose one
+	- activate
+	- manual discard 
+	- manual discard vs auto discard
+	- dark gift button
 
-default counter visibility
-resolution fixes (4k)
-
-discard
-activate
-??
-
-figure out how to release
+Release:
+	- test release build
 	- make readme
+	- update notification
+		- query GitHub
+		- show UI with link
+	- install script
 	- GitHub release
 	- make GitHub public
 
-DONE:
-	- hero power (can use API event)
-	- performance bug fix
-	- refactor HDTBootstrap to use CounterData/CounterState
-	- choose one
-	- discover
-	- work while spectating
+
