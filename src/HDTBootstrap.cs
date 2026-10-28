@@ -36,24 +36,11 @@ namespace APTTracker
             if (_isLoaded)
                 return;
 
-            _pluginContainer = new PluginContainer(_session.Counters);
-            SetIdleVisibility();
-            Core.OverlayCanvas.Children.Add(_pluginContainer);
-            Hearthstone_Deck_Tracker.Utility.Extensions.OverlayExtensions.SetIsOverlayHitTestVisible(_pluginContainer, true);
-            PluginPosition.RestorePosition(_pluginContainer);
-            _inputMoveManager = new InputMoveManager(_pluginContainer);
-            _inputMoveManager.Enable();
+            CreateOverlay();
             _isLoaded = true;
-            GameEvents.OnGameStart.Add(GameStart);
-            GameEvents.OnGameEnd.Add(GameEnd);
-            GameEvents.OnTurnStart.Add(TurnStart);
-            GameEvents.OnPlayerPlay.Add(OnCardPlayed);
-            GameEvents.OnPlayerHeroPower.Add(OnHeroPower);
-            LogEvents.OnPowerLogLine.Add(OnPowerLogLine);
-            LogEvents.OnPowerGamestateLogLine.Add(OnPowerGamestateLogLine);
+            RegisterHostCallbacks();
             _pluginContainer.RefreshAchievements();
             RefreshCounters();
-            RefreshTiming();
         }
 
         public void OnUnload()
@@ -62,11 +49,47 @@ namespace APTTracker
             _session.Stop();
             _debugWindow?.Close();
             _debugWindow = null;
+            RemoveOverlay();
+        }
+
+        private void CreateOverlay()
+        {
+            _pluginContainer = new PluginContainer(_session.Counters);
+            SetIdleVisibility();
+            Core.OverlayCanvas.Children.Add(_pluginContainer);
+            Hearthstone_Deck_Tracker.Utility.Extensions.OverlayExtensions.SetIsOverlayHitTestVisible(_pluginContainer, true);
+            PluginPosition.RestorePosition(_pluginContainer);
+            _inputMoveManager = new InputMoveManager(_pluginContainer);
+            _inputMoveManager.Enable();
+        }
+
+        private void RemoveOverlay()
+        {
             _inputMoveManager?.Dispose();
             _inputMoveManager = null;
             if (_pluginContainer != null)
                 Core.OverlayCanvas.Children.Remove(_pluginContainer);
             _pluginContainer = null;
+        }
+
+        // HDT identifies the owning plugin from Add's immediate caller type.
+        // Keep registration in this class and preserve the call frame.
+        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.NoInlining)]
+        private void RegisterHostCallbacks()
+        {
+            GameEvents.OnGameStart.Add(GameStart);
+            GameEvents.OnGameEnd.Add(GameEnd);
+            GameEvents.OnTurnStart.Add(TurnStart);
+            GameEvents.OnPlayerPlay.Add(OnCardPlayed);
+            GameEvents.OnPlayerHeroPower.Add(OnHeroPower);
+            LogEvents.OnPowerLogLine.Add(OnPowerLogLine);
+            LogEvents.OnPowerGamestateLogLine.Add(OnPowerGamestateLogLine);
+        }
+
+        private static bool IsSupportedGame()
+        {
+            var mode = Core.Game.CurrentGameMode;
+            return mode == GameMode.Battlegrounds || mode == GameMode.Spectator;
         }
 
         private bool CanTrack => _isLoaded && _session.IsActive;
@@ -83,8 +106,7 @@ namespace APTTracker
                 return;
             if (PhaseLogParser.TryGetTurn(line, out int turn))
             {
-                if (_session.ChangePhase(turn))
-                    RefreshTiming();
+                _session.ChangePhase(turn);
                 return;
             }
             ProcessCounterEvent(CounterEventAdapter.FromPowerLog(line));
@@ -127,7 +149,7 @@ namespace APTTracker
             if (!_isLoaded)
                 return;
             _session.Stop();
-            if (Core.Game.CurrentGameMode != GameMode.Battlegrounds && Core.Game.CurrentGameMode != GameMode.Spectator)
+            if (!IsSupportedGame())
             {
                 SetIdleVisibility();
                 return;
@@ -136,7 +158,6 @@ namespace APTTracker
             _pluginContainer.Visibility = Visibility.Visible;
             PluginPosition.RestorePosition(_pluginContainer);
             RefreshCounters();
-            RefreshTiming();
         }
 
         private void GameEnd()
@@ -144,7 +165,6 @@ namespace APTTracker
             if (!_isLoaded)
                 return;
             _session.Stop();
-            RefreshTiming();
             SetIdleVisibility();
         }
 
@@ -159,7 +179,6 @@ namespace APTTracker
                 _pluginContainer.RefreshAchievements();
             }
             RefreshCounters();
-            RefreshTiming();
         }
 
         private void OnCardPlayed(Card card)
