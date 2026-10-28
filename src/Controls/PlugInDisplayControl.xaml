@@ -7,8 +7,9 @@
     xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
     mc:Ignorable="d"
     MinWidth="225"
-    d:DesignHeight="400" d:DesignWidth="225">
-     
+    d:DesignHeight="400"
+        d:DesignWidth="225">
+
     <!-- Summary Panel -->
     <Border
         x:Name="SummaryBorder"
@@ -59,8 +60,19 @@
                     </Grid.RowDefinitions>
 
                     <!-- Total Actions Counter -->
-                    <StackPanel x:Name="CounterBorder" Grid.Row="0" Orientation="Horizontal" Height="40" HorizontalAlignment="Center" VerticalAlignment="Stretch">
-                        <iconPacks:PackIconMaterial x:Name="Trophy1" Kind="Trophy" Visibility="Collapsed" Height="10" Foreground="Gold" VerticalAlignment="Bottom" Margin="0,0,0,6.5"/>
+                    <StackPanel x:Name="CounterBorder"
+                            Grid.Row="0"
+                            Orientation="Horizontal"
+                            Height="40"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Stretch">
+                        <iconPacks:PackIconMaterial x:Name="Trophy1"
+                                Kind="Trophy"
+                                Visibility="Collapsed"
+                                Height="10"
+                                Foreground="Gold"
+                                VerticalAlignment="Bottom"
+                                Margin="0,0,0,6.5"/>
                         <TextBlock
                             x:Name="SummaryCounter"
                             FontSize="42"
@@ -70,28 +82,64 @@
                             Text="41"
                             TextAlignment="Center"
                             VerticalAlignment="Center"/>
-                        <iconPacks:PackIconMaterial x:Name="Trophy2" Kind="Trophy" Visibility="Collapsed" Height="10" Foreground="Gold" VerticalAlignment="Bottom" Margin="0,0,0,6.5"/>
+                        <iconPacks:PackIconMaterial x:Name="Trophy2"
+                                Kind="Trophy"
+                                Visibility="Collapsed"
+                                Height="10"
+                                Foreground="Gold"
+                                VerticalAlignment="Bottom"
+                                Margin="0,0,0,6.5"/>
                     </StackPanel>
 
-                    <StackPanel Grid.Row="1" >
+                    <StackPanel Grid.Row="1">
                         <!-- C/S Time -->
-                        <StackPanel x:Name="CombatShopTimePanel" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,0">
-                            <TextBlock x:Name="CombatShopTimeLabel" FontSize="14" FontWeight="Bold" Foreground="White" Text="Turn: "/>
-                            <TextBlock x:Name="CombatTimeText" FontSize="14" FontWeight="Bold" Foreground="#E91E63" Text="10s"/>
-                            <TextBlock x:Name="CombatShopSlash" FontSize="14" FontWeight="Bold" Foreground="White" Text="/"/>
-                            <TextBlock x:Name="ShopTimeText" FontSize="14" FontWeight="Bold" Foreground="#FF9800" Text="121s"/>
+                        <StackPanel x:Name="CombatShopTimePanel"
+                                Orientation="Horizontal"
+                                HorizontalAlignment="Center"
+                                Margin="0,0,0,0">
+                            <TextBlock x:Name="CombatShopTimeLabel"
+                                    FontSize="14"
+                                    FontWeight="Bold"
+                                    Foreground="White"
+                                    Text="Turn: "/>
+                            <TextBlock x:Name="CombatTimeText"
+                                    FontSize="14"
+                                    FontWeight="Bold"
+                                    Foreground="#E91E63"
+                                    Text="0s"/>
+                            <TextBlock x:Name="CombatShopSlash"
+                                    FontSize="14"
+                                    FontWeight="Bold"
+                                    Foreground="White"
+                                    Text="/"/>
+                            <TextBlock x:Name="ShopTimeText"
+                                    FontSize="14"
+                                    FontWeight="Bold"
+                                    Foreground="#FF9800"
+                                    Text="0s"/>
                         </StackPanel>
                         <!-- APM -->
-                        <StackPanel x:Name="ApmPanel" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,0">
-                            <TextBlock x:Name="ApmLabel" FontSize="14" FontWeight="Bold" Foreground="White" Text="APM: "/>
-                            <TextBlock x:Name="ApmText" FontSize="14" FontWeight="Bold" Foreground="White" Text="2.13"/>
+                        <StackPanel x:Name="ApmPanel"
+                                Orientation="Horizontal"
+                                HorizontalAlignment="Center"
+                                Margin="0,0,0,0">
+                            <TextBlock x:Name="ApmLabel"
+                                    FontSize="14"
+                                    FontWeight="Bold"
+                                    Foreground="White"
+                                    Text="APM: "/>
+                            <TextBlock x:Name="ApmText"
+                                    FontSize="14"
+                                    FontWeight="Bold"
+                                    Foreground="White"
+                                    Text="0"/>
                         </StackPanel>
                     </StackPanel>
                 </Grid>
             </Grid>
         </Grid>
     </Border>
-    
+
     <!-- Counters Panel -->
     <Border
         x:Name="CountersBorder"
@@ -100,7 +148,7 @@
         BorderThickness="1,0,1,1"
         Padding="8"
         Visibility="Collapsed">
-         
+
         <StackPanel x:Name="CountersPanel"/>
     </Border>
 </StackPanel>

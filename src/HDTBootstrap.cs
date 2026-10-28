@@ -55,16 +55,17 @@ namespace APTTracker
         private void CreateOverlay()
         {
             _pluginContainer = new PluginContainer(_session.Counters);
-            SetIdleVisibility();
             Core.OverlayCanvas.Children.Add(_pluginContainer);
             Hearthstone_Deck_Tracker.Utility.Extensions.OverlayExtensions.SetIsOverlayHitTestVisible(_pluginContainer, true);
             PluginPosition.RestorePosition(_pluginContainer);
             _inputMoveManager = new InputMoveManager(_pluginContainer);
+            SetIdleOverlayState();
         }
 
-        private void SetIdleVisibility()
+        private void SetIdleOverlayState()
         {
 #if DEBUG
+            _inputMoveManager.Enable();
             _pluginContainer.Visibility = Visibility.Visible;
 #else
             _pluginContainer.Visibility = Visibility.Collapsed;
@@ -158,10 +159,9 @@ namespace APTTracker
             if (!_isLoaded)
                 return;
             _session.Stop();
-            _inputMoveManager.Disable();
             if (!IsSupportedGame())
             {
-                SetIdleVisibility();
+                SetIdleOverlayState();
                 return;
             }
             _session.Start(AppSettings.Default.HighestApt);
@@ -176,10 +176,9 @@ namespace APTTracker
             if (!_isLoaded)
                 return;
             _session.Stop();
-            _inputMoveManager.Disable();
             _debugWindow?.Close();
             _debugWindow = null;
-            SetIdleVisibility();
+            SetIdleOverlayState();
         }
 
         private void SaveHighestApt()
