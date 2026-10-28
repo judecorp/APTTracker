@@ -4,7 +4,7 @@ using System.Windows.Controls;
 using APTTracker.Settings;
 using Core = Hearthstone_Deck_Tracker.API.Core;
 
-namespace APTTracker.Logic
+namespace APTTracker.Overlay
 {
     public static class PluginPosition
     {

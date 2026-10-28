@@ -1,6 +1,7 @@
 using System.Windows;
 using System.Windows.Controls;
-using APTTracker.Logic;
+using APTTracker.Counters;
+using APTTracker.Overlay;
 using APTTracker.Settings;
 
 namespace APTTracker.Controls

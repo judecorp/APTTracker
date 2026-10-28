@@ -1,11 +1,10 @@
-using APTTracker.Data;
 using HearthDb.Enums;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Card = Hearthstone_Deck_Tracker.Hearthstone.Card;
 
-namespace APTTracker.Logic
+namespace APTTracker.Counters
 {
     /// <summary>Source-specific detection belongs here; counter selection belongs in the rules.</summary>
     public static class CounterEventAdapter

@@ -5,10 +5,10 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
 using MahApps.Metro.IconPacks;
-using APTTracker.Logic;
+using APTTracker.Counters;
+using APTTracker.Overlay;
 using APTTracker.Settings;
 using System.Collections.Generic;
-using APTTracker.Data;
 
 namespace APTTracker.Controls
 {

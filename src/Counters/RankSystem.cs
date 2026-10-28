@@ -5,11 +5,9 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
-using APTTracker.Logic;
-using APTTracker.Data;
 using APTTracker.Controls;
 
-namespace APTTracker.Logic
+namespace APTTracker.Counters
 {
     public class RankInfo
     {

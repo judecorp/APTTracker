@@ -4,8 +4,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
-using APTTracker.Logic;
-using APTTracker.Data;
+using APTTracker.Counters;
+using APTTracker.Overlay;
 using APTTracker.Settings;
 using System.Linq;
 
@@ -140,15 +140,7 @@ namespace APTTracker.Controls
         {
             _lastState = state;
 
-            int totalActions = 0;
-
-            foreach (CounterKey key in Enum.GetValues(typeof(CounterKey)))
-            {
-                if (CounterDataProvider.Counters[key].IncludeInSummary)
-                {
-                    totalActions += state[key];
-                }
-            }
+            int totalActions = state.TotalActions;
 
             double targetFontSize = 42 + (totalActions > 0 ? PulseIncrease : 0);
             _summaryCounter.FontSize = targetFontSize;

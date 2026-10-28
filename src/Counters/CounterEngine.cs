@@ -1,6 +1,5 @@
-using APTTracker.Data;
 
-namespace APTTracker.Logic
+namespace APTTracker.Counters
 {
     /// <summary>One event can increment multiple counters, each at most once.</summary>
     public sealed class CounterEngine

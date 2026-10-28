@@ -1,4 +1,5 @@
-using APTTracker.Logic;
+using APTTracker.Counters;
+using APTTracker.Overlay;
 using System.Diagnostics;
 using System.Reflection;
 using System.Windows;

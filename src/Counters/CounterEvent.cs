@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace APTTracker.Data
+namespace APTTracker.Counters
 {
     public enum CounterEventKind
     {

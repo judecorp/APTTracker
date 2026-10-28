@@ -1,8 +1,8 @@
 using System.Windows;
 using System.Windows.Controls;
 using MahApps.Metro.IconPacks;
-using APTTracker.Logic;
-using APTTracker.Data;
+using APTTracker.Counters;
+using APTTracker.Overlay;
 using System.Windows.Threading;
 
 namespace APTTracker.Controls
@@ -48,6 +48,8 @@ namespace APTTracker.Controls
 
         private void PositionLoaded(object sender, RoutedEventArgs e)
         {
+            UIStateManager.Instance.PropertyChanged += ScaleChanged;
+            ApplyScale();
             _positionCanvas = Parent as Canvas;
             if (_positionCanvas != null)
                 _positionCanvas.SizeChanged += PositionSizeChanged;
@@ -56,9 +58,23 @@ namespace APTTracker.Controls
 
         private void PositionUnloaded(object sender, RoutedEventArgs e)
         {
+            UIStateManager.Instance.PropertyChanged -= ScaleChanged;
             if (_positionCanvas != null)
                 _positionCanvas.SizeChanged -= PositionSizeChanged;
             _positionCanvas = null;
+        }
+
+        private void ScaleChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(UIStateManager.TotalScale))
+                ApplyScale();
+        }
+
+        private void ApplyScale()
+        {
+            ContainerScale.ScaleX = UIStateManager.Instance.TotalScale;
+            ContainerScale.ScaleY = UIStateManager.Instance.TotalScale;
+            QueuePositionUpdate();
         }
 
         public PluginContainer(CounterState state)
@@ -70,14 +86,6 @@ namespace APTTracker.Controls
             SizeChanged += PositionSizeChanged;
             
             // Bind to UIStateManager
-            UIStateManager.Instance.PropertyChanged += (s, e) => {
-                if (e.PropertyName == nameof(UIStateManager.TotalScale))
-                {
-                    ContainerScale.ScaleX = UIStateManager.Instance.TotalScale;
-                    ContainerScale.ScaleY = UIStateManager.Instance.TotalScale;
-                    QueuePositionUpdate();
-                }
-            };
             ContainerScale.ScaleX = UIStateManager.Instance.TotalScale;
             ContainerScale.ScaleY = UIStateManager.Instance.TotalScale;
             

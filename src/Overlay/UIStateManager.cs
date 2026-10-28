@@ -6,7 +6,7 @@ using System.Windows;
 using APTTracker.Settings;
 using Core = Hearthstone_Deck_Tracker.API.Core;
 
-namespace APTTracker.Logic
+namespace APTTracker.Overlay
 {
     public class UIStateManager : INotifyPropertyChanged
     {
@@ -62,6 +62,7 @@ namespace APTTracker.Logic
             _manualScale = AppSettings.Default.Scale;
             
             UpdateAutoScale();
+            UpdateTotalScale();
             
             var window = Application.Current?.MainWindow;
             if (window != null)

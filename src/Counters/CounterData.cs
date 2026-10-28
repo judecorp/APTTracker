@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 
-namespace APTTracker.Data
+namespace APTTracker.Counters
 {
     public enum CounterKey
     {

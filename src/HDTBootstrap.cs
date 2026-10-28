@@ -1,6 +1,6 @@
 using APTTracker.Controls;
-using APTTracker.Data;
-using APTTracker.Logic;
+using APTTracker.Counters;
+using APTTracker.Overlay;
 using APTTracker.Settings;
 using Hearthstone_Deck_Tracker.API;
 using Hearthstone_Deck_Tracker.Enums;
@@ -263,14 +263,7 @@ namespace APTTracker
             }
 
             // Before resetting counters, capture the APT of the just‑finished turn
-            int totalActions = 0;
-            foreach (CounterKey key in Enum.GetValues(typeof(CounterKey)))
-            {
-                if (CounterDataProvider.Counters[key].IncludeInSummary)
-                {
-                    totalActions += _counterState[key];
-                }
-            }
+            int totalActions = _counterState.TotalActions;
             // Record highest APT if this turn beats the record
             if (totalActions > AppSettings.Default.HighestApt)
             {
@@ -325,14 +318,7 @@ namespace APTTracker
             if (elapsed.TotalSeconds < 1)
                 return 0;
 
-            int totalActions = 0;
-            foreach (CounterKey key in Enum.GetValues(typeof(CounterKey)))
-            {
-                if (CounterDataProvider.Counters[key].IncludeInSummary)
-                {
-                    totalActions += _counterState[key];
-                }
-            }
+            int totalActions = _counterState.TotalActions;
 
             return Math.Round(totalActions * 60.0 / elapsed.TotalSeconds, 2);
         }

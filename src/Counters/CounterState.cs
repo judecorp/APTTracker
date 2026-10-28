@@ -6,7 +6,7 @@
 
 using System.Collections.Generic;
 
-namespace APTTracker.Data
+namespace APTTracker.Counters
 {
     /// <summary>
     /// Runtime state for all counters. Values are mutable and independent of the
@@ -53,8 +53,21 @@ namespace APTTracker.Data
         }
 
         /// <summary>
-        /// Returns current values, including calculated counters.
+        /// Returns the total of counters included in the action summary.
         /// </summary>
+        public int TotalActions
+        {
+            get
+            {
+                int total = 0;
+                foreach (var entry in CounterDataProvider.Counters)
+                    if (entry.Value.IncludeInSummary)
+                        total += this[entry.Key];
+                return total;
+            }
+        }
+
+        /// <summary>Returns current values, including calculated counters.</summary>
         public IReadOnlyDictionary<CounterKey, int> Snapshot()
         {
             var snapshot = new Dictionary<CounterKey, int>();
