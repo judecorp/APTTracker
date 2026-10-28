@@ -34,10 +34,14 @@ namespace APTTracker.Controls
             Dispatcher.BeginInvoke(DispatcherPriority.Loaded, new System.Action(() =>
             {
                 _positionUpdatePending = false;
-                if (_positionCanvas == null || _positionCanvas.ActualWidth <= 0 || _positionCanvas.ActualHeight <= 0)
+                if (_positionCanvas == null || _positionCanvas.ActualWidth <= 0 || _positionCanvas.ActualHeight <= 0
+                    || ActualWidth <= 0 || ActualHeight <= 0)
                     return;
 
                 PluginPosition.RestorePosition(this);
+                // Reveal only after settings and the first usable layout have been applied.
+                Opacity = 1;
+                IsHitTestVisible = true;
             }));
         }
 
@@ -62,6 +66,8 @@ namespace APTTracker.Controls
             if (_positionCanvas != null)
                 _positionCanvas.SizeChanged -= PositionSizeChanged;
             _positionCanvas = null;
+            Opacity = 0;
+            IsHitTestVisible = false;
         }
 
         private void ScaleChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -80,6 +86,9 @@ namespace APTTracker.Controls
         public PluginContainer(CounterState state)
         {
             InitializeComponent();
+            // Keep layout active during startup so positioning can use the measured size.
+            Opacity = 0;
+            IsHitTestVisible = false;
             _state = state;
             Loaded += PositionLoaded;
             Unloaded += PositionUnloaded;
