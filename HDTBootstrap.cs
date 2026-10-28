@@ -23,6 +23,7 @@ namespace APTTracker
     {
         private PluginContainer _pluginContainer;
         private readonly CounterState _counterState = new CounterState();
+        private readonly CounterEngine _counterEngine;
         private DebugWindow _debugWindow;
         private bool _isTracking = false;
         private bool _isInCombat = false;
@@ -107,43 +108,15 @@ namespace APTTracker
             }
         }
 
-        private CounterKey? GetCounterKeyFromCardId(string cardId)
+        public HDTBootstrap()
         {
-            foreach (var kvp in CounterDataProvider.Counters)
-            {
-                if (kvp.Value.ParsingDetails is LogParsingDetails logDetails && logDetails.MatchStrategy == MatchStrategy.STARTS_WITH && cardId.StartsWith(logDetails.CardId))
-                {
-                    return kvp.Key;
-                }
-                else if(kvp.Value.ParsingDetails is LogParsingDetails exactLogDetails && exactLogDetails.MatchStrategy == MatchStrategy.EXACT && cardId == exactLogDetails.CardId)
-                {
-                    return kvp.Key;
-                }
-            }
-            return null;
-        }
-        private CounterKey? GetCounterKeyFromCardType(string cardType)
-        {
-            foreach (var kvp in CounterDataProvider.Counters)
-            {
-                if (kvp.Value.ParsingDetails is APIParsingDetails apiDetails && apiDetails.CardType == cardType)
-                {
-                    return kvp.Key;
-                }
-            }
-            return null;
+            _counterEngine = new CounterEngine(_counterState);
         }
 
-        private CounterKey? GetCounterKeyFromCardTag(Card card)
+        private void ProcessCounterEvent(CounterEvent counterEvent)
         {
-            foreach (var kvp in CounterDataProvider.Counters)
-            {
-                if (kvp.Value.ParsingDetails is TagParsingDetails tagDetails && card.HasTag(tagDetails.GameTag))
-                {
-                    return kvp.Key;
-                }
-            }
-            return null;
+            if (_counterEngine.Process(counterEvent))
+                UpdateDisplay();
         }
 
         private void OnPowerLogLine(string line)
@@ -199,46 +172,16 @@ namespace APTTracker
                 return;
             }
 
-            // Only process BLOCK_START BlockType=PLAY lines
-            if (!line.Contains("BLOCK_START BlockType=PLAY"))
-                return;
-
-            // Extract cardId using regex
-            var cardIdMatch = Regex.Match(line, @"cardId=(\S+)");
-            if (!cardIdMatch.Success) return;
-
-            string cardId = cardIdMatch.Groups[1].Value;
-            string entityName = "";
-            var nameMatch = Regex.Match(line, @"entityName=(\S+)");
-            if (nameMatch.Success) entityName = nameMatch.Groups[1].Value;
-
-            // Extract player ID
-            int playerId = 0;
-            var playerMatch = Regex.Match(line, @"player=(\d+)");
-            if (playerMatch.Success) playerId = int.Parse(playerMatch.Groups[1].Value);
-
-            // Identify shop action based on cardId
-            var counterKey = GetCounterKeyFromCardId(cardId);
-            if (counterKey.HasValue)
-            {
-                _counterState[counterKey.Value]++;
-                //_logWriter.WriteLine($"[{DateTime.Now}] ACTION: {CounterDataProvider.Counters[counterKey.Value].DisplayName} ({entityName}) (Player: {playerId})");
-                UpdateDisplay();
-            }
+            var counterEvent = CounterEventAdapter.FromPowerLog(line);
+            if (counterEvent != null)
+                ProcessCounterEvent(counterEvent);
         }
 
         private void OnPowerGamestateLogLine(string line)
         {
-            if (line.Contains("m_chosenEntities"))
-            {
-                foreach (var kvp in CounterDataProvider.Counters)
-                {
-                    if (kvp.Value.ParsingDetails is GameStateCounter)
-                    {
-                        _counterState[kvp.Key]++;
-                    }
-                }
-            }
+            var counterEvent = CounterEventAdapter.FromGamestateLog(line);
+            if (counterEvent != null)
+                ProcessCounterEvent(counterEvent);
         }
 
         public void OnUpdate()
@@ -345,19 +288,7 @@ namespace APTTracker
             if (!_isTracking)
                 return;
 
-            var counterKey = GetCounterKeyFromCardType(card.Type);
-            if (counterKey.HasValue)
-            {
-                _counterState[counterKey.Value]++;
-                UpdateDisplay();
-            }
-
-            var tagCounterKey = GetCounterKeyFromCardTag(card);
-            if (tagCounterKey.HasValue)
-            {
-                _counterState[tagCounterKey.Value]++;
-                UpdateDisplay();
-            }
+            ProcessCounterEvent(CounterEventAdapter.FromCardPlayed(card));
         }
 
         private void OnHeroPower()
@@ -365,13 +296,7 @@ namespace APTTracker
             if (!_isTracking)
                 return;
 
-            foreach (var kvp in CounterDataProvider.Counters)
-            {
-                if (kvp.Value.ParsingDetails is HeroPowerCounter)
-                {
-                    _counterState[kvp.Key]++;
-                }
-            }
+            ProcessCounterEvent(new CounterEvent(CounterEventKind.HeroPowerUsed));
         }
 
         private void ResetCounters()

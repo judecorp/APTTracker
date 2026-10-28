@@ -119,6 +119,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Data\CounterData.cs" />
+    <Compile Include="Data\CounterEvent.cs" />
+    <Compile Include="Logic\CounterEngine.cs" />
+    <Compile Include="Logic\CounterEventAdapter.cs" />
 	<Compile Include="Data\Constants.cs" />
     <Compile Include="Data\CounterState.cs" />
     <Compile Include="Data\AppSettings.cs" />

@@ -5,8 +5,6 @@
 // value (0) for every entry found in CounterDataProvider.Counters.
 
 using System.Collections.Generic;
-using System.Drawing;
-using APTTracker.Settings;
 
 namespace APTTracker.Data
 {
@@ -38,12 +36,11 @@ namespace APTTracker.Data
         {
             get
             {
-                if (CounterDataProvider.Counters[key].ParsingDetails is SumCounter)
+                if (CounterDataProvider.Counters[key].CountersToSum.Count != 0)
                 {
-                    SumCounter sumCounter = (SumCounter)CounterDataProvider.Counters[key].ParsingDetails;
                     int summedValue = 0;
 
-                    foreach (var subKey in sumCounter.CountersToSum)
+                    foreach (var subKey in CounterDataProvider.Counters[key].CountersToSum)
                     {
                         summedValue += this[subKey];
                     }
@@ -56,11 +53,14 @@ namespace APTTracker.Data
         }
 
         /// <summary>
-        /// Returns a shallow copy of the internal dictionary for read‑only purposes.
+        /// Returns current values, including calculated counters.
         /// </summary>
         public IReadOnlyDictionary<CounterKey, int> Snapshot()
         {
-            return new Dictionary<CounterKey, int>(_values);
+            var snapshot = new Dictionary<CounterKey, int>();
+            foreach (var key in _values.Keys)
+                snapshot[key] = this[key];
+            return snapshot;
         }
     }
 }
