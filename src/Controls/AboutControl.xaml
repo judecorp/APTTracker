@@ -17,7 +17,7 @@
             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 			<ResourceDictionary.MergedDictionaries>
-				<ResourceDictionary Source="../Themes/ScrollBars.xaml"/>
+				<ResourceDictionary Source="../../assets/themes/ScrollBars.xaml"/>
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
 	</Border.Resources>
@@ -28,7 +28,7 @@
             <TextBlock x:Name="VersionText" FontSize="12" Foreground="#888888" Margin="0,0,0,16"/>
             <TextBlock Text="Created and maintained by:" FontSize="12" Foreground="White" TextWrapping="Wrap" Margin="0,0,0,8"/>
             <StackPanel Orientation="Vertical" Margin="0,0,0,0">
-                <Image Source="pack://application:,,,/APTTracker;component/img/JudeCorpLogo.png" Height="32" HorizontalAlignment="Right" Margin="0,0,0,16"/>
+                <Image Source="pack://application:,,,/APTTracker;component/assets/images/JudeCorpLogo.png" Height="32" HorizontalAlignment="Right" Margin="0,0,0,16"/>
 				<TextBlock Text="Report bugs and suggest features at:" FontSize="12" Foreground="White" TextWrapping="Wrap" Margin="0,0,0,8"/>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,0,16">
                     <iconPacks:PackIconMaterial Kind="Github" Width="16" Height="16" Foreground="White" Margin="0,0,4,0"/>
@@ -38,7 +38,7 @@
                 </StackPanel>
 				<TextBlock Text="Support the project by donating:" FontSize="12" Foreground="White" TextWrapping="Wrap" Margin="0,0,0,8"/>
 				<StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
-					<Image Source="pack://application:,,,/APTTracker;component/img/kofi_symbol.png" Height="24" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,4,0"/>
+					<Image Source="pack://application:,,,/APTTracker;component/assets/images/kofi_symbol.png" Height="24" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,4,0"/>
 					<TextBlock VerticalAlignment="Center">
 						<Hyperlink NavigateUri="https://ko-fi.com/judecorp" RequestNavigate="Hyperlink_RequestNavigate">ko-fi.com/judecorp</Hyperlink>
 					</TextBlock>

@@ -65,7 +65,7 @@ namespace APTTracker.Logic
         {
             try
             {
-                return new BitmapImage(new Uri($"pack://application:,,,/APTTracker;component/img/{GetRank(totalActions).ImagePath}"));
+                return new BitmapImage(new Uri($"pack://application:,,,/APTTracker;component/assets/images/{GetRank(totalActions).ImagePath}"));
             }
             catch(Exception)
             {

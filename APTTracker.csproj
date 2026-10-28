@@ -6,7 +6,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{50C96E63-F9C3-41A5-8EFD-1FFEF2FF4BB2}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <AppDesignerFolder>src\Properties</AppDesignerFolder>
     <RootNamespace>APTTracker</RootNamespace>
     <AssemblyName>APTTracker</AssemblyName>
     <TargetFramework>net472</TargetFramework>
@@ -103,63 +103,58 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Controls\PlugInDisplayControl.xaml.cs">
+    <Compile Include="src\Controls\PlugInDisplayControl.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Controls\SettingsControl.xaml.cs">
+    <Compile Include="src\Controls\SettingsControl.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Controls\AchievementsControl.xaml.cs">
+    <Compile Include="src\Controls\AchievementsControl.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Controls\AboutControl.xaml.cs">
+    <Compile Include="src\Controls\AboutControl.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Controls\PluginContainer.xaml.cs">
+    <Compile Include="src\Controls\PluginContainer.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Data\CounterData.cs" />
-    <Compile Include="Data\CounterEvent.cs" />
-    <Compile Include="Logic\CounterEngine.cs" />
-    <Compile Include="Logic\CounterEventAdapter.cs" />
-	<Compile Include="Data\Constants.cs" />
-    <Compile Include="Data\CounterState.cs" />
-    <Compile Include="Data\AppSettings.cs" />
-    <Compile Include="DebugWindow.xaml.cs">
+    <Compile Include="src\Data\CounterData.cs" />
+    <Compile Include="src\Data\CounterEvent.cs" />
+    <Compile Include="src\Logic\CounterEngine.cs" />
+    <Compile Include="src\Logic\CounterEventAdapter.cs" />
+	<Compile Include="src\Data\Constants.cs" />
+    <Compile Include="src\Data\CounterState.cs" />
+    <Compile Include="src\Settings\AppSettings.cs" />
+    <Compile Include="dev\debug\DebugWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="HDTBootstrap.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>Settings.settings</DependentUpon>
-    </Compile>
-    <Compile Include="Logic\InputMoveManager.cs" />
-    <Compile Include="Logic\PluginPosition.cs" />
-	<Compile Include="Logic\UIStateManager.cs" />
-    <Compile Include="Logic\RankSystem.cs" />
+    <Compile Include="src\HDTBootstrap.cs" />
+    <Compile Include="src\Properties\AssemblyInfo.cs" />
+    <Compile Include="src\Logic\InputMoveManager.cs" />
+    <Compile Include="src\Logic\PluginPosition.cs" />
+	<Compile Include="src\Logic\UIStateManager.cs" />
+    <Compile Include="src\Logic\RankSystem.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Page Include="Controls\PlugInDisplayControl.xaml">
+    <Page Include="src\Controls\PlugInDisplayControl.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Controls\SettingsControl.xaml">
+    <Page Include="src\Controls\SettingsControl.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Controls\AchievementsControl.xaml">
+    <Page Include="src\Controls\AchievementsControl.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Controls\AboutControl.xaml">
+    <Page Include="src\Controls\AboutControl.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Controls\PluginContainer.xaml">
+    <Page Include="src\Controls\PluginContainer.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="DebugWindow.xaml">
+    <Page Include="dev\debug\DebugWindow.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Themes\ScrollBars.xaml">
+    <Page Include="assets\themes\ScrollBars.xaml">
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
@@ -171,7 +166,7 @@
     <Content Include="libs\HearthDb.dll" />
     <Content Include="libs\HearthstoneDeckTracker.exe" />
     <None Include="packages.config" />
-    <Resource Include="img\*.png" />
+    <Resource Include="assets\images\*.png" />
   </ItemGroup>
   <Import Project="packages\System.ValueTuple.4.6.2\build\net471\System.ValueTuple.targets" Condition="Exists('packages\System.ValueTuple.4.6.2\build\net471\System.ValueTuple.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
