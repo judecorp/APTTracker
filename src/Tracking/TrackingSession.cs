@@ -11,8 +11,9 @@ namespace APTTracker.Tracking
         private int _phaseTurn;
 
         public CounterState Counters { get; } = new CounterState();
-        public bool IsActive { get; private set; }
+        public bool IsInGame { get; private set; }
         public bool IsInCombat { get; private set; }
+        public bool IsInShop => IsInGame && !IsInCombat;
         public int ShopSeconds { get; private set; }
         public int CombatSeconds { get; private set; }
         public double Apm { get; private set; }
@@ -25,11 +26,11 @@ namespace APTTracker.Tracking
 
         public void Start(int highestApt)
         {
-            IsActive = true;
+            IsInGame = true;
             IsInCombat = false;
             HighestApt = highestApt;
             _phaseTurn = 0;
-            _phaseClock.Reset();
+            _phaseClock.Restart();
             ShopSeconds = CombatSeconds = 0;
             Apm = 0;
             ResetCounters();
@@ -38,28 +39,34 @@ namespace APTTracker.Tracking
         public void Stop()
         {
             UpdateTiming();
-            IsActive = false;
+            IsInGame = false;
+            IsInCombat = false;
             _phaseClock.Stop();
         }
 
         public bool Process(CounterEvent counterEvent)
         {
-            return IsActive && counterEvent != null && _engine.Process(counterEvent);
+            return IsInShop && counterEvent != null && _engine.Process(counterEvent);
         }
 
         public bool ChangePhase(int turn)
         {
-            if (!IsActive || turn <= _phaseTurn)
+            if (!IsInGame || turn <= _phaseTurn)
+                return false;
+
+            _phaseTurn = turn;
+            // Existing log convention: even GameEntity turns are combat, odd are shop.
+            bool enteringCombat = turn % 2 == 0;
+            if (enteringCombat == IsInCombat)
                 return false;
 
             UpdateTiming();
-            _phaseTurn = turn;
-            // Preserve the existing GameEntity TURN convention: even=combat, odd=shop.
-            IsInCombat = turn % 2 == 0;
+            IsInCombat = enteringCombat;
             if (IsInCombat)
                 CombatSeconds = 0;
             else
             {
+                StartShop();
                 ShopSeconds = 0;
                 Apm = 0;
             }
@@ -67,21 +74,15 @@ namespace APTTracker.Tracking
             return true;
         }
 
-        public bool StartPlayerTurn()
+        private void StartShop()
         {
-            if (!IsActive)
-                return false;
-            bool newRecord = Counters.TotalActions > HighestApt;
-            if (newRecord)
-                HighestApt = Counters.TotalActions;
+            HighestApt = Math.Max(HighestApt, Counters.TotalActions);
             ResetCounters();
-            Apm = 0;
-            return newRecord;
         }
 
         public void UpdateTiming()
         {
-            if (!IsActive || !_phaseClock.IsRunning)
+            if (!IsInGame || !_phaseClock.IsRunning)
                 return;
             double seconds = _phaseClock.Elapsed.TotalSeconds;
             if (IsInCombat)

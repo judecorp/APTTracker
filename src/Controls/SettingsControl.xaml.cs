@@ -24,6 +24,8 @@ public partial class SettingsControl : Border
         // Key: arbitrary string tag (CounterKey.ToString() for counters, "ShowXxx" for show rows)
         private readonly Dictionary<string, Button[]> _rowButtons = new Dictionary<string, Button[]>();
 
+        public event EventHandler VisibilitySettingsChanged;
+
         private readonly AppSettings _settings = AppSettings.Default;
         private ScrollViewer _scrollViewer;
         private StackPanel _showControlsPanel;
@@ -179,7 +181,7 @@ public partial class SettingsControl : Border
             // Reset show rows to always (2) as before
             foreach (var row in ShowRows)
                 SetShowSetting(row.Tag, 2, persist: false);
-            _settings.Save();
+            SaveVisibilitySettings();
         }
 
 
@@ -240,7 +242,7 @@ Action<bool> hover = on =>
                 foreach (var row in ShowRows)
                     SetShowSetting(row.Tag, value, persist: false);
 
-                _settings.Save();
+                SaveVisibilitySettings();
             };
 
             btn.MouseEnter += (s, e) => hover(true);
@@ -281,7 +283,7 @@ Action<bool> hover = on =>
                 case "ShowRank":       _settings.ShowRankVisibility        = value; break;
             }
             ApplyRowButtons(tag, value);
-            if (persist) _settings.Save();
+            if (persist) SaveVisibilitySettings();
         }
 
         // ════════════════════════════════════════════════════════════════════
@@ -308,7 +310,7 @@ Action<bool> hover = on =>
                     {
                         _settings.CounterVisibility[key] = v;
                         ApplyRowButtons(tag, v);
-                        _settings.Save();
+                        SaveVisibilitySettings();
                     });
 
                 _counterControlsPanel.Children.Add(grid);
@@ -414,8 +416,14 @@ Action<bool> hover = on =>
         }
 
         // ════════════════════════════════════════════════════════════════════
-        // LOAD SETTINGS
+        // SAVE AND LOAD SETTINGS
         // ════════════════════════════════════════════════════════════════════
+
+        private void SaveVisibilitySettings()
+        {
+            VisibilitySettingsChanged?.Invoke(this, EventArgs.Empty);
+            _settings.Save();
+        }
 
         private void LoadSettings()
         {

@@ -91,6 +91,8 @@ namespace APTTracker.Controls
             
             _displayControl = DisplayPanel;
             _settingsControl = SettingsPanel;
+            _settingsControl.VisibilitySettingsChanged += (sender, args) =>
+                _displayControl.ApplyVisibilitySettings();
             _achievementsControl = AchievementsPanel;
             _aboutControl = AboutPanel;
             _backButton = BackButton;

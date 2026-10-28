@@ -60,7 +60,15 @@ namespace APTTracker
             Hearthstone_Deck_Tracker.Utility.Extensions.OverlayExtensions.SetIsOverlayHitTestVisible(_pluginContainer, true);
             PluginPosition.RestorePosition(_pluginContainer);
             _inputMoveManager = new InputMoveManager(_pluginContainer);
-            _inputMoveManager.Enable();
+        }
+
+        private void SetIdleVisibility()
+        {
+#if DEBUG
+            _pluginContainer.Visibility = Visibility.Visible;
+#else
+            _pluginContainer.Visibility = Visibility.Collapsed;
+#endif
         }
 
         private void RemoveOverlay()
@@ -79,7 +87,6 @@ namespace APTTracker
         {
             GameEvents.OnGameStart.Add(GameStart);
             GameEvents.OnGameEnd.Add(GameEnd);
-            GameEvents.OnTurnStart.Add(TurnStart);
             GameEvents.OnPlayerPlay.Add(OnCardPlayed);
             GameEvents.OnPlayerHeroPower.Add(OnHeroPower);
             LogEvents.OnPowerLogLine.Add(OnPowerLogLine);
@@ -92,47 +99,49 @@ namespace APTTracker
             return mode == GameMode.Battlegrounds || mode == GameMode.Spectator;
         }
 
-        private bool CanTrack => _isLoaded && _session.IsActive;
+        private bool IsInGame => _isLoaded && _session.IsInGame;
+        private bool IsInShop => _isLoaded && _session.IsInShop;
 
         private void ProcessCounterEvent(CounterEvent counterEvent)
         {
-            if (CanTrack && _session.Process(counterEvent))
+            if (IsInShop && _session.Process(counterEvent))
                 RefreshCounters();
         }
 
         private void OnPowerLogLine(string line)
         {
-            if (!CanTrack || string.IsNullOrEmpty(line))
+            if (!IsInGame || string.IsNullOrEmpty(line))
                 return;
             if (PhaseLogParser.TryGetTurn(line, out int turn))
             {
-                _session.ChangePhase(turn);
+                if (_session.ChangePhase(turn) && _session.IsInShop)
+                {
+                    SaveHighestApt();
+                    RefreshCounters();
+                }
                 return;
             }
-            ProcessCounterEvent(CounterEventAdapter.FromPowerLog(line));
+            if (IsInShop)
+                ProcessCounterEvent(CounterEventAdapter.FromPowerLog(line));
         }
 
         private void OnPowerGamestateLogLine(string line)
         {
-            if (CanTrack && !string.IsNullOrEmpty(line))
+            if (IsInShop && !string.IsNullOrEmpty(line))
                 ProcessCounterEvent(CounterEventAdapter.FromGamestateLog(line));
         }
 
         public void OnUpdate()
         {
-            if (!_isLoaded || _pluginContainer == null)
+            if (!IsInGame)
                 return;
-#if !DEBUG
-            if (!_session.IsActive || (_debugWindow != null && _debugWindow.IsLoaded))
-                return;
-#endif
             _session.UpdateTiming();
             RefreshTiming();
         }
 
         public void OnButtonPress()
         {
-            if (!_isLoaded)
+            if (!IsInGame)
                 return;
             if (_debugWindow == null || !_debugWindow.IsLoaded)
             {
@@ -149,12 +158,14 @@ namespace APTTracker
             if (!_isLoaded)
                 return;
             _session.Stop();
+            _inputMoveManager.Disable();
             if (!IsSupportedGame())
             {
                 SetIdleVisibility();
                 return;
             }
             _session.Start(AppSettings.Default.HighestApt);
+            _inputMoveManager.Enable();
             _pluginContainer.Visibility = Visibility.Visible;
             PluginPosition.RestorePosition(_pluginContainer);
             RefreshCounters();
@@ -165,25 +176,24 @@ namespace APTTracker
             if (!_isLoaded)
                 return;
             _session.Stop();
+            _inputMoveManager.Disable();
+            _debugWindow?.Close();
+            _debugWindow = null;
             SetIdleVisibility();
         }
 
-        private void TurnStart(ActivePlayer player)
+        private void SaveHighestApt()
         {
-            if (!CanTrack || player != ActivePlayer.Player)
+            if (_session.HighestApt <= AppSettings.Default.HighestApt)
                 return;
-            if (_session.StartPlayerTurn())
-            {
-                AppSettings.Default.HighestApt = _session.HighestApt;
-                AppSettings.Default.Save();
-                _pluginContainer.RefreshAchievements();
-            }
-            RefreshCounters();
+            AppSettings.Default.HighestApt = _session.HighestApt;
+            AppSettings.Default.Save();
+            _pluginContainer.RefreshAchievements();
         }
 
         private void OnCardPlayed(Card card)
         {
-            if (CanTrack && card != null)
+            if (IsInShop && card != null)
                 ProcessCounterEvent(CounterEventAdapter.FromCardPlayed(card));
         }
 
@@ -203,15 +213,6 @@ namespace APTTracker
             display.SetCombatTime(_session.CombatSeconds);
             display.SetShopTime(_session.ShopSeconds);
             display.SetApm(_session.Apm);
-        }
-
-        private void SetIdleVisibility()
-        {
-#if DEBUG
-            _pluginContainer.Visibility = Visibility.Visible;
-#else
-            _pluginContainer.Visibility = Visibility.Collapsed;
-#endif
         }
 
     }
