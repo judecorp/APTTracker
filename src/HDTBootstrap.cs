@@ -2,18 +2,14 @@ using APTTracker.Controls;
 using APTTracker.Counters;
 using APTTracker.Overlay;
 using APTTracker.Settings;
+using APTTracker.Tracking;
 using Hearthstone_Deck_Tracker.API;
 using Hearthstone_Deck_Tracker.Enums;
 using Hearthstone_Deck_Tracker.Plugins;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics.PerformanceData;
-using System.IO;
 using System.Reflection;
-using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Threading;
 using Card = Hearthstone_Deck_Tracker.Hearthstone.Card;
 using Core = Hearthstone_Deck_Tracker.API.Core;
 
@@ -21,200 +17,101 @@ namespace APTTracker
 {
     public class HDTBootstrap : IPlugin
     {
+        private readonly TrackingSession _session = new TrackingSession();
         private PluginContainer _pluginContainer;
-        private readonly CounterState _counterState = new CounterState();
-        private readonly CounterEngine _counterEngine;
         private DebugWindow _debugWindow;
-        private bool _isTracking = false;
-        private bool _isInCombat = false;
-        private string _logFilePath;
-        private StreamWriter _logWriter;
         private InputMoveManager _inputMoveManager;
-
-        // Shop action counters for verification
-        private int _turnNumber = 0;
-        private DateTime _turnStartTime = DateTime.MinValue;
-        private int _lastShopLength = 0;
-        private int _lastCombatLength = 0;
-        private int _currentTimeout = 0;
+        private bool _isLoaded;
 
         public string Author => "JudeCorp";
-        public string ButtonText => "BG Action Tracker";
+        public string ButtonText => "Open Debug Window";
         public string Description => "Tracks actions per turn in Battlegrounds";
-        public string Name => "BG Action Tracker";
+        public string Name => "APTTracker";
         public Version Version => new Version(Assembly.GetExecutingAssembly()
-        .GetCustomAttribute<AssemblyInformationalVersionAttribute>()
-        ?.InformationalVersion);
+            .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion);
         public MenuItem MenuItem => null;
 
         public void OnLoad()
         {
-            _pluginContainer = new PluginContainer(_counterState);
-#if DEBUG
-            _pluginContainer.Visibility = Visibility.Visible;
-#else
-            _pluginContainer.Visibility = Visibility.Collapsed;
-#endif
+            if (_isLoaded)
+                return;
+
+            _pluginContainer = new PluginContainer(_session.Counters);
+            SetIdleVisibility();
             Core.OverlayCanvas.Children.Add(_pluginContainer);
             Hearthstone_Deck_Tracker.Utility.Extensions.OverlayExtensions.SetIsOverlayHitTestVisible(_pluginContainer, true);
-
             PluginPosition.RestorePosition(_pluginContainer);
-
-            // Initialize input move manager for dragging functionality
             _inputMoveManager = new InputMoveManager(_pluginContainer);
             _inputMoveManager.Enable();
-
-            // Initialize counters
-            ResetCounters();
-
-            // Initialize PowerLog line logging
-            var logDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "APTTracker");
-            Directory.CreateDirectory(logDir);
-            _logFilePath = Path.Combine(logDir, "PowerLogLines.log");
-            _logWriter = new StreamWriter(_logFilePath, false) { AutoFlush = true };
-            _logWriter.WriteLine($"[{DateTime.Now}] HDTPlugin loaded, subscribing to OnPowerLogLine");
-
+            _isLoaded = true;
             GameEvents.OnGameStart.Add(GameStart);
             GameEvents.OnGameEnd.Add(GameEnd);
             GameEvents.OnTurnStart.Add(TurnStart);
             GameEvents.OnPlayerPlay.Add(OnCardPlayed);
             GameEvents.OnPlayerHeroPower.Add(OnHeroPower);
-
             LogEvents.OnPowerLogLine.Add(OnPowerLogLine);
             LogEvents.OnPowerGamestateLogLine.Add(OnPowerGamestateLogLine);
+            _pluginContainer.RefreshAchievements();
+            RefreshCounters();
+            RefreshTiming();
         }
 
         public void OnUnload()
         {
-            if (_debugWindow != null)
-            {
-                _debugWindow.Close();
-                _debugWindow = null;
-            }
-            if (_logWriter != null)
-            {
-                _logWriter.Close();
-                _logWriter = null;
-            }
+            _isLoaded = false;
+            _session.Stop();
+            _debugWindow?.Close();
+            _debugWindow = null;
+            _inputMoveManager?.Dispose();
+            _inputMoveManager = null;
             if (_pluginContainer != null)
-            {
                 Core.OverlayCanvas.Children.Remove(_pluginContainer);
-                _pluginContainer = null;
-            }
-            if (_inputMoveManager != null)
-            {
-                _inputMoveManager.Dispose();
-                _inputMoveManager = null;
-            }
+            _pluginContainer = null;
         }
 
-        public HDTBootstrap()
-        {
-            _counterEngine = new CounterEngine(_counterState);
-        }
+        private bool CanTrack => _isLoaded && _session.IsActive;
 
         private void ProcessCounterEvent(CounterEvent counterEvent)
         {
-            if (_counterEngine.Process(counterEvent))
-                UpdateDisplay();
+            if (CanTrack && _session.Process(counterEvent))
+                RefreshCounters();
         }
 
         private void OnPowerLogLine(string line)
         {
-            // Track TIMEOUT value (allocated shop time)
-            if (line.Contains("TAG_CHANGE Entity=SLOSK#1451 tag=TIMEOUT value="))
+            if (!CanTrack || string.IsNullOrEmpty(line))
+                return;
+            if (PhaseLogParser.TryGetTurn(line, out int turn))
             {
-                var timeoutMatch = Regex.Match(line, @"tag=TIMEOUT value=(\d+)");
-                if (timeoutMatch.Success)
-                {
-                    _currentTimeout = int.Parse(timeoutMatch.Groups[1].Value);
-                }
+                if (_session.ChangePhase(turn))
+                    RefreshTiming();
                 return;
             }
-
-            // Track turn changes - calculate length when new turn starts
-            if (line.Contains("TAG_CHANGE Entity=GameEntity tag=TURN value="))
-            {
-                var turnMatch = Regex.Match(line, @"tag=TURN value=(\d+)");
-                if (turnMatch.Success)
-                {
-                    int newTurn = int.Parse(turnMatch.Groups[1].Value);
-                    if (_turnStartTime != DateTime.MinValue && newTurn > 1)
-                    {
-                        var duration = DateTime.Now - _turnStartTime;
-                        int elapsedSeconds = (int)duration.TotalSeconds;
-
-                        // Even turn = shop phase, odd turn = combat phase
-                        if (newTurn % 2 == 0)
-                        {
-                            // Starting combat phase - show previous shop length, calculate combat
-                            _isInCombat = true;
-                            //_lastShopLength = elapsedSeconds;
-
-                            //_logWriter.WriteLine($"[{DateTime.Now}] SHOP TURN {newTurn} STARTED - Combat from turn {newTurn - 1}: {_lastCombatLength}s (timeout: {_currentTimeout}s)");
-                        }
-                        else
-                        {
-                            // Starting shop phase - reset shop length, keep combat length
-                            _lastShopLength = 0;
-                            if (_turnStartTime != DateTime.MinValue)
-                            {
-                                _lastCombatLength = elapsedSeconds;
-                            }
-                            _isInCombat = false;
-                            //_logWriter.WriteLine($"[{DateTime.Now}] COMBAT TURN {newTurn} STARTED - Shop from turn {newTurn - 1}: {_lastShopLength}s, Combat: {_lastCombatLength}s (timeout: {_currentTimeout}s)");
-                        }
-                    }
-                    _turnStartTime = DateTime.Now;
-                    if (_isTracking)
-                        UpdateDisplay();
-                }
-                return;
-            }
-
-            var counterEvent = CounterEventAdapter.FromPowerLog(line);
-            if (counterEvent != null)
-                ProcessCounterEvent(counterEvent);
+            ProcessCounterEvent(CounterEventAdapter.FromPowerLog(line));
         }
 
         private void OnPowerGamestateLogLine(string line)
         {
-            var counterEvent = CounterEventAdapter.FromGamestateLog(line);
-            if (counterEvent != null)
-                ProcessCounterEvent(counterEvent);
+            if (CanTrack && !string.IsNullOrEmpty(line))
+                ProcessCounterEvent(CounterEventAdapter.FromGamestateLog(line));
         }
 
         public void OnUpdate()
         {
+            if (!_isLoaded || _pluginContainer == null)
+                return;
 #if !DEBUG
-            if (!_isTracking)
-                return;
-
-            if (_pluginContainer == null)
-                return;
-
-            if (_debugWindow != null && _debugWindow.IsLoaded)
+            if (!_session.IsActive || (_debugWindow != null && _debugWindow.IsLoaded))
                 return;
 #endif
-
-            //TEMPORARY:
-            if (_isInCombat)
-            {
-                _lastCombatLength = (int)(DateTime.Now - _turnStartTime).TotalSeconds;
-            }
-            else
-            {
-                _lastShopLength = (int)(DateTime.Now - _turnStartTime).TotalSeconds;
-            }
-
-            if (_isTracking && !_isInCombat)
-            {
-                _pluginContainer.DisplayControl.SetApm(CalculateApm());
-            }
-            UpdateDisplay();
+            _session.UpdateTiming();
+            RefreshTiming();
         }
+
         public void OnButtonPress()
         {
+            if (!_isLoaded)
+                return;
             if (_debugWindow == null || !_debugWindow.IsLoaded)
             {
                 _debugWindow = new DebugWindow();
@@ -222,32 +119,75 @@ namespace APTTracker
                 _debugWindow.Show();
             }
             else
-            {
                 _debugWindow.Activate();
-            }
         }
 
         private void GameStart()
         {
-            if (Core.Game.CurrentGameMode != GameMode.Battlegrounds && Core.Game.CurrentGameMode != GameMode.Spectator)
+            if (!_isLoaded)
                 return;
-
-            _isTracking = true;
-            _isInCombat = false;
-            _turnNumber = 0;
-            _turnStartTime = DateTime.MinValue;
-            _lastShopLength = 0;
-            _lastCombatLength = 0;
-            _currentTimeout = 0;
-            ResetCounters();
+            _session.Stop();
+            if (Core.Game.CurrentGameMode != GameMode.Battlegrounds && Core.Game.CurrentGameMode != GameMode.Spectator)
+            {
+                SetIdleVisibility();
+                return;
+            }
+            _session.Start(AppSettings.Default.HighestApt);
             _pluginContainer.Visibility = Visibility.Visible;
             PluginPosition.RestorePosition(_pluginContainer);
-            UpdateDisplay();
+            RefreshCounters();
+            RefreshTiming();
         }
 
         private void GameEnd()
         {
-            _isTracking = false;
+            if (!_isLoaded)
+                return;
+            _session.Stop();
+            RefreshTiming();
+            SetIdleVisibility();
+        }
+
+        private void TurnStart(ActivePlayer player)
+        {
+            if (!CanTrack || player != ActivePlayer.Player)
+                return;
+            if (_session.StartPlayerTurn())
+            {
+                AppSettings.Default.HighestApt = _session.HighestApt;
+                AppSettings.Default.Save();
+                _pluginContainer.RefreshAchievements();
+            }
+            RefreshCounters();
+            RefreshTiming();
+        }
+
+        private void OnCardPlayed(Card card)
+        {
+            if (CanTrack && card != null)
+                ProcessCounterEvent(CounterEventAdapter.FromCardPlayed(card));
+        }
+
+        private void OnHeroPower()
+        {
+            ProcessCounterEvent(new CounterEvent(CounterEventKind.HeroPowerUsed));
+        }
+
+        private void RefreshCounters()
+        {
+            _pluginContainer.DisplayControl.UpdateCounters(_session.Counters);
+        }
+
+        private void RefreshTiming()
+        {
+            var display = _pluginContainer.DisplayControl;
+            display.SetCombatTime(_session.CombatSeconds);
+            display.SetShopTime(_session.ShopSeconds);
+            display.SetApm(_session.Apm);
+        }
+
+        private void SetIdleVisibility()
+        {
 #if DEBUG
             _pluginContainer.Visibility = Visibility.Visible;
 #else
@@ -255,72 +195,5 @@ namespace APTTracker
 #endif
         }
 
-        private void TurnStart(ActivePlayer player)
-        {
-            if (player != ActivePlayer.Player)
-            {
-                return;
-            }
-
-            // Before resetting counters, capture the APT of the just‑finished turn
-            int totalActions = _counterState.TotalActions;
-            // Record highest APT if this turn beats the record
-            if (totalActions > AppSettings.Default.HighestApt)
-            {
-                AppSettings.Default.HighestApt = totalActions;
-                AppSettings.Default.Save();
-            }
-
-            ResetCounters(); // Resets ALL counters for the new turn
-            _turnNumber++;
-            UpdateDisplay();
-        }
-
-        private void OnCardPlayed(Card card)
-        {
-            if (!_isTracking)
-                return;
-
-            ProcessCounterEvent(CounterEventAdapter.FromCardPlayed(card));
-        }
-
-        private void OnHeroPower()
-        {
-            if (!_isTracking)
-                return;
-
-            ProcessCounterEvent(new CounterEvent(CounterEventKind.HeroPowerUsed));
-        }
-
-        private void ResetCounters()
-        {
-            foreach (var key in CounterDataProvider.Counters.Keys)
-            {
-                _counterState[key] = 0;
-            }
-        }
-
-        private void UpdateDisplay()
-        {
-            _pluginContainer.DisplayControl.SetCombatTime(_lastCombatLength);
-            _pluginContainer.DisplayControl.SetShopTime(_lastShopLength);
-
-            _pluginContainer.DisplayControl.UpdateCounters(_counterState);
-            _pluginContainer.RefreshAchievements();
-        }
-
-        private double CalculateApm()
-        {
-            if (_turnStartTime == DateTime.MinValue || !_isTracking)
-                return 0;
-
-            var elapsed = DateTime.Now - _turnStartTime;
-            if (elapsed.TotalSeconds < 1)
-                return 0;
-
-            int totalActions = _counterState.TotalActions;
-
-            return Math.Round(totalActions * 60.0 / elapsed.TotalSeconds, 2);
-        }
     }
 }

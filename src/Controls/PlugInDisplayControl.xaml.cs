@@ -123,17 +123,23 @@ namespace APTTracker.Controls
 
         public void SetApm(double apm)
         {
-            _apmText.Text = $"{apm:F2}";
+            string text = $"{apm:F2}";
+            if (_apmText.Text != text)
+                _apmText.Text = text;
         }
 
         public void SetCombatTime(int seconds)
         {
-            _combatTimeText.Text = $"{seconds}s";
+            string text = $"{seconds}s";
+            if (_combatTimeText.Text != text)
+                _combatTimeText.Text = text;
         }
 
         public void SetShopTime(int seconds)
         {
-            _shopTimeText.Text = $"{seconds}s";
+            string text = $"{seconds}s";
+            if (_shopTimeText.Text != text)
+                _shopTimeText.Text = text;
         }
 
         public void UpdateCounters(CounterState state)
