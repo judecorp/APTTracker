@@ -126,7 +126,7 @@ namespace APTTracker
                 return;
             }
             if (IsInShop)
-                ProcessCounterEvent(CounterEventAdapter.FromPowerLog(line));
+                ProcessCounterEvent(CounterEventAdapter.FromPowerLog(line, Core.Game.Entities, Core.Game.Player.Id));
         }
 
         private void OnPowerGamestateLogLine(string line)

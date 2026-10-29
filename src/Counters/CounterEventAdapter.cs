@@ -10,6 +10,9 @@ namespace APTTracker.Counters
     /// <summary>Source-specific detection belongs here; counter selection belongs in the rules.</summary>
     public static class CounterEventAdapter
     {
+        private static readonly Regex PlaySource = new Regex(
+            @"BLOCK_START BlockType=PLAY Entity=\[entityName=.*? id=(\d+) zone=(\w+) zonePos=\d+ cardId=(\S+) player=(\d+)\]");
+
         public static CounterEvent FromHandDiscard(Entity discarded, Entity source)
         {
             // HDT also reports hand removals to SETASIDE (e.g. triples) as discards.
@@ -21,18 +24,31 @@ namespace APTTracker.Counters
                 cardId: discarded.CardId, sourceCardId: source?.CardId);
         }
 
-        public static CounterEvent FromPowerLog(string line)
+        public static CounterEvent FromPowerLog(string line,
+            IReadOnlyDictionary<int, Entity> entities = null, int playerId = 0)
         {
-            if (!line.Contains("BLOCK_START BlockType=PLAY"))
+            if (string.IsNullOrEmpty(line))
                 return null;
 
-            var match = Regex.Match(line, @"cardId=(\S+)");
+            // Match the source explicitly: buy/sell blocks can target a minion in PLAY.
+            var match = PlaySource.Match(line);
+            if (!match.Success)
+                return null;
+
+            // The block records the origin zone before the action resolves. HDT supplies
+            // live type/ownership; HAS_ACTIVATE_POWER also appears on non-Activate entities.
+            if (match.Groups[2].Value == "PLAY" && playerId > 0 && entities != null
+                && int.TryParse(match.Groups[1].Value, out int entityId)
+                && int.TryParse(match.Groups[4].Value, out int controllerId)
+                && controllerId == playerId
+                && entities.TryGetValue(entityId, out var source)
+                && source.IsMinion && source.IsControlledBy(playerId))
+                return new CounterEvent(CounterEventKind.ActivateUsed, cardId: match.Groups[3].Value);
+
             var subOptionMatch = Regex.Match(line, @"\bSubOption=(-?\d+)(?:\s|$)");
             int? subOption = subOptionMatch.Success && int.TryParse(subOptionMatch.Groups[1].Value, out int value)
                 ? (int?)value : null;
-            return match.Success
-                ? new CounterEvent(CounterEventKind.LogPlay, cardId: match.Groups[1].Value, subOption: subOption)
-                : null;
+            return new CounterEvent(CounterEventKind.LogPlay, cardId: match.Groups[3].Value, subOption: subOption);
         }
 
         public static CounterEvent FromGamestateLog(string line)

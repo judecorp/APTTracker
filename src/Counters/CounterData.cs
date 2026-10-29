@@ -208,7 +208,7 @@ namespace APTTracker.Counters
                         DisplayName = "Activate",
                         Color = Color.Cornsilk,
                         DefaultVisibility = 0,
-                        // Activate is WIP: no event rules yet.
+                        Rules = { new CounterRule { EventKind = CounterEventKind.ActivateUsed } }
                     }
                 },
                 {

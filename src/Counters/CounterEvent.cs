@@ -11,7 +11,8 @@ namespace APTTracker.Counters
         LogPlay,
         DiscoverCompleted,
         HeroPowerUsed,
-        HandDiscarded
+        HandDiscarded,
+        ActivateUsed
     }
 
     /// <summary>Source handlers translate their input into these facts, without choosing counters.</summary>
