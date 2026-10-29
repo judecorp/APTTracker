@@ -19,14 +19,16 @@ namespace APTTracker.Counters
         public CounterEventKind Kind { get; }
         public string CardId { get; }
         public string CardType { get; }
+        public int? SubOption { get; }
         public IReadOnlyCollection<GameTag> Tags { get; }
 
         public CounterEvent(CounterEventKind kind, string cardId = null,
-            string cardType = null, IEnumerable<GameTag> tags = null)
+            string cardType = null, IEnumerable<GameTag> tags = null, int? subOption = null)
         {
             Kind = kind;
             CardId = cardId;
             CardType = cardType;
+            SubOption = subOption;
             Tags = new List<GameTag>(tags ?? new GameTag[0]).AsReadOnly();
         }
     }
@@ -39,10 +41,13 @@ namespace APTTracker.Counters
         public MatchStrategy CardIdMatch { get; set; } = MatchStrategy.EXACT;
         public string CardType { get; set; }
         public GameTag? RequiredTag { get; set; }
+        public int? SubOption { get; set; }
 
         public bool Matches(CounterEvent counterEvent)
         {
             if (counterEvent.Kind != EventKind)
+                return false;
+            if (SubOption.HasValue && SubOption != counterEvent.SubOption)
                 return false;
             if (CardType != null && CardType != counterEvent.CardType)
                 return false;

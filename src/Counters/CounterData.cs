@@ -20,6 +20,8 @@ namespace APTTracker.Counters
         DISCOVER_COUNT,
         ACTIVATE_COUNT,
         HERO_POWER,
+        CHOOSE_ONE_MANUAL_COUNT,
+        DARK_GIFT_COUNT,
     }
 
     public enum MatchStrategy
@@ -135,7 +137,20 @@ namespace APTTracker.Counters
                         DisplayName = "Choose One",
                         Color = Color.DarkSeaGreen,
                         DefaultVisibility = 0,
+                        IncludeInSummary = false,
                         Rules = { new CounterRule { EventKind = CounterEventKind.CardPlayed, RequiredTag = GameTag.CHOOSE_ONE } }
+                    }
+                },
+                {
+                    CounterKey.CHOOSE_ONE_MANUAL_COUNT,
+                    new CounterData {
+                        DisplayName = "Choose One (Manual)",
+                        Color = Color.DarkSeaGreen,
+                        DefaultVisibility = 0,
+                        Rules = {
+                            new CounterRule { EventKind = CounterEventKind.LogPlay, SubOption = 0 },
+                            new CounterRule { EventKind = CounterEventKind.LogPlay, SubOption = 1 }
+                        }
                     }
                 },
                 {
@@ -154,6 +169,15 @@ namespace APTTracker.Counters
                         Color = Color.Cornsilk,
                         DefaultVisibility = 0,
                         // Activate is WIP: no event rules yet.
+                    }
+                },
+                {
+                    CounterKey.DARK_GIFT_COUNT,
+                    new CounterData {
+                        DisplayName = "Dark Gift",
+                        Color = Color.MediumPurple,
+                        DefaultVisibility = 0,
+                        Rules = { new CounterRule { EventKind = CounterEventKind.LogPlay, CardId = "BG36_Button_DarkGift" } }
                     }
                 },
                 {

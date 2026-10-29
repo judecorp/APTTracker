@@ -15,8 +15,11 @@ namespace APTTracker.Counters
                 return null;
 
             var match = Regex.Match(line, @"cardId=(\S+)");
+            var subOptionMatch = Regex.Match(line, @"\bSubOption=(-?\d+)(?:\s|$)");
+            int? subOption = subOptionMatch.Success && int.TryParse(subOptionMatch.Groups[1].Value, out int value)
+                ? (int?)value : null;
             return match.Success
-                ? new CounterEvent(CounterEventKind.LogPlay, cardId: match.Groups[1].Value)
+                ? new CounterEvent(CounterEventKind.LogPlay, cardId: match.Groups[1].Value, subOption: subOption)
                 : null;
         }
 
