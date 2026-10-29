@@ -17,7 +17,7 @@ namespace APTTracker.Counters
             foreach (var entry in CounterDataProvider.Counters)
             {
                 var definition = entry.Value;
-                if (definition.CountersToSum.Count != 0)
+                if (definition.IsDerived)
                     continue;
 
                 foreach (var rule in definition.Rules)

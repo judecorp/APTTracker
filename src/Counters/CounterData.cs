@@ -22,6 +22,9 @@ namespace APTTracker.Counters
         HERO_POWER,
         CHOOSE_ONE_MANUAL_COUNT,
         DARK_GIFT_COUNT,
+        DISCARD_COUNT,
+        DISCARD_AUTO_COUNT,
+        DISCARD_MANUAL_COUNT,
     }
 
     public enum MatchStrategy
@@ -41,6 +44,8 @@ namespace APTTracker.Counters
         public List<CounterRule> Rules { get; set; } = new List<CounterRule>();
         // Derived counters have no event rules and are evaluated when read.
         public List<CounterKey> CountersToSum { get; set; } = new List<CounterKey>();
+        public List<CounterKey> CountersToSubtract { get; set; } = new List<CounterKey>();
+        public bool IsDerived => CountersToSum.Count != 0 || CountersToSubtract.Count != 0;
     }
 
     public static class CounterDataProvider
@@ -160,6 +165,41 @@ namespace APTTracker.Counters
                         Color = Color.Bisque,
                         DefaultVisibility = 0,
                         Rules = { new CounterRule { EventKind = CounterEventKind.DiscoverCompleted } }
+                    }
+                },
+                {
+                    CounterKey.DISCARD_COUNT,
+                    new CounterData {
+                        DisplayName = "Discard (All)",
+                        Color = Color.LightSalmon,
+                        DefaultVisibility = 0,
+                        IncludeInSummary = false,
+                        Rules = { new CounterRule { EventKind = CounterEventKind.HandDiscarded } }
+                    }
+                },
+                {
+                    CounterKey.DISCARD_AUTO_COUNT,
+                    new CounterData {
+                        DisplayName = "Discard (Auto)",
+                        Color = Color.LightSalmon,
+                        DefaultVisibility = 0,
+                        IncludeInSummary = false,
+                        Rules = {
+                            // Willbreaker's paired spells discard through this enchantment.
+                            new CounterRule { EventKind = CounterEventKind.HandDiscarded, SourceCardId = "BG36_307pe" },
+                            new CounterRule { EventKind = CounterEventKind.HandDiscarded, SourceCardId = "BG36_320" },
+                            new CounterRule { EventKind = CounterEventKind.HandDiscarded, SourceCardId = "BG36_320_G" }
+                        }
+                    }
+                },
+                {
+                    CounterKey.DISCARD_MANUAL_COUNT,
+                    new CounterData {
+                        DisplayName = "Discard (Manual)",
+                        Color = Color.LightSalmon,
+                        DefaultVisibility = 0,
+                        CountersToSum = { CounterKey.DISCARD_COUNT },
+                        CountersToSubtract = { CounterKey.DISCARD_AUTO_COUNT }
                     }
                 },
                 {

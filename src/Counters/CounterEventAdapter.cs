@@ -3,12 +3,24 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Card = Hearthstone_Deck_Tracker.Hearthstone.Card;
+using Hearthstone_Deck_Tracker.Hearthstone.Entities;
 
 namespace APTTracker.Counters
 {
     /// <summary>Source-specific detection belongs here; counter selection belongs in the rules.</summary>
     public static class CounterEventAdapter
     {
+        public static CounterEvent FromHandDiscard(Entity discarded, Entity source)
+        {
+            // HDT also reports hand removals to SETASIDE (e.g. triples) as discards.
+            // Read HDT's current zone; the entity description in a log line may be stale.
+            if (discarded == null || discarded.GetTag(GameTag.ZONE) != (int)Zone.GRAVEYARD)
+                return null;
+
+            return new CounterEvent(CounterEventKind.HandDiscarded,
+                cardId: discarded.CardId, sourceCardId: source?.CardId);
+        }
+
         public static CounterEvent FromPowerLog(string line)
         {
             if (!line.Contains("BLOCK_START BlockType=PLAY"))

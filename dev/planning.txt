@@ -1,7 +1,6 @@
 Bug fixes:
 	- phantom spell at start of game in aberration lobbies
 	- hero choice counts as discover
-	- default values for APM, shop time, and combat time
 
 Spectate feature:
 	- need to identify battlegrounds game mode while spectating

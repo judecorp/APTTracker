@@ -10,7 +10,8 @@ namespace APTTracker.Counters
         CardPlayed,
         LogPlay,
         DiscoverCompleted,
-        HeroPowerUsed
+        HeroPowerUsed,
+        HandDiscarded
     }
 
     /// <summary>Source handlers translate their input into these facts, without choosing counters.</summary>
@@ -19,15 +20,18 @@ namespace APTTracker.Counters
         public CounterEventKind Kind { get; }
         public string CardId { get; }
         public string CardType { get; }
+        public string SourceCardId { get; }
         public int? SubOption { get; }
         public IReadOnlyCollection<GameTag> Tags { get; }
 
         public CounterEvent(CounterEventKind kind, string cardId = null,
-            string cardType = null, IEnumerable<GameTag> tags = null, int? subOption = null)
+            string cardType = null, IEnumerable<GameTag> tags = null, int? subOption = null,
+            string sourceCardId = null)
         {
             Kind = kind;
             CardId = cardId;
             CardType = cardType;
+            SourceCardId = sourceCardId;
             SubOption = subOption;
             Tags = new List<GameTag>(tags ?? new GameTag[0]).AsReadOnly();
         }
@@ -40,12 +44,15 @@ namespace APTTracker.Counters
         public string CardId { get; set; }
         public MatchStrategy CardIdMatch { get; set; } = MatchStrategy.EXACT;
         public string CardType { get; set; }
+        public string SourceCardId { get; set; }
         public GameTag? RequiredTag { get; set; }
         public int? SubOption { get; set; }
 
         public bool Matches(CounterEvent counterEvent)
         {
             if (counterEvent.Kind != EventKind)
+                return false;
+            if (SourceCardId != null && SourceCardId != counterEvent.SourceCardId)
                 return false;
             if (SubOption.HasValue && SubOption != counterEvent.SubOption)
                 return false;

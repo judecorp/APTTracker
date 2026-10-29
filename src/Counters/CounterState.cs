@@ -36,14 +36,17 @@ namespace APTTracker.Counters
         {
             get
             {
-                if (CounterDataProvider.Counters[key].CountersToSum.Count != 0)
+                var definition = CounterDataProvider.Counters[key];
+                if (definition.IsDerived)
                 {
                     int summedValue = 0;
 
-                    foreach (var subKey in CounterDataProvider.Counters[key].CountersToSum)
+                    foreach (var subKey in definition.CountersToSum)
                     {
                         summedValue += this[subKey];
                     }
+                    foreach (var subKey in definition.CountersToSubtract)
+                        summedValue -= this[subKey];
                     return summedValue;
                 }
 

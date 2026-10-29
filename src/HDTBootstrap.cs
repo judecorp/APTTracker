@@ -3,11 +3,13 @@ using APTTracker.Counters;
 using APTTracker.Overlay;
 using APTTracker.Settings;
 using APTTracker.Tracking;
+using HearthDb.Enums;
 using Hearthstone_Deck_Tracker.API;
 using Hearthstone_Deck_Tracker.Enums;
 using Hearthstone_Deck_Tracker.Plugins;
 using System;
 using System.Reflection;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using Card = Hearthstone_Deck_Tracker.Hearthstone.Card;
@@ -89,6 +91,7 @@ namespace APTTracker
             GameEvents.OnGameStart.Add(GameStart);
             GameEvents.OnGameEnd.Add(GameEnd);
             GameEvents.OnPlayerPlay.Add(OnCardPlayed);
+            GameEvents.OnPlayerHandDiscard.Add(OnHandDiscard);
             GameEvents.OnPlayerHeroPower.Add(OnHeroPower);
             LogEvents.OnPowerLogLine.Add(OnPowerLogLine);
             LogEvents.OnPowerGamestateLogLine.Add(OnPowerGamestateLogLine);
@@ -199,6 +202,26 @@ namespace APTTracker
         private void OnHeroPower()
         {
             ProcessCounterEvent(new CounterEvent(CounterEventKind.HeroPowerUsed));
+        }
+
+        private void OnHandDiscard(Card card)
+        {
+            if (!IsInShop || card == null)
+                return;
+
+            // HDT appends the entity before invoking OnPlayerHandDiscard(Card).
+            var discarded = Core.Game.Player.EntitiesDiscardedFromHand.LastOrDefault();
+            if (discarded == null)
+                return;
+            Core.Game.Entities.TryGetValue(discarded.GetTag(GameTag.LAST_AFFECTED_BY), out var source);
+            var counterEvent = CounterEventAdapter.FromHandDiscard(discarded, source);
+            if (counterEvent == null)
+                return;
+
+            Hearthstone_Deck_Tracker.Utility.Logging.Log.Info(
+                $"[APTTracker] Discard: entity={discarded.Id}, card={discarded.CardId}, " +
+                $"source={source?.CardId ?? "unknown"} (entity={source?.Id.ToString() ?? "unknown"})");
+            ProcessCounterEvent(counterEvent);
         }
 
         private void RefreshCounters()
