@@ -29,7 +29,7 @@ namespace APTTracker.Settings
                 CounterVisibility = new Dictionary<CounterKey, int>();
                 foreach (var kvp in CounterDataProvider.Counters)
                 {
-                    // Map bool DefaultVisibility to int (1 for true, 0 for false)
+                    // Copy the counter's three-state default visibility.
                     CounterVisibility[kvp.Key] = kvp.Value.DefaultVisibility;
                 }
             }
@@ -37,6 +37,8 @@ namespace APTTracker.Settings
 
         public const double MinimumScale = 0.5;
         public const double MaximumScale = 2.0;
+        public const double DefaultPositionLeftPercent = 0.75351745700885875;
+        public const double DefaultPositionTopPercent = 0.0;
 
         public static double ClampScale(double value)
         {
@@ -50,14 +52,14 @@ namespace APTTracker.Settings
             set => SetProperty(ref _scale, ClampScale(value));
         }
 
-        private double _positionLeftPercent = -1.0;
+        private double _positionLeftPercent = DefaultPositionLeftPercent;
         public double PositionLeftPercent
         {
             get => _positionLeftPercent;
             set => SetProperty(ref _positionLeftPercent, value);
         }
 
-        private double _positionTopPercent = -1.0;
+        private double _positionTopPercent = DefaultPositionTopPercent;
         public double PositionTopPercent
         {
             get => _positionTopPercent;

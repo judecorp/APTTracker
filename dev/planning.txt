@@ -16,6 +16,9 @@ Defaults:
 	- better default position
 	- improve colors/counter ordering
 
+- add choose one (auto)
+- clean up logging
+
 Bug:
 	- plugin goes to mainmenu control immediately when game ends. Should wait until user goes to mainmenu
-
+	- should only open when enter battlegrounds from main menu

@@ -37,7 +37,7 @@ namespace APTTracker.Counters
     public class CounterData
     {
         public string DisplayName { get; set; }
-        public int DefaultVisibility { get; set; } = 2; // 0 = hidden, 1 = hover, 2 = always
+        public int DefaultVisibility { get; set; } = 1; // 0 = hidden, 1 = hover, 2 = always
         public Color Color { get; set; }
         public bool IncludeInSummary { get; set; } = true;
         // Rules are alternatives; each rule combines its conditions with AND.
@@ -141,7 +141,6 @@ namespace APTTracker.Counters
                     new CounterData {
                         DisplayName = "Choose One",
                         Color = Color.DarkSeaGreen,
-                        DefaultVisibility = 0,
                         IncludeInSummary = false,
                         Rules = { new CounterRule { EventKind = CounterEventKind.CardPlayed, RequiredTag = GameTag.CHOOSE_ONE } }
                     }
@@ -163,7 +162,6 @@ namespace APTTracker.Counters
                     new CounterData {
                         DisplayName = "Discover",
                         Color = Color.Bisque,
-                        DefaultVisibility = 0,
                         Rules = { new CounterRule { EventKind = CounterEventKind.DiscoverCompleted } }
                     }
                 },
@@ -172,7 +170,6 @@ namespace APTTracker.Counters
                     new CounterData {
                         DisplayName = "Discard (All)",
                         Color = Color.LightSalmon,
-                        DefaultVisibility = 0,
                         IncludeInSummary = false,
                         Rules = { new CounterRule { EventKind = CounterEventKind.HandDiscarded } }
                     }
@@ -207,7 +204,6 @@ namespace APTTracker.Counters
                     new CounterData {
                         DisplayName = "Activate",
                         Color = Color.Cornsilk,
-                        DefaultVisibility = 0,
                         Rules = { new CounterRule { EventKind = CounterEventKind.ActivateUsed } }
                     }
                 },
@@ -216,7 +212,6 @@ namespace APTTracker.Counters
                     new CounterData {
                         DisplayName = "Dark Gift",
                         Color = Color.MediumPurple,
-                        DefaultVisibility = 0,
                         Rules = { new CounterRule { EventKind = CounterEventKind.LogPlay, CardId = "BG36_Button_DarkGift" } }
                     }
                 },

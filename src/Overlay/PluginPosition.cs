@@ -13,8 +13,8 @@ namespace APTTracker.Overlay
             // Clamping must not overwrite the preferred position: resizing back restores it.
             var settings = AppSettings.Default;
             UpdatePosition(element,
-                HasSavedPosition ? settings.PositionLeftPercent : 0.7,
-                HasSavedPosition ? settings.PositionTopPercent : 0.0);
+                HasSavedPosition ? settings.PositionLeftPercent : AppSettings.DefaultPositionLeftPercent,
+                HasSavedPosition ? settings.PositionTopPercent : AppSettings.DefaultPositionTopPercent);
         }
 
         private static Size GetViewportSize(FrameworkElement element = null)
