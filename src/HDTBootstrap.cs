@@ -149,7 +149,8 @@ namespace APTTracker
 
         public void OnButtonPress()
         {
-            if (!IsInGame)
+            // The debug window uses mock counters and is available outside a game.
+            if (!_isLoaded)
                 return;
             if (_debugWindow == null || !_debugWindow.IsLoaded)
             {
