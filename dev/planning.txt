@@ -5,14 +5,17 @@ Spectate feature:
 
 Release:
 	- test release build
-	- make readme
 	- GitHub release
 	- make GitHub public
 
 Update:
-	- update notification
-		- query GitHub
-		- show UI with link
+	- finish and test update notification
 
+Defaults:
+	- tune default counter vis.
+	- better default position
+	- improve colors/counter ordering
 
+Bug:
+	- plugin goes to mainmenu control immediately when game ends. Should wait until user goes to mainmenu
 
