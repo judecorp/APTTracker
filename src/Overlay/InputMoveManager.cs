@@ -74,9 +74,8 @@ namespace APTTracker.Overlay
                     _selected = false;
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                System.Diagnostics.Debug.WriteLine($"[InputMoveManager] LmbDown error: {ex.Message}");
                 _selected = false;
             }
         }
@@ -112,9 +111,8 @@ namespace APTTracker.Overlay
                     // Ignore coordinate conversion errors
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                System.Diagnostics.Debug.WriteLine($"[InputMoveManager] MouseMoved error: {ex.Message}");
             }
         }
 

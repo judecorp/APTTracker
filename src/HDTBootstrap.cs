@@ -225,9 +225,6 @@ namespace APTTracker
             if (counterEvent == null)
                 return;
 
-            Hearthstone_Deck_Tracker.Utility.Logging.Log.Info(
-                $"[APTTracker] Discard: entity={discarded.Id}, card={discarded.CardId}, " +
-                $"source={source?.CardId ?? "unknown"} (entity={source?.Id.ToString() ?? "unknown"})");
             ProcessCounterEvent(counterEvent);
         }
 

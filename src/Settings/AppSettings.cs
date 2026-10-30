@@ -133,9 +133,8 @@ namespace APTTracker.Settings
                 }
                 catch (Exception ex)
                 {
-                    // Log the exception (e.g., HearthstoneDeckTracker.Log.Error(ex, "Failed to load settings"))
-                    // For now, just print to console for debugging
-                    Console.WriteLine($"Error loading settings: {ex.Message}");
+                    Hearthstone_Deck_Tracker.Utility.Logging.Log.Warn(
+                        $"[APTTracker] Failed to load settings; using defaults. {ex}");
                     return new AppSettings(); // Return new settings on error
                 }
             }

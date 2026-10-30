@@ -24,7 +24,8 @@ namespace APTTracker.Controls
             }
             catch (System.Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"[APTTracker] Could not open update link: {ex.Message}");
+                Hearthstone_Deck_Tracker.Utility.Logging.Log.Warn(
+                    $"[APTTracker] Could not open update link. {ex}");
             }
             e.Handled = true;
         }
