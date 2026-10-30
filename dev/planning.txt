@@ -11,12 +11,6 @@ Release:
 Update:
 	- finish and test update notification
 
-Defaults:
-	- tune default counter vis.
-	- better default position
-	- improve colors/counter ordering
-
-- add choose one (auto)
 - clean up logging
 
 Bug:

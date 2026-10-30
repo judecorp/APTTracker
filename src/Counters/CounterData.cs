@@ -105,7 +105,6 @@ namespace APTTracker.Counters
                     new CounterData {
                         DisplayName = "Spell",
                         Color = Color.FromArgb(0x8D, 0xB9, 0xF4), // #8DB9F4 blue
-                        DefaultVisibility = 1,
                         IncludeInSummary = false,
                         CountersToSum = { CounterKey.TAVERN_SPELLS, CounterKey.NON_TAVERN_SPELLS }
                     }
@@ -123,6 +122,7 @@ namespace APTTracker.Counters
                     new CounterData {
                         DisplayName = "Non-Tavern Spell",
                         Color = Color.FromArgb(0xC3, 0xDC, 0xFF), // #C3DCFF light blue
+                        DefaultVisibility = 0,
                         Rules = { new CounterRule { EventKind = CounterEventKind.CardPlayed, CardType = "Spell" } }
                     }
                 },
