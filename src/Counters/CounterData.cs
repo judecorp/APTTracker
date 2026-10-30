@@ -6,27 +6,27 @@ namespace APTTracker.Counters
 {
     public enum CounterKey
     {
-        UNITS_PLAYED,
-        TAVERN_SPELLS,
-        NON_TAVERN_SPELLS,
-        BUY_MINION_COUNT,
-        BUY_SPELL_COUNT,
-        BUY_CARD_COUNT,
-        SELL_MINION_COUNT,
-        REFRESH_COUNT,
-        FREEZE_COUNT,
-        LEVELED_UP,
-        CHOOSE_ONE_COUNT,
-        DISCOVER_COUNT,
-        ACTIVATE_COUNT,
+        PLAY_MINION,
+        TAVERN_SPELL,
+        NON_TAVERN_SPELL,
+        BUY_MINION,
+        BUY_SPELL,
+        BUY_CARD,
+        SELL_MINION,
+        REFRESH,
+        FREEZE,
+        LEVEL_UP,
+        CHOOSE_ONE,
+        DISCOVER,
+        ACTIVATE,
         HERO_POWER,
-        CHOOSE_ONE_MANUAL_COUNT,
-        DARK_GIFT_COUNT,
-        DISCARD_COUNT,
-        DISCARD_AUTO_COUNT,
-        DISCARD_MANUAL_COUNT,
-        SPELL_COUNT,
-        CHOOSE_ONE_AUTO_COUNT,
+        CHOOSE_ONE_MANUAL,
+        DARK_GIFT,
+        DISCARD,
+        DISCARD_AUTO,
+        DISCARD_MANUAL,
+        SPELL,
+        CHOOSE_ONE_AUTO,
     }
 
     public enum MatchStrategy
@@ -57,15 +57,15 @@ namespace APTTracker.Counters
         public static readonly Dictionary<CounterKey, CounterData> Counters = new Dictionary<CounterKey, CounterData>
             {
                 {
-                    CounterKey.BUY_CARD_COUNT,
+                    CounterKey.BUY_CARD,
                     new CounterData {
                         DisplayName = "Buy Card",
                         Color = Color.FromArgb(0x93, 0xDB, 0xA5), // #93DBA5 leaf green
-                        CountersToSum = { CounterKey.BUY_MINION_COUNT, CounterKey.BUY_SPELL_COUNT }
+                        CountersToSum = { CounterKey.BUY_MINION, CounterKey.BUY_SPELL }
                     }
                 },
                 {
-                    CounterKey.BUY_MINION_COUNT,
+                    CounterKey.BUY_MINION,
                     new CounterData {
                         DisplayName = "Buy Minion",
                         Color = Color.FromArgb(0x56, 0xBA, 0x78), // #56BA78 deeper green
@@ -75,7 +75,7 @@ namespace APTTracker.Counters
                     }
                 },
                 {
-                    CounterKey.BUY_SPELL_COUNT,
+                    CounterKey.BUY_SPELL,
                     new CounterData {
                         DisplayName = "Buy Spell",
                         Color = Color.FromArgb(0xC4, 0xF3, 0xD0), // #C4F3D0 light green
@@ -85,7 +85,7 @@ namespace APTTracker.Counters
                     }
                 },
                 {
-                    CounterKey.UNITS_PLAYED,
+                    CounterKey.PLAY_MINION,
                     new CounterData {
                         DisplayName = "Play Minion",
                         Color = Color.FromArgb(0xFF, 0xC6, 0x81), // #FFC681 apricot
@@ -93,7 +93,7 @@ namespace APTTracker.Counters
                     }
                 },
                 {
-                    CounterKey.SELL_MINION_COUNT,
+                    CounterKey.SELL_MINION,
                     new CounterData {
                         DisplayName = "Sell Minion",
                         Color = Color.FromArgb(0xEE, 0x82, 0x4B), // #EE824B deeper orange
@@ -101,16 +101,16 @@ namespace APTTracker.Counters
                     }
                 },
                 {
-                    CounterKey.SPELL_COUNT,
+                    CounterKey.SPELL,
                     new CounterData {
                         DisplayName = "Spell",
                         Color = Color.FromArgb(0x8D, 0xB9, 0xF4), // #8DB9F4 blue
                         IncludeInSummary = false,
-                        CountersToSum = { CounterKey.TAVERN_SPELLS, CounterKey.NON_TAVERN_SPELLS }
+                        CountersToSum = { CounterKey.TAVERN_SPELL, CounterKey.NON_TAVERN_SPELL }
                     }
                 },
                 {
-                    CounterKey.TAVERN_SPELLS,
+                    CounterKey.TAVERN_SPELL,
                     new CounterData {
                         DisplayName = "Tavern Spell",
                         Color = Color.FromArgb(0x5C, 0x90, 0xE0), // #5C90E0 deeper blue
@@ -118,7 +118,7 @@ namespace APTTracker.Counters
                     }
                 },
                 {
-                    CounterKey.NON_TAVERN_SPELLS,
+                    CounterKey.NON_TAVERN_SPELL,
                     new CounterData {
                         DisplayName = "Non-Tavern Spell",
                         Color = Color.FromArgb(0xC3, 0xDC, 0xFF), // #C3DCFF light blue
@@ -127,7 +127,7 @@ namespace APTTracker.Counters
                     }
                 },
                 {
-                    CounterKey.REFRESH_COUNT,
+                    CounterKey.REFRESH,
                     new CounterData {
                         DisplayName = "Refresh",
                         Color = Color.FromArgb(0x83, 0xD5, 0xC9), // #83D5C9 teal
@@ -135,7 +135,7 @@ namespace APTTracker.Counters
                     }
                 },
                 {
-                    CounterKey.DISCOVER_COUNT,
+                    CounterKey.DISCOVER,
                     new CounterData {
                         DisplayName = "Discover",
                         Color = Color.FromArgb(0xF3, 0xF5, 0x9B), // #F3F59B lemon yellow
@@ -143,7 +143,7 @@ namespace APTTracker.Counters
                     }
                 },
                 {
-                    CounterKey.CHOOSE_ONE_COUNT,
+                    CounterKey.CHOOSE_ONE,
                     new CounterData {
                         DisplayName = "Choose-one",
                         Color = Color.FromArgb(0xD4, 0xAD, 0x88), // #D4AD88 warm brown
@@ -152,18 +152,18 @@ namespace APTTracker.Counters
                     }
                 },
                 {
-                    CounterKey.CHOOSE_ONE_AUTO_COUNT,
+                    CounterKey.CHOOSE_ONE_AUTO,
                     new CounterData {
                         DisplayName = "Choose-one (Auto)",
                         Color = Color.FromArgb(0xB8, 0x8B, 0x62), // #B88B62 deeper brown
                         DefaultVisibility = 0,
                         IncludeInSummary = false,
-                        CountersToSum = { CounterKey.CHOOSE_ONE_COUNT },
-                        CountersToSubtract = { CounterKey.CHOOSE_ONE_MANUAL_COUNT }
+                        CountersToSum = { CounterKey.CHOOSE_ONE },
+                        CountersToSubtract = { CounterKey.CHOOSE_ONE_MANUAL }
                     }
                 },
                 {
-                    CounterKey.CHOOSE_ONE_MANUAL_COUNT,
+                    CounterKey.CHOOSE_ONE_MANUAL,
                     new CounterData {
                         DisplayName = "Choose-one (Manual)",
                         Color = Color.FromArgb(0xF1, 0xD5, 0xB8), // #F1D5B8 light brown
@@ -175,7 +175,7 @@ namespace APTTracker.Counters
                     }
                 },
                 {
-                    CounterKey.DISCARD_COUNT,
+                    CounterKey.DISCARD,
                     new CounterData {
                         DisplayName = "Discard",
                         Color = Color.FromArgb(0xC5, 0xA0, 0xEE), // #C5A0EE purple
@@ -184,7 +184,7 @@ namespace APTTracker.Counters
                     }
                 },
                 {
-                    CounterKey.DISCARD_AUTO_COUNT,
+                    CounterKey.DISCARD_AUTO,
                     new CounterData {
                         DisplayName = "Discard (Auto)",
                         Color = Color.FromArgb(0xA7, 0x78, 0xDF), // #A778DF deeper purple
@@ -200,17 +200,17 @@ namespace APTTracker.Counters
                     }
                 },
                 {
-                    CounterKey.DISCARD_MANUAL_COUNT,
+                    CounterKey.DISCARD_MANUAL,
                     new CounterData {
                         DisplayName = "Discard (Manual)",
                         Color = Color.FromArgb(0xE5, 0xD0, 0xFF), // #E5D0FF light purple
                         DefaultVisibility = 0,
-                        CountersToSum = { CounterKey.DISCARD_COUNT },
-                        CountersToSubtract = { CounterKey.DISCARD_AUTO_COUNT }
+                        CountersToSum = { CounterKey.DISCARD },
+                        CountersToSubtract = { CounterKey.DISCARD_AUTO }
                     }
                 },
                 {
-                    CounterKey.ACTIVATE_COUNT,
+                    CounterKey.ACTIVATE,
                     new CounterData {
                         DisplayName = "Activate",
                         Color = Color.FromArgb(0xFF, 0x8F, 0x83), // #FF8F83 bright coral
@@ -218,7 +218,7 @@ namespace APTTracker.Counters
                     }
                 },
                 {
-                    CounterKey.LEVELED_UP,
+                    CounterKey.LEVEL_UP,
                     new CounterData {
                         DisplayName = "Level Up",
                         Color = Color.FromArgb(0xF2, 0xCF, 0x75), // #F2CF75 gold
@@ -226,7 +226,7 @@ namespace APTTracker.Counters
                     }
                 },
                 {
-                    CounterKey.DARK_GIFT_COUNT,
+                    CounterKey.DARK_GIFT,
                     new CounterData {
                         DisplayName = "Dark Gift",
                         Color = Color.FromArgb(0xE6, 0x53, 0x70), // #85001b deeper crimson
@@ -242,7 +242,7 @@ namespace APTTracker.Counters
                     }
                 },
                 {
-                    CounterKey.FREEZE_COUNT,
+                    CounterKey.FREEZE,
                     new CounterData {
                         DisplayName = "Freeze",
                         Color = Color.FromArgb(0xA2, 0xE2, 0xF5), // #A2E2F5 ice blue
