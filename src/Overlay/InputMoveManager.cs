@@ -127,6 +127,16 @@ namespace APTTracker.Overlay
                 if (pos.X < 0 || pos.X > control.ActualWidth || pos.Y < 0 || pos.Y > control.ActualHeight)
                     return false;
 
+                // Hyperlinks are content elements, so the visual-tree walk below cannot see them.
+                var input = control.InputHitTest(pos) as DependencyObject;
+                while (input is System.Windows.ContentElement content)
+                {
+                    if (content is System.Windows.Documents.Hyperlink)
+                        return false;
+                    input = ContentOperations.GetParent(content)
+                        ?? (content as FrameworkContentElement)?.Parent;
+                }
+
                 // Hit‑test the point inside the element
                 var hit = System.Windows.Media.VisualTreeHelper.HitTest(control, new System.Windows.Point(pos.X, pos.Y))?.VisualHit;
 

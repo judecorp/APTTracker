@@ -7,7 +7,7 @@
     xmlns:controls="clr-namespace:APTTracker.Controls"
     xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
     mc:Ignorable="d"
-    MinWidth="225"
+    Width="225"
     MouseEnter="Plugin_MouseEnter"
     MouseLeave="Plugin_MouseLeave">
 
@@ -45,12 +45,15 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Grid>
         <!-- Main Content Area -->
         <controls:PlugInDisplayControl x:Name="DisplayPanel"/>
+        <controls:MainMenuControl x:Name="MainMenuPanel" Visibility="Collapsed"/>
         <controls:SettingsControl x:Name="SettingsPanel" Visibility="Collapsed"/>
         <controls:AchievementsControl x:Name="AchievementsPanel" Visibility="Collapsed"/>
         <controls:AboutControl x:Name="AboutPanel" Visibility="Collapsed"/>
         
         <!-- Navigation Buttons Overlay (always visible) -->
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,2,4,0" Panel.ZIndex="100">
+            <controls:UpdateNoticeControl x:Name="HeaderUpdateNotice" Visibility="Collapsed"
+                                          VerticalAlignment="Center" Margin="0,-2,6,0"/>
             <Button x:Name="AboutButton" Click="AboutButton_Click" Style="{StaticResource HeaderButtonStyle}" Margin="0,0,2,0" MouseEnter="HeaderButton_MouseEnter" MouseLeave="HeaderButton_MouseLeave" Tag="HelpIcon">
                 <iconPacks:PackIconMaterial x:Name="HelpIcon" Kind="HelpCircle" Foreground="#888888" Width="12" Height="12"/>
             </Button>

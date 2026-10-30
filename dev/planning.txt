@@ -1,27 +1,18 @@
-Bug fixes:
-	- phantom spell at start of game in aberration lobbies
-	- hero choice counts as discover
-
 Spectate feature:
 	- need to identify battlegrounds game mode while spectating
 	- do not update highest APT while spectating
 	- test spectating... do all tracker features work while spectating?
 
-Action tracking specificity...:
-	- auto choose one vs manual choose one
-	- activate
-	- manual discard 
-	- manual discard vs auto discard
-	- dark gift button
-
 Release:
 	- test release build
 	- make readme
+	- GitHub release
+	- make GitHub public
+
+Update:
 	- update notification
 		- query GitHub
 		- show UI with link
-	- install script
-	- GitHub release
-	- make GitHub public
+
 
 

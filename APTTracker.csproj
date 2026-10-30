@@ -103,6 +103,8 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="src\Controls\MainMenuControl.xaml.cs" />
+    <Compile Include="src\Controls\UpdateNoticeControl.xaml.cs" />
     <Compile Include="src\Controls\PlugInDisplayControl.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -137,6 +139,8 @@
     <Compile Include="src\Counters\RankSystem.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="src\Controls\MainMenuControl.xaml" />
+    <Page Include="src\Controls\UpdateNoticeControl.xaml" />
     <Page Include="src\Controls\PlugInDisplayControl.xaml">
       <SubType>Designer</SubType>
     </Page>

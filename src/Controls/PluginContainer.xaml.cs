@@ -24,6 +24,7 @@ namespace APTTracker.Controls
         private readonly CounterState _state;
         private Canvas _positionCanvas;
         private bool _positionUpdatePending;
+        private bool _isMainMenu;
 
         private void QueuePositionUpdate()
         {
@@ -122,12 +123,21 @@ namespace APTTracker.Controls
             _achievementsControl?.RefreshHighestApt();
         }
 
+        public void SetMainMenu(bool isMainMenu)
+        {
+            _isMainMenu = isMainMenu;
+            ShowDisplay();
+        }
+
         public void ShowDisplay()
         {
             _settingsControl.Visibility = Visibility.Collapsed;
             _achievementsControl.Visibility = Visibility.Collapsed;
             _aboutControl.Visibility = Visibility.Collapsed;
-            _displayControl.Visibility = Visibility.Visible;
+            _displayControl.Visibility = _isMainMenu ? Visibility.Collapsed : Visibility.Visible;
+            MainMenuPanel.Visibility = _isMainMenu ? Visibility.Visible : Visibility.Collapsed;
+            HeaderUpdateNotice.Visibility = _isMainMenu && UpdateNoticeControl.IsUpdateAvailable
+                ? Visibility.Visible : Visibility.Collapsed;
             _displayControl.ApplyVisibilitySettings();
             _backButton.Visibility = Visibility.Collapsed;
         }
@@ -135,6 +145,8 @@ namespace APTTracker.Controls
         private void ShowSettings()
         {
             _displayControl.Visibility = Visibility.Collapsed;
+            MainMenuPanel.Visibility = Visibility.Collapsed;
+            HeaderUpdateNotice.Visibility = Visibility.Collapsed;
             _achievementsControl.Visibility = Visibility.Collapsed;
             _aboutControl.Visibility = Visibility.Collapsed;
             _settingsControl.Visibility = Visibility.Visible;
@@ -144,6 +156,8 @@ namespace APTTracker.Controls
         private void ShowAchievements()
         {
             _displayControl.Visibility = Visibility.Collapsed;
+            MainMenuPanel.Visibility = Visibility.Collapsed;
+            HeaderUpdateNotice.Visibility = Visibility.Collapsed;
             _settingsControl.Visibility = Visibility.Collapsed;
             _aboutControl.Visibility = Visibility.Collapsed;
             _achievementsControl.Visibility = Visibility.Visible;
@@ -153,6 +167,8 @@ namespace APTTracker.Controls
         private void ShowAbout()
         {
             _displayControl.Visibility = Visibility.Collapsed;
+            MainMenuPanel.Visibility = Visibility.Collapsed;
+            HeaderUpdateNotice.Visibility = Visibility.Collapsed;
             _settingsControl.Visibility = Visibility.Collapsed;
             _achievementsControl.Visibility = Visibility.Collapsed;
             _aboutControl.Visibility = Visibility.Visible;

@@ -1,0 +1,9 @@
+<TextBlock x:Class="APTTracker.Controls.UpdateNoticeControl"
+           xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+           xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+           FontSize="10"
+           TextWrapping="Wrap">
+    <Hyperlink NavigateUri="https://github.com/judecorp/HDTPlugin/releases/latest"
+               Foreground="#42A5F5"
+               RequestNavigate="Update_RequestNavigate">v0.2.0 is available</Hyperlink>
+</TextBlock>

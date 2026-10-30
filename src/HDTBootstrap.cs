@@ -66,12 +66,9 @@ namespace APTTracker
 
         private void SetIdleOverlayState()
         {
-#if DEBUG
             _inputMoveManager.Enable();
+            _pluginContainer.SetMainMenu(true);
             _pluginContainer.Visibility = Visibility.Visible;
-#else
-            _pluginContainer.Visibility = Visibility.Collapsed;
-#endif
         }
 
         private void RemoveOverlay()
@@ -116,6 +113,13 @@ namespace APTTracker
         {
             if (!IsInGame || string.IsNullOrEmpty(line))
                 return;
+            // This callback receives the processed PowerTaskList stream, after setup animations.
+            if (PhaseLogParser.IsMainAction(line))
+            {
+                if (_session.BeginTracking())
+                    RefreshTiming();
+                return;
+            }
             if (PhaseLogParser.TryGetTurn(line, out int turn))
             {
                 if (_session.ChangePhase(turn) && _session.IsInShop)
@@ -164,9 +168,11 @@ namespace APTTracker
             _session.Stop();
             if (!IsSupportedGame())
             {
-                SetIdleOverlayState();
+                _pluginContainer.Visibility = Visibility.Collapsed;
+                _inputMoveManager.Disable();
                 return;
             }
+            _pluginContainer.SetMainMenu(false);
             _session.Start(AppSettings.Default.HighestApt);
             _inputMoveManager.Enable();
             _pluginContainer.Visibility = Visibility.Visible;
