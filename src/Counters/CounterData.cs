@@ -50,30 +50,14 @@ namespace APTTracker.Counters
 
     public static class CounterDataProvider
     {
-            public static readonly Dictionary<CounterKey, CounterData> Counters = new Dictionary<CounterKey, CounterData>
+        public static readonly Dictionary<CounterKey, CounterData> Counters = new Dictionary<CounterKey, CounterData>
             {
-                { 
-                    CounterKey.UNITS_PLAYED,
-                    new CounterData {
-                        DisplayName = "Minions Played",
-                        Color = Color.LightGreen,
-                        Rules = { new CounterRule { EventKind = CounterEventKind.CardPlayed, CardType = "Minion" } }
-                    } 
-                },
                 {
-                    CounterKey.TAVERN_SPELLS,
+                    CounterKey.BUY_CARD_COUNT,
                     new CounterData {
-                        DisplayName = "Tavern Spells",
-                        Color = Color.LightBlue,
-                        Rules = { new CounterRule { EventKind = CounterEventKind.CardPlayed, CardType = "Battleground_Spell" } }
-                    }
-                },
-                {
-                    CounterKey.NON_TAVERN_SPELLS,
-                    new CounterData {
-                        DisplayName = "Non-Tavern Spells",
-                        Color = Color.LightYellow,
-                        Rules = { new CounterRule { EventKind = CounterEventKind.CardPlayed, CardType = "Spell" } }
+                        DisplayName = "Buy Card",
+                        Color = Color.LightGray,
+                        CountersToSum = { CounterKey.BUY_MINION_COUNT, CounterKey.BUY_SPELL_COUNT }
                     }
                 },
                 {
@@ -97,11 +81,35 @@ namespace APTTracker.Counters
                     }
                 },
                 {
+                    CounterKey.UNITS_PLAYED,
+                    new CounterData {
+                        DisplayName = "Play Minion",
+                        Color = Color.LightGreen,
+                        Rules = { new CounterRule { EventKind = CounterEventKind.CardPlayed, CardType = "Minion" } }
+                    }
+                },
+                {
                     CounterKey.SELL_MINION_COUNT,
                     new CounterData {
                         DisplayName = "Sell Minion",
                         Color = Color.LightSalmon,
                         Rules = { new CounterRule { EventKind = CounterEventKind.LogPlay, CardId = "TB_BaconShop_DragSell" } }
+                    }
+                },
+                {
+                    CounterKey.TAVERN_SPELLS,
+                    new CounterData {
+                        DisplayName = "Tavern Spell",
+                        Color = Color.LightBlue,
+                        Rules = { new CounterRule { EventKind = CounterEventKind.CardPlayed, CardType = "Battleground_Spell" } }
+                    }
+                },
+                {
+                    CounterKey.NON_TAVERN_SPELLS,
+                    new CounterData {
+                        DisplayName = "Non-Tavern Spell",
+                        Color = Color.LightYellow,
+                        Rules = { new CounterRule { EventKind = CounterEventKind.CardPlayed, CardType = "Spell" } }
                     }
                 },
                 {
@@ -113,33 +121,17 @@ namespace APTTracker.Counters
                     }
                 },
                 {
-                    CounterKey.FREEZE_COUNT,
+                    CounterKey.DISCOVER_COUNT,
                     new CounterData {
-                        DisplayName = "Freeze",
-                        Color = Color.LightSteelBlue,
-                        Rules = { new CounterRule { EventKind = CounterEventKind.LogPlay, CardId = "TB_BaconShopLockAll_Button" } }
-                    }
-                },
-                {
-                    CounterKey.LEVELED_UP,
-                    new CounterData {
-                        DisplayName = "Leveled Up",
-                        Color = Color.LightGoldenrodYellow,
-                        Rules = { new CounterRule { EventKind = CounterEventKind.LogPlay, CardId = "TB_BaconShopTechUp", CardIdMatch = MatchStrategy.STARTS_WITH } }
-                    }
-                },
-                {
-                    CounterKey.BUY_CARD_COUNT,
-                    new CounterData {
-                        DisplayName = "Cards Bought",
-                        Color = Color.LightGray,
-                        CountersToSum = { CounterKey.BUY_MINION_COUNT, CounterKey.BUY_SPELL_COUNT }
+                        DisplayName = "Discover",
+                        Color = Color.Bisque,
+                        Rules = { new CounterRule { EventKind = CounterEventKind.DiscoverCompleted } }
                     }
                 },
                 {
                     CounterKey.CHOOSE_ONE_COUNT,
                     new CounterData {
-                        DisplayName = "Choose One",
+                        DisplayName = "Choose-one",
                         Color = Color.DarkSeaGreen,
                         IncludeInSummary = false,
                         Rules = { new CounterRule { EventKind = CounterEventKind.CardPlayed, RequiredTag = GameTag.CHOOSE_ONE } }
@@ -148,7 +140,7 @@ namespace APTTracker.Counters
                 {
                     CounterKey.CHOOSE_ONE_MANUAL_COUNT,
                     new CounterData {
-                        DisplayName = "Choose One (Manual)",
+                        DisplayName = "Choose-one (Manual)",
                         Color = Color.DarkSeaGreen,
                         DefaultVisibility = 0,
                         Rules = {
@@ -158,17 +150,9 @@ namespace APTTracker.Counters
                     }
                 },
                 {
-                    CounterKey.DISCOVER_COUNT,
-                    new CounterData {
-                        DisplayName = "Discover",
-                        Color = Color.Bisque,
-                        Rules = { new CounterRule { EventKind = CounterEventKind.DiscoverCompleted } }
-                    }
-                },
-                {
                     CounterKey.DISCARD_COUNT,
                     new CounterData {
-                        DisplayName = "Discard (All)",
+                        DisplayName = "Discard",
                         Color = Color.LightSalmon,
                         IncludeInSummary = false,
                         Rules = { new CounterRule { EventKind = CounterEventKind.HandDiscarded } }
@@ -182,8 +166,9 @@ namespace APTTracker.Counters
                         DefaultVisibility = 0,
                         IncludeInSummary = false,
                         Rules = {
-                            // Willbreaker's paired spells discard through this enchantment.
+                            // Paired spells discard through an enchantment with this ID.
                             new CounterRule { EventKind = CounterEventKind.HandDiscarded, SourceCardId = "BG36_307pe" },
+                            // Mysterious K'thir
                             new CounterRule { EventKind = CounterEventKind.HandDiscarded, SourceCardId = "BG36_320" },
                             new CounterRule { EventKind = CounterEventKind.HandDiscarded, SourceCardId = "BG36_320_G" }
                         }
@@ -208,6 +193,14 @@ namespace APTTracker.Counters
                     }
                 },
                 {
+                    CounterKey.LEVELED_UP,
+                    new CounterData {
+                        DisplayName = "Level Up",
+                        Color = Color.LightGoldenrodYellow,
+                        Rules = { new CounterRule { EventKind = CounterEventKind.LogPlay, CardId = "TB_BaconShopTechUp", CardIdMatch = MatchStrategy.STARTS_WITH } }
+                    }
+                },
+                {
                     CounterKey.DARK_GIFT_COUNT,
                     new CounterData {
                         DisplayName = "Dark Gift",
@@ -222,7 +215,15 @@ namespace APTTracker.Counters
                         Color = Color.Gainsboro,
                         Rules = { new CounterRule { EventKind = CounterEventKind.HeroPowerUsed } }
                     }
-                }
+                },
+                {
+                    CounterKey.FREEZE_COUNT,
+                    new CounterData {
+                        DisplayName = "Freeze",
+                        Color = Color.LightSteelBlue,
+                        Rules = { new CounterRule { EventKind = CounterEventKind.LogPlay, CardId = "TB_BaconShopLockAll_Button" } }
+                    }
+                },
             };
     }
 }
