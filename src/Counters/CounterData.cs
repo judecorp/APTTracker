@@ -52,13 +52,15 @@ namespace APTTracker.Counters
 
     public static class CounterDataProvider
     {
+        // Light foregrounds for the #1A1A1A panels. Related counters share a hue;
+        // automatic variants are deeper and manual variants lighter for clear separation.
         public static readonly Dictionary<CounterKey, CounterData> Counters = new Dictionary<CounterKey, CounterData>
             {
                 {
                     CounterKey.BUY_CARD_COUNT,
                     new CounterData {
                         DisplayName = "Buy Card",
-                        Color = Color.LightGray,
+                        Color = Color.FromArgb(0x93, 0xDB, 0xA5), // #93DBA5 leaf green
                         CountersToSum = { CounterKey.BUY_MINION_COUNT, CounterKey.BUY_SPELL_COUNT }
                     }
                 },
@@ -66,7 +68,7 @@ namespace APTTracker.Counters
                     CounterKey.BUY_MINION_COUNT,
                     new CounterData {
                         DisplayName = "Buy Minion",
-                        Color = Color.LightCoral,
+                        Color = Color.FromArgb(0x56, 0xBA, 0x78), // #56BA78 deeper green
                         DefaultVisibility = 0,
                         IncludeInSummary = false,
                         Rules = { new CounterRule { EventKind = CounterEventKind.LogPlay, CardId = "TB_BaconShop_DragBuy" } }
@@ -76,7 +78,7 @@ namespace APTTracker.Counters
                     CounterKey.BUY_SPELL_COUNT,
                     new CounterData {
                         DisplayName = "Buy Spell",
-                        Color = Color.LightPink,
+                        Color = Color.FromArgb(0xC4, 0xF3, 0xD0), // #C4F3D0 light green
                         DefaultVisibility = 0,
                         IncludeInSummary = false,
                         Rules = { new CounterRule { EventKind = CounterEventKind.LogPlay, CardId = "TB_BaconShop_DragBuy_Spell" } }
@@ -86,7 +88,7 @@ namespace APTTracker.Counters
                     CounterKey.UNITS_PLAYED,
                     new CounterData {
                         DisplayName = "Play Minion",
-                        Color = Color.LightGreen,
+                        Color = Color.FromArgb(0xFF, 0xC6, 0x81), // #FFC681 apricot
                         Rules = { new CounterRule { EventKind = CounterEventKind.CardPlayed, CardType = "Minion" } }
                     }
                 },
@@ -94,7 +96,7 @@ namespace APTTracker.Counters
                     CounterKey.SELL_MINION_COUNT,
                     new CounterData {
                         DisplayName = "Sell Minion",
-                        Color = Color.LightSalmon,
+                        Color = Color.FromArgb(0xEE, 0x82, 0x4B), // #EE824B deeper orange
                         Rules = { new CounterRule { EventKind = CounterEventKind.LogPlay, CardId = "TB_BaconShop_DragSell" } }
                     }
                 },
@@ -102,7 +104,7 @@ namespace APTTracker.Counters
                     CounterKey.SPELL_COUNT,
                     new CounterData {
                         DisplayName = "Spell",
-                        Color = Color.LightBlue,
+                        Color = Color.FromArgb(0x8D, 0xB9, 0xF4), // #8DB9F4 blue
                         DefaultVisibility = 1,
                         IncludeInSummary = false,
                         CountersToSum = { CounterKey.TAVERN_SPELLS, CounterKey.NON_TAVERN_SPELLS }
@@ -112,7 +114,7 @@ namespace APTTracker.Counters
                     CounterKey.TAVERN_SPELLS,
                     new CounterData {
                         DisplayName = "Tavern Spell",
-                        Color = Color.LightBlue,
+                        Color = Color.FromArgb(0x5C, 0x90, 0xE0), // #5C90E0 deeper blue
                         Rules = { new CounterRule { EventKind = CounterEventKind.CardPlayed, CardType = "Battleground_Spell" } }
                     }
                 },
@@ -120,7 +122,7 @@ namespace APTTracker.Counters
                     CounterKey.NON_TAVERN_SPELLS,
                     new CounterData {
                         DisplayName = "Non-Tavern Spell",
-                        Color = Color.LightYellow,
+                        Color = Color.FromArgb(0xC3, 0xDC, 0xFF), // #C3DCFF light blue
                         Rules = { new CounterRule { EventKind = CounterEventKind.CardPlayed, CardType = "Spell" } }
                     }
                 },
@@ -128,7 +130,7 @@ namespace APTTracker.Counters
                     CounterKey.REFRESH_COUNT,
                     new CounterData {
                         DisplayName = "Refresh",
-                        Color = Color.LightSkyBlue,
+                        Color = Color.FromArgb(0x83, 0xD5, 0xC9), // #83D5C9 teal
                         Rules = { new CounterRule { EventKind = CounterEventKind.LogPlay, CardId = "TB_BaconShop_8p_Reroll_Button" } }
                     }
                 },
@@ -136,7 +138,7 @@ namespace APTTracker.Counters
                     CounterKey.DISCOVER_COUNT,
                     new CounterData {
                         DisplayName = "Discover",
-                        Color = Color.Bisque,
+                        Color = Color.FromArgb(0xF3, 0xF5, 0x9B), // #F3F59B lemon yellow
                         Rules = { new CounterRule { EventKind = CounterEventKind.DiscoverCompleted } }
                     }
                 },
@@ -144,7 +146,7 @@ namespace APTTracker.Counters
                     CounterKey.CHOOSE_ONE_COUNT,
                     new CounterData {
                         DisplayName = "Choose-one",
-                        Color = Color.DarkSeaGreen,
+                        Color = Color.FromArgb(0xD4, 0xAD, 0x88), // #D4AD88 warm brown
                         IncludeInSummary = false,
                         Rules = { new CounterRule { EventKind = CounterEventKind.CardPlayed, RequiredTag = GameTag.CHOOSE_ONE } }
                     }
@@ -153,7 +155,7 @@ namespace APTTracker.Counters
                     CounterKey.CHOOSE_ONE_AUTO_COUNT,
                     new CounterData {
                         DisplayName = "Choose-one (Auto)",
-                        Color = Color.DarkSeaGreen,
+                        Color = Color.FromArgb(0xB8, 0x8B, 0x62), // #B88B62 deeper brown
                         DefaultVisibility = 0,
                         IncludeInSummary = false,
                         CountersToSum = { CounterKey.CHOOSE_ONE_COUNT },
@@ -164,7 +166,7 @@ namespace APTTracker.Counters
                     CounterKey.CHOOSE_ONE_MANUAL_COUNT,
                     new CounterData {
                         DisplayName = "Choose-one (Manual)",
-                        Color = Color.DarkSeaGreen,
+                        Color = Color.FromArgb(0xF1, 0xD5, 0xB8), // #F1D5B8 light brown
                         DefaultVisibility = 0,
                         Rules = {
                             new CounterRule { EventKind = CounterEventKind.LogPlay, SubOption = 0 },
@@ -176,7 +178,7 @@ namespace APTTracker.Counters
                     CounterKey.DISCARD_COUNT,
                     new CounterData {
                         DisplayName = "Discard",
-                        Color = Color.LightSalmon,
+                        Color = Color.FromArgb(0xC5, 0xA0, 0xEE), // #C5A0EE purple
                         IncludeInSummary = false,
                         Rules = { new CounterRule { EventKind = CounterEventKind.HandDiscarded } }
                     }
@@ -185,7 +187,7 @@ namespace APTTracker.Counters
                     CounterKey.DISCARD_AUTO_COUNT,
                     new CounterData {
                         DisplayName = "Discard (Auto)",
-                        Color = Color.LightSalmon,
+                        Color = Color.FromArgb(0xA7, 0x78, 0xDF), // #A778DF deeper purple
                         DefaultVisibility = 0,
                         IncludeInSummary = false,
                         Rules = {
@@ -201,7 +203,7 @@ namespace APTTracker.Counters
                     CounterKey.DISCARD_MANUAL_COUNT,
                     new CounterData {
                         DisplayName = "Discard (Manual)",
-                        Color = Color.LightSalmon,
+                        Color = Color.FromArgb(0xE5, 0xD0, 0xFF), // #E5D0FF light purple
                         DefaultVisibility = 0,
                         CountersToSum = { CounterKey.DISCARD_COUNT },
                         CountersToSubtract = { CounterKey.DISCARD_AUTO_COUNT }
@@ -211,7 +213,7 @@ namespace APTTracker.Counters
                     CounterKey.ACTIVATE_COUNT,
                     new CounterData {
                         DisplayName = "Activate",
-                        Color = Color.Cornsilk,
+                        Color = Color.FromArgb(0xFF, 0x8F, 0x83), // #FF8F83 bright coral
                         Rules = { new CounterRule { EventKind = CounterEventKind.ActivateUsed } }
                     }
                 },
@@ -219,7 +221,7 @@ namespace APTTracker.Counters
                     CounterKey.LEVELED_UP,
                     new CounterData {
                         DisplayName = "Level Up",
-                        Color = Color.LightGoldenrodYellow,
+                        Color = Color.FromArgb(0xF2, 0xCF, 0x75), // #F2CF75 gold
                         Rules = { new CounterRule { EventKind = CounterEventKind.LogPlay, CardId = "TB_BaconShopTechUp", CardIdMatch = MatchStrategy.STARTS_WITH } }
                     }
                 },
@@ -227,7 +229,7 @@ namespace APTTracker.Counters
                     CounterKey.DARK_GIFT_COUNT,
                     new CounterData {
                         DisplayName = "Dark Gift",
-                        Color = Color.MediumPurple,
+                        Color = Color.FromArgb(0xE6, 0x53, 0x70), // #85001b deeper crimson
                         Rules = { new CounterRule { EventKind = CounterEventKind.LogPlay, CardId = "BG36_Button_DarkGift" } }
                     }
                 },
@@ -235,7 +237,7 @@ namespace APTTracker.Counters
                     CounterKey.HERO_POWER,
                     new CounterData {
                         DisplayName = "Hero Power",
-                        Color = Color.Gainsboro,
+                        Color = Color.FromArgb(0xF0, 0xB7, 0xD6), // #F0B7D6 rose
                         Rules = { new CounterRule { EventKind = CounterEventKind.HeroPowerUsed } }
                     }
                 },
@@ -243,7 +245,7 @@ namespace APTTracker.Counters
                     CounterKey.FREEZE_COUNT,
                     new CounterData {
                         DisplayName = "Freeze",
-                        Color = Color.LightSteelBlue,
+                        Color = Color.FromArgb(0xA2, 0xE2, 0xF5), // #A2E2F5 ice blue
                         Rules = { new CounterRule { EventKind = CounterEventKind.LogPlay, CardId = "TB_BaconShopLockAll_Button" } }
                     }
                 },
