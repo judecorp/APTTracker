@@ -142,7 +142,7 @@ namespace APTTracker.Controls
                 _shopTimeText.Text = text;
         }
 
-        public void UpdateCounters(CounterState state)
+        public void UpdateCounters(CounterState state, bool hasNewAptRecord = false)
         {
             _lastState = state;
 
@@ -167,7 +167,7 @@ namespace APTTracker.Controls
 
             _previousTotalActions = totalActions;
 
-            if (totalActions > AppSettings.Default.HighestApt)
+            if (hasNewAptRecord || totalActions > AppSettings.Default.HighestApt)
             {
                 Trophy1.Visibility = Visibility.Visible;
                 Trophy2.Visibility = Visibility.Visible;

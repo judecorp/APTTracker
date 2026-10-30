@@ -19,6 +19,7 @@ namespace APTTracker.Tracking
         public int CombatSeconds { get; private set; }
         public double Apm { get; private set; }
         public int HighestApt { get; private set; }
+        public bool HasNewAptRecord { get; private set; }
 
         public TrackingSession()
         {
@@ -59,7 +60,15 @@ namespace APTTracker.Tracking
 
         public bool Process(CounterEvent counterEvent)
         {
-            return IsInShop && counterEvent != null && _engine.Process(counterEvent);
+            if (!IsInShop || counterEvent == null || !_engine.Process(counterEvent))
+                return false;
+
+            if (Counters.TotalActions > HighestApt)
+            {
+                HighestApt = Counters.TotalActions;
+                HasNewAptRecord = true;
+            }
+            return true;
         }
 
         public bool ChangePhase(int turn)
@@ -84,18 +93,12 @@ namespace APTTracker.Tracking
                 CombatSeconds = 0;
             else
             {
-                StartShop();
+                ResetCounters();
                 ShopSeconds = 0;
                 Apm = 0;
             }
             _phaseClock.Restart();
             return true;
-        }
-
-        private void StartShop()
-        {
-            HighestApt = Math.Max(HighestApt, Counters.TotalActions);
-            ResetCounters();
         }
 
         public void UpdateTiming()
@@ -114,6 +117,7 @@ namespace APTTracker.Tracking
 
         private void ResetCounters()
         {
+            HasNewAptRecord = false;
             foreach (var key in CounterDataProvider.Counters.Keys)
                 Counters[key] = 0;
         }

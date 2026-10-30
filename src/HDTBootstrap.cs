@@ -127,7 +127,10 @@ namespace APTTracker
         private void ProcessCounterEvent(CounterEvent counterEvent)
         {
             if (IsInShop && _session.Process(counterEvent))
+            {
+                SaveHighestApt();
                 RefreshCounters();
+            }
         }
 
         private void OnPowerLogLine(string line)
@@ -145,7 +148,6 @@ namespace APTTracker
             {
                 if (_session.ChangePhase(turn) && _session.IsInShop)
                 {
-                    SaveHighestApt();
                     RefreshCounters();
                 }
                 return;
@@ -263,7 +265,7 @@ namespace APTTracker
 
         private void RefreshCounters()
         {
-            _pluginContainer.DisplayControl.UpdateCounters(_session.Counters);
+            _pluginContainer.DisplayControl.UpdateCounters(_session.Counters, _session.HasNewAptRecord);
         }
 
         private void RefreshTiming()
