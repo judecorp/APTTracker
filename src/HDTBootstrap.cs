@@ -15,7 +15,6 @@ using System.Windows;
 using System.Windows.Controls;
 using Card = Hearthstone_Deck_Tracker.Hearthstone.Card;
 using Core = Hearthstone_Deck_Tracker.API.Core;
-using SceneHandler = Hearthstone_Deck_Tracker.SceneHandler;
 
 namespace APTTracker
 {
@@ -26,6 +25,7 @@ namespace APTTracker
         private DebugWindow _debugWindow;
         private InputMoveManager _inputMoveManager;
         private bool _isLoaded;
+        private bool _isShowingGame;
 
         public string Author => "JudeCorp";
         public string ButtonText => "Open Debug Window";
@@ -63,23 +63,22 @@ namespace APTTracker
             Hearthstone_Deck_Tracker.Utility.Extensions.OverlayExtensions.SetIsOverlayHitTestVisible(_pluginContainer, true);
             PluginPosition.RestorePosition(_pluginContainer);
             _inputMoveManager = new InputMoveManager(_pluginContainer);
-            SetIdleOverlayState();
-        }
-
-        private void SetIdleOverlayState()
-        {
+            _isShowingGame = false;
             _pluginContainer.SetMainMenu(true);
-            UpdateOverlayVisibility();
+            UpdateOverlayState(Core.Game.CurrentMode);
         }
 
-        private void UpdateOverlayVisibility()
+        private void UpdateOverlayState(Mode mode)
         {
-            var scene = SceneHandler.Scene;
-            bool inBattlegrounds = scene == Mode.BACON
-                || (scene == Mode.GAMEPLAY && (IsInGame || Core.Game.IsBattlegroundsMatch))
-                || (scene == null && (
-                    (SceneHandler.LastScene == Mode.BACON && SceneHandler.NextScene == Mode.GAMEPLAY)
-                    || (SceneHandler.LastScene == Mode.GAMEPLAY && SceneHandler.NextScene == Mode.BACON)));
+            // Keep the final counters until HDT reports that gameplay has been left.
+            if (_isShowingGame && !IsInGame && mode != Mode.GAMEPLAY)
+            {
+                _isShowingGame = false;
+                _pluginContainer.SetMainMenu(true);
+            }
+
+            bool inBattlegrounds = mode == Mode.BACON
+                || (mode == Mode.GAMEPLAY && (IsInGame || _isShowingGame || Core.Game.IsBattlegroundsMatch));
             var visibility = Core.Game.IsRunning && inBattlegrounds ? Visibility.Visible : Visibility.Collapsed;
             if (_pluginContainer.Visibility == visibility)
                 return;
@@ -107,6 +106,8 @@ namespace APTTracker
         {
             GameEvents.OnGameStart.Add(GameStart);
             GameEvents.OnGameEnd.Add(GameEnd);
+            GameEvents.OnModeChanged.Add(OnModeChanged);
+            GameEvents.OnInMenu.Add(OnInMenu);
             GameEvents.OnPlayerPlay.Add(OnCardPlayed);
             GameEvents.OnPlayerHandDiscard.Add(OnHandDiscard);
             GameEvents.OnPlayerHeroPower.Add(OnHeroPower);
@@ -161,14 +162,22 @@ namespace APTTracker
 
         public void OnUpdate()
         {
-            if (!_isLoaded)
-                return;
-
-            UpdateOverlayVisibility();
             if (!IsInGame)
                 return;
             _session.UpdateTiming();
             RefreshTiming();
+        }
+
+        private void OnModeChanged(Mode mode)
+        {
+            if (_isLoaded)
+                UpdateOverlayState(mode);
+        }
+
+        private void OnInMenu()
+        {
+            if (_isLoaded)
+                UpdateOverlayState(Core.Game.CurrentMode);
         }
 
         public void OnButtonPress()
@@ -193,12 +202,13 @@ namespace APTTracker
             _session.Stop();
             if (!IsSupportedGame())
             {
-                UpdateOverlayVisibility();
+                UpdateOverlayState(Core.Game.CurrentMode);
                 return;
             }
             _pluginContainer.SetMainMenu(false);
+            _isShowingGame = true;
             _session.Start(AppSettings.Default.HighestApt);
-            UpdateOverlayVisibility();
+            UpdateOverlayState(Core.Game.CurrentMode);
             PluginPosition.RestorePosition(_pluginContainer);
             RefreshCounters();
         }
@@ -208,9 +218,10 @@ namespace APTTracker
             if (!_isLoaded)
                 return;
             _session.Stop();
+            RefreshTiming();
             _debugWindow?.Close();
             _debugWindow = null;
-            SetIdleOverlayState();
+            UpdateOverlayState(Core.Game.CurrentMode);
         }
 
         private void SaveHighestApt()
