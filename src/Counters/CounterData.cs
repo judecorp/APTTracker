@@ -25,6 +25,8 @@ namespace APTTracker.Counters
         DISCARD_COUNT,
         DISCARD_AUTO_COUNT,
         DISCARD_MANUAL_COUNT,
+        SPELL_COUNT,
+        CHOOSE_ONE_AUTO_COUNT,
     }
 
     public enum MatchStrategy
@@ -97,6 +99,16 @@ namespace APTTracker.Counters
                     }
                 },
                 {
+                    CounterKey.SPELL_COUNT,
+                    new CounterData {
+                        DisplayName = "Spell",
+                        Color = Color.LightBlue,
+                        DefaultVisibility = 1,
+                        IncludeInSummary = false,
+                        CountersToSum = { CounterKey.TAVERN_SPELLS, CounterKey.NON_TAVERN_SPELLS }
+                    }
+                },
+                {
                     CounterKey.TAVERN_SPELLS,
                     new CounterData {
                         DisplayName = "Tavern Spell",
@@ -135,6 +147,17 @@ namespace APTTracker.Counters
                         Color = Color.DarkSeaGreen,
                         IncludeInSummary = false,
                         Rules = { new CounterRule { EventKind = CounterEventKind.CardPlayed, RequiredTag = GameTag.CHOOSE_ONE } }
+                    }
+                },
+                {
+                    CounterKey.CHOOSE_ONE_AUTO_COUNT,
+                    new CounterData {
+                        DisplayName = "Choose-one (Auto)",
+                        Color = Color.DarkSeaGreen,
+                        DefaultVisibility = 0,
+                        IncludeInSummary = false,
+                        CountersToSum = { CounterKey.CHOOSE_ONE_COUNT },
+                        CountersToSubtract = { CounterKey.CHOOSE_ONE_MANUAL_COUNT }
                     }
                 },
                 {
