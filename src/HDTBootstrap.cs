@@ -6,6 +6,7 @@ using APTTracker.Tracking;
 using HearthDb.Enums;
 using Hearthstone_Deck_Tracker.API;
 using Hearthstone_Deck_Tracker.Enums;
+using Hearthstone_Deck_Tracker.Enums.Hearthstone;
 using Hearthstone_Deck_Tracker.Plugins;
 using System;
 using System.Reflection;
@@ -14,6 +15,7 @@ using System.Windows;
 using System.Windows.Controls;
 using Card = Hearthstone_Deck_Tracker.Hearthstone.Card;
 using Core = Hearthstone_Deck_Tracker.API.Core;
+using SceneHandler = Hearthstone_Deck_Tracker.SceneHandler;
 
 namespace APTTracker
 {
@@ -56,7 +58,7 @@ namespace APTTracker
 
         private void CreateOverlay()
         {
-            _pluginContainer = new PluginContainer(_session.Counters);
+            _pluginContainer = new PluginContainer(_session.Counters) { Visibility = Visibility.Collapsed };
             Core.OverlayCanvas.Children.Add(_pluginContainer);
             Hearthstone_Deck_Tracker.Utility.Extensions.OverlayExtensions.SetIsOverlayHitTestVisible(_pluginContainer, true);
             PluginPosition.RestorePosition(_pluginContainer);
@@ -66,9 +68,27 @@ namespace APTTracker
 
         private void SetIdleOverlayState()
         {
-            _inputMoveManager.Enable();
             _pluginContainer.SetMainMenu(true);
-            _pluginContainer.Visibility = Visibility.Visible;
+            UpdateOverlayVisibility();
+        }
+
+        private void UpdateOverlayVisibility()
+        {
+            var scene = SceneHandler.Scene;
+            bool inBattlegrounds = scene == Mode.BACON
+                || (scene == Mode.GAMEPLAY && (IsInGame || Core.Game.IsBattlegroundsMatch))
+                || (scene == null && (
+                    (SceneHandler.LastScene == Mode.BACON && SceneHandler.NextScene == Mode.GAMEPLAY)
+                    || (SceneHandler.LastScene == Mode.GAMEPLAY && SceneHandler.NextScene == Mode.BACON)));
+            var visibility = Core.Game.IsRunning && inBattlegrounds ? Visibility.Visible : Visibility.Collapsed;
+            if (_pluginContainer.Visibility == visibility)
+                return;
+
+            _pluginContainer.Visibility = visibility;
+            if (visibility == Visibility.Visible)
+                _inputMoveManager.Enable();
+            else
+                _inputMoveManager.Disable();
         }
 
         private void RemoveOverlay()
@@ -113,7 +133,7 @@ namespace APTTracker
         {
             if (!IsInGame || string.IsNullOrEmpty(line))
                 return;
-            // This callback receives the processed PowerTaskList stream, after setup animations.
+
             if (PhaseLogParser.IsMainAction(line))
             {
                 if (_session.BeginTracking())
@@ -141,6 +161,10 @@ namespace APTTracker
 
         public void OnUpdate()
         {
+            if (!_isLoaded)
+                return;
+
+            UpdateOverlayVisibility();
             if (!IsInGame)
                 return;
             _session.UpdateTiming();
@@ -169,14 +193,12 @@ namespace APTTracker
             _session.Stop();
             if (!IsSupportedGame())
             {
-                _pluginContainer.Visibility = Visibility.Collapsed;
-                _inputMoveManager.Disable();
+                UpdateOverlayVisibility();
                 return;
             }
             _pluginContainer.SetMainMenu(false);
             _session.Start(AppSettings.Default.HighestApt);
-            _inputMoveManager.Enable();
-            _pluginContainer.Visibility = Visibility.Visible;
+            UpdateOverlayVisibility();
             PluginPosition.RestorePosition(_pluginContainer);
             RefreshCounters();
         }

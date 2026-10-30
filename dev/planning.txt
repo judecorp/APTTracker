@@ -10,9 +10,7 @@ Release:
 
 Update:
 	- finish and test update notification
-
-- clean up logging
-
+	
 Bug:
 	- plugin goes to mainmenu control immediately when game ends. Should wait until user goes to mainmenu
 	- should only open when enter battlegrounds from main menu
