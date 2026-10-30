@@ -126,7 +126,7 @@
     <Compile Include="src\Counters\CounterEventAdapter.cs" />
     <Compile Include="src\Counters\CounterState.cs" />
     <Compile Include="src\Settings\AppSettings.cs" />
-    <Compile Include="dev\debug\DebugWindow.xaml.cs">
+    <Compile Include="dev\debug\DebugWindow.xaml.cs" Condition=" '$(Configuration)' == 'Debug' ">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="src\HDTBootstrap.cs" />
@@ -156,7 +156,7 @@
     <Page Include="src\Controls\PluginContainer.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="dev\debug\DebugWindow.xaml">
+    <Page Include="dev\debug\DebugWindow.xaml" Condition=" '$(Configuration)' == 'Debug' ">
       <SubType>Designer</SubType>
     </Page>
     <Page Include="assets\themes\ScrollBars.xaml">
@@ -171,7 +171,8 @@
     <Content Include="libs\HearthDb.dll" />
     <Content Include="libs\HearthstoneDeckTracker.exe" />
     <None Include="packages.config" />
-    <Resource Include="assets\images\*.png" />
+    <Resource Include="assets\images\*.png" Exclude="assets\images\hsplugin.png" />
+    <Resource Include="assets\images\hsplugin.png" Condition=" '$(Configuration)' == 'Debug' " />
   </ItemGroup>
   <Import Project="packages\System.ValueTuple.4.6.2\build\net471\System.ValueTuple.targets" Condition="Exists('packages\System.ValueTuple.4.6.2\build\net471\System.ValueTuple.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

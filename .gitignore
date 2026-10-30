@@ -33,6 +33,12 @@ bld/
 [Ll]og/
 [Ll]ogs/
 
+# Debug window source is maintained alongside the project.
+!/dev/debug/
+/dev/debug/*
+!/dev/debug/DebugWindow.xaml
+!/dev/debug/DebugWindow.xaml.cs
+
 # Visual Studio 2015/2017 cache/options directory
 .vs/
 # Uncomment if you have tasks that create the project's static files in wwwroot

@@ -22,13 +22,19 @@ namespace APTTracker
     {
         private readonly TrackingSession _session = new TrackingSession();
         private PluginContainer _pluginContainer;
+#if DEBUG
         private DebugWindow _debugWindow;
+#endif
         private InputMoveManager _inputMoveManager;
         private bool _isLoaded;
         private bool _isShowingGame;
 
         public string Author => "JudeCorp";
+#if DEBUG
         public string ButtonText => "Open Debug Window";
+#else
+        public string ButtonText => null;
+#endif
         public string Description => "Tracks actions per turn in Battlegrounds";
         public string Name => "APTTracker";
         public Version Version => new Version(Assembly.GetExecutingAssembly()
@@ -51,8 +57,10 @@ namespace APTTracker
         {
             _isLoaded = false;
             _session.Stop();
+#if DEBUG
             _debugWindow?.Close();
             _debugWindow = null;
+#endif
             RemoveOverlay();
         }
 
@@ -184,6 +192,7 @@ namespace APTTracker
 
         public void OnButtonPress()
         {
+#if DEBUG
             // The debug window uses mock counters and is available outside a game.
             if (!_isLoaded)
                 return;
@@ -195,6 +204,7 @@ namespace APTTracker
             }
             else
                 _debugWindow.Activate();
+#endif
         }
 
         private void GameStart()
@@ -221,8 +231,10 @@ namespace APTTracker
                 return;
             _session.Stop();
             RefreshTiming();
+#if DEBUG
             _debugWindow?.Close();
             _debugWindow = null;
+#endif
             UpdateOverlayState(Core.Game.CurrentMode);
         }
 

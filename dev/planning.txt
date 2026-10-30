@@ -3,6 +3,8 @@ Spectate feature:
 	- do not update highest APT while spectating
 	- test spectating... do all tracker features work while spectating?
 
+CI Job
+
 Release:
 	- test release build
 	- GitHub release

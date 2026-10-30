@@ -1,0 +1,111 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media.Imaging;
+using APTTracker.Counters;
+using APTTracker.Overlay;
+using APTTracker.Controls;
+
+namespace APTTracker
+{
+    public partial class DebugWindow : Window
+    {
+        private readonly CounterState _counterState = new CounterState();
+        private readonly Dictionary<CounterKey, TextBlock> _counterLabels = new Dictionary<CounterKey, TextBlock>();
+        private InputMoveManager _inputMoveManager;
+        private PluginContainer _pluginContainer;
+
+        public DebugWindow()
+        {
+            InitializeComponent();
+            
+            _pluginContainer = new PluginContainer(_counterState);
+            PluginCanvas.Children.Add(_pluginContainer);
+
+            // No need for GameCounters initialization – CounterState starts at zero for all counters
+            CreateCounterControls();
+            
+            _inputMoveManager = new InputMoveManager(_pluginContainer);
+            _inputMoveManager.Enable();
+            
+            UpdateDisplay();
+        }
+
+        private void CreateCounterControls()
+        {
+            foreach (var def in CounterDataProvider.Counters)
+            {
+                var key = def.Key;
+                var displayName = def.Value.DisplayName;
+                var grid = new Grid { Margin = new Thickness(0, 5, 0, 0) };
+                grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(120) });
+                grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+
+                var label = new TextBlock { Text = displayName + ":", VerticalAlignment = VerticalAlignment.Center, Foreground = System.Windows.Media.Brushes.White };
+                Grid.SetColumn(label, 0);
+                grid.Children.Add(label);
+
+                var stackPanel = new StackPanel { Orientation = Orientation.Horizontal, HorizontalAlignment = HorizontalAlignment.Right };
+                Grid.SetColumn(stackPanel, 1);
+
+                var valueLabel = new TextBlock { Text = _counterState[key].ToString(), Width = 30, TextAlignment = TextAlignment.Center, VerticalAlignment = VerticalAlignment.Center, Foreground = System.Windows.Media.Brushes.White };
+                _counterLabels[key] = valueLabel;
+
+                stackPanel.Children.Add(CreateButton("-10", -10, key));
+                stackPanel.Children.Add(CreateButton("-1", -1, key));
+                stackPanel.Children.Add(valueLabel);
+                stackPanel.Children.Add(CreateButton("+1", 1, key));
+                stackPanel.Children.Add(CreateButton("+10", 10, key));
+
+                grid.Children.Add(stackPanel);
+                DynamicControlsContainer.Children.Add(grid);
+            }
+        }
+
+        private Button CreateButton(string content, int delta, CounterKey key)
+        {
+            var btn = new Button { Content = content, Width = content.Contains("10") ? 35 : 30, Margin = new Thickness(content.StartsWith("-") ? 0 : 2, 0, 0, 0) };
+            btn.Click += (s, e) => AdjustCounter(key, delta);
+            return btn;
+        }
+
+        private void AdjustCounter(CounterKey key, int delta)
+        {
+            int newValue = Math.Max(0, _counterState[key] + delta);
+            _counterState[key] = newValue;
+            UpdateDisplay();
+        }
+
+        private void UpdateDisplay()
+        {
+            foreach (var kvp in _counterStateSnapshot())
+            {
+                if (_counterLabels.TryGetValue(kvp.Key, out var lbl))
+                    lbl.Text = kvp.Value.ToString();
+            }
+
+            // Directly update the display control with the current CounterState
+            _pluginContainer.DisplayControl.UpdateCounters(_counterState);
+        }
+
+        // Helper to get a snapshot of the current CounterState values
+        private IReadOnlyDictionary<CounterKey, int> _counterStateSnapshot()
+        {
+            // CounterState already provides Snapshot method
+            return _counterState.Snapshot();
+        }
+
+        private void BtnReset_Click(object sender, RoutedEventArgs e)
+        {
+            // Reset all counters to zero (default state)
+            foreach (var key in Enum.GetValues(typeof(CounterKey)))
+            {
+                _counterState[(CounterKey)key] = 0;
+            }
+            UpdateDisplay();
+        }
+    }
+}
