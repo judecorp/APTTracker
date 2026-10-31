@@ -24,12 +24,10 @@
     <Company>JudeCorp Inc.</Company>
     <Product>APTTracker</Product>
     <Copyright>Copyright ©  2026</Copyright>
-    <!-- Change the version here; all assembly version attributes derive from it. -->
-    <Version>0.1.0</Version>
+    <Version>0.2.0</Version>
     <AssemblyVersion>$(Version).0</AssemblyVersion>
     <FileVersion>$(Version).0</FileVersion>
     <InformationalVersion>$(Version)</InformationalVersion>
-    <!-- HDTBootstrap parses this attribute with System.Version. -->
     <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
