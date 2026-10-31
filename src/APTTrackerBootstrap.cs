@@ -164,7 +164,8 @@ namespace APTTracker
         private static bool IsSupportedGame()
         {
             var mode = Core.Game.CurrentGameMode;
-            return mode == GameMode.Battlegrounds || mode == GameMode.Spectator;
+            return mode == GameMode.Battlegrounds
+                || (mode == GameMode.Spectator && Core.Game.IsBattlegroundsMatch);
         }
 
         private bool IsInGame => _isLoaded && _session.IsInGame;
@@ -252,6 +253,8 @@ namespace APTTracker
             _session.Stop();
             if (!IsSupportedGame())
             {
+                _isShowingGame = false;
+                _pluginContainer.SetMainMenu(true);
                 UpdateOverlayState(Core.Game.CurrentMode);
                 return;
             }
