@@ -2,18 +2,22 @@ using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Navigation;
+using APTTracker.Updates;
 
 namespace APTTracker.Controls
 {
     public partial class UpdateNoticeControl : TextBlock
     {
-        // Temporary UI preview state, shared by both update notices and the About icon.
-        public static bool IsUpdateAvailable => true;
-
         public UpdateNoticeControl()
         {
             InitializeComponent();
-            Visibility = IsUpdateAvailable ? Visibility.Visible : Visibility.Collapsed;
+            Visibility = Visibility.Collapsed;
+        }
+
+        internal void SetAvailableUpdate(AvailableUpdate update)
+        {
+            UpdateLink.NavigateUri = update.ReleaseUrl;
+            UpdateText.Text = $"v{update.Version} is available";
         }
 
         private void Update_RequestNavigate(object sender, RequestNavigateEventArgs e)

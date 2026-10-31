@@ -3,6 +3,7 @@ using System.Windows.Controls;
 using MahApps.Metro.IconPacks;
 using APTTracker.Counters;
 using APTTracker.Overlay;
+using APTTracker.Updates;
 using System.Windows.Threading;
 
 namespace APTTracker.Controls
@@ -25,6 +26,7 @@ namespace APTTracker.Controls
         private Canvas _positionCanvas;
         private bool _positionUpdatePending;
         private bool _isMainMenu;
+        private bool _isUpdateAvailable;
 
         private void QueuePositionUpdate()
         {
@@ -117,6 +119,20 @@ namespace APTTracker.Controls
 
         public PlugInDisplayControl DisplayControl => _displayControl;
 
+        internal void SetAvailableUpdate(AvailableUpdate update)
+        {
+            HeaderUpdateNotice.SetAvailableUpdate(update);
+            _isUpdateAvailable = true;
+            RefreshUpdateNotice();
+        }
+
+        private void RefreshUpdateNotice()
+        {
+            HeaderUpdateNotice.Visibility = _isUpdateAvailable && _isMainMenu
+                && MainMenuPanel.Visibility == Visibility.Visible
+                ? Visibility.Visible : Visibility.Collapsed;
+        }
+
         // Expose a refresh for achievement stats (e.g., highest APT)
         public void RefreshAchievements()
         {
@@ -136,8 +152,7 @@ namespace APTTracker.Controls
             _aboutControl.Visibility = Visibility.Collapsed;
             _displayControl.Visibility = _isMainMenu ? Visibility.Collapsed : Visibility.Visible;
             MainMenuPanel.Visibility = _isMainMenu ? Visibility.Visible : Visibility.Collapsed;
-            HeaderUpdateNotice.Visibility = _isMainMenu && UpdateNoticeControl.IsUpdateAvailable
-                ? Visibility.Visible : Visibility.Collapsed;
+            RefreshUpdateNotice();
             _displayControl.ApplyVisibilitySettings();
             _backButton.Visibility = Visibility.Collapsed;
         }

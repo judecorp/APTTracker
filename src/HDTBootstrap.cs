@@ -3,6 +3,7 @@ using APTTracker.Counters;
 using APTTracker.Overlay;
 using APTTracker.Settings;
 using APTTracker.Tracking;
+using APTTracker.Updates;
 using HearthDb.Enums;
 using Hearthstone_Deck_Tracker.API;
 using Hearthstone_Deck_Tracker.Enums;
@@ -11,6 +12,9 @@ using Hearthstone_Deck_Tracker.Plugins;
 using System;
 using System.Reflection;
 using System.Linq;
+using System.Net.Http;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using Card = Hearthstone_Deck_Tracker.Hearthstone.Card;
@@ -28,6 +32,7 @@ namespace APTTracker
         private InputMoveManager _inputMoveManager;
         private bool _isLoaded;
         private bool _isShowingGame;
+        private CancellationTokenSource _updateCheckCancellation;
 
         public string Author => "JudeCorp";
 #if DEBUG
@@ -51,11 +56,44 @@ namespace APTTracker
             RegisterHostCallbacks();
             _pluginContainer.RefreshAchievements();
             RefreshCounters();
+            _updateCheckCancellation = new CancellationTokenSource();
+            _ = CheckForUpdatesAsync(_pluginContainer, _updateCheckCancellation.Token);
+        }
+
+        private async Task CheckForUpdatesAsync(PluginContainer container, CancellationToken cancellationToken)
+        {
+            try
+            {
+                using (var client = new HttpClient { Timeout = TimeSpan.FromSeconds(10) })
+                {
+                    var update = await new UpdateChecker(client).CheckAsync(Version, cancellationToken).ConfigureAwait(false);
+                    if (update == null || cancellationToken.IsCancellationRequested)
+                        return;
+
+                    await container.Dispatcher.InvokeAsync(() =>
+                    {
+                        if (!cancellationToken.IsCancellationRequested)
+                            container.SetAvailableUpdate(update);
+                    });
+                }
+            }
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            {
+                // The plugin was unloaded while the request was in progress.
+            }
+            catch (Exception ex)
+            {
+                Hearthstone_Deck_Tracker.Utility.Logging.Log.Warn(
+                    $"[APTTracker] Could not check for updates. {ex.Message}");
+            }
         }
 
         public void OnUnload()
         {
             _isLoaded = false;
+            _updateCheckCancellation?.Cancel();
+            _updateCheckCancellation?.Dispose();
+            _updateCheckCancellation = null;
             _session.Stop();
 #if DEBUG
             _debugWindow?.Close();
