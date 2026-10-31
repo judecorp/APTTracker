@@ -22,6 +22,18 @@
                             Foreground="White" Margin="0,0,0,0"/>
                 <iconPacks:PackIconMaterial Kind="Trophy" Height="10" Foreground="Gold" VerticalAlignment="Bottom" Margin="0,0,0,10"/>
             </StackPanel>
+            <Image x:Name="HighestRankImage"
+                   Width="80"
+                   Height="80"
+                   HorizontalAlignment="Center"
+                   Stretch="Uniform"
+                   Margin="0,4,0,4"/>
+            <TextBlock x:Name="HighestRankName"
+                       FontSize="14"
+                       FontWeight="Bold"
+                       Foreground="White"
+                       TextAlignment="Center"
+                       TextWrapping="Wrap"/>
         </StackPanel>
     </ScrollViewer>
 </Border>
