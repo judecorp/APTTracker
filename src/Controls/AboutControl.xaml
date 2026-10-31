@@ -10,39 +10,79 @@
     BorderBrush="#AAAAAA"
     BorderThickness="1"
     Padding="8,0,0,8"
-	Margin="0">
+    Margin="0">
 
-	<Border.Resources>
-		<ResourceDictionary
+    <Border.Resources>
+        <ResourceDictionary
             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-			<ResourceDictionary.MergedDictionaries>
-				<ResourceDictionary Source="../../assets/themes/ScrollBars.xaml"/>
-			</ResourceDictionary.MergedDictionaries>
-		</ResourceDictionary>
-	</Border.Resources>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="../../assets/themes/ScrollBars.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Border.Resources>
 
-    <ScrollViewer x:Name="AboutScrollViewer" VerticalScrollBarVisibility="Auto" Margin="0,16,0,0" Padding="0,0,8,0">
+    <ScrollViewer x:Name="AboutScrollViewer"
+            VerticalScrollBarVisibility="Auto"
+            Margin="0,16,0,0"
+            Padding="0,0,8,0">
         <StackPanel>
-            <TextBlock Text="About" FontSize="14" FontWeight="Bold" Foreground="White" Margin="0,0,0,0"/>
-            <TextBlock x:Name="VersionText" FontSize="12" Foreground="#888888" Margin="0,0,0,16"/>
-            <TextBlock Text="Created and maintained by:" FontSize="12" Foreground="White" TextWrapping="Wrap" Margin="0,0,0,8"/>
-            <StackPanel Orientation="Vertical" Margin="0,0,0,0">
-                <Image Source="pack://application:,,,/APTTracker;component/assets/images/JudeCorpLogo.png" Height="32" HorizontalAlignment="Right" Margin="0,0,0,16"/>
-				<TextBlock Text="Report bugs and suggest features at:" FontSize="12" Foreground="White" TextWrapping="Wrap" Margin="0,0,0,8"/>
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,0,16">
-                    <iconPacks:PackIconMaterial Kind="Github" Width="16" Height="16" Foreground="White" Margin="0,0,4,0"/>
+            <TextBlock Text="About"
+                    FontSize="14"
+                    FontWeight="Bold"
+                    Foreground="White"
+                    Margin="0,0,0,0"/>
+            <TextBlock x:Name="VersionText"
+                    FontSize="12"
+                    Foreground="#888888"
+                    Margin="0,0,0,16"/>
+            <TextBlock Text="Created and maintained by:"
+                    FontSize="12"
+                    Foreground="White"
+                    TextWrapping="Wrap"
+                    Margin="0,0,0,8"/>
+            <StackPanel Orientation="Vertical"
+                    Margin="0,0,0,0">
+                <Image Source="pack://application:,,,/APTTracker;component/assets/images/JudeCorpLogo.png"
+                        Height="32"
+                        HorizontalAlignment="Right"
+                        Margin="0,0,0,16"/>
+                <TextBlock Text="Report bugs and suggest features at:"
+                        FontSize="12"
+                        Foreground="White"
+                        TextWrapping="Wrap"
+                        Margin="0,0,0,8"/>
+                <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Right"
+                        Margin="0,0,0,16">
+                    <iconPacks:PackIconMaterial Kind="Github"
+                            Width="16"
+                            Height="16"
+                            Foreground="White"
+                            Margin="0,0,4,0"/>
                     <TextBlock>
-                    <Hyperlink NavigateUri="https://github.com/judecorp/HDTPlugin" RequestNavigate="Hyperlink_RequestNavigate">judecorp/HDTPlugin</Hyperlink>
+                    <Hyperlink NavigateUri="https://github.com/judecorp/APTTracker"
+                                RequestNavigate="Hyperlink_RequestNavigate">judecorp/APTTracker</Hyperlink>
                     </TextBlock>
                 </StackPanel>
-				<TextBlock Text="Support the project by donating:" FontSize="12" Foreground="White" TextWrapping="Wrap" Margin="0,0,0,8"/>
-				<StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
-					<Image Source="pack://application:,,,/APTTracker;component/assets/images/kofi_symbol.png" Height="24" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,4,0"/>
-					<TextBlock VerticalAlignment="Center">
-						<Hyperlink NavigateUri="https://ko-fi.com/judecorp" RequestNavigate="Hyperlink_RequestNavigate">ko-fi.com/judecorp</Hyperlink>
-					</TextBlock>
-				</StackPanel>
+                <TextBlock Text="Support the project by donating:"
+                        FontSize="12"
+                        Foreground="White"
+                        TextWrapping="Wrap"
+                        Margin="0,0,0,8"/>
+                <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Center">
+                    <Image Source="pack://application:,,,/APTTracker;component/assets/images/kofi_symbol.png"
+                            Height="24"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                            Margin="0,0,4,0"/>
+                    <TextBlock VerticalAlignment="Center">
+						<Hyperlink NavigateUri="https://ko-fi.com/judecorp"
+                                RequestNavigate="Hyperlink_RequestNavigate">ko-fi.com/judecorp</Hyperlink>
+                    </TextBlock>
+                </StackPanel>
             </StackPanel>
         </StackPanel>
     </ScrollViewer>

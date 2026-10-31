@@ -1,7 +1,7 @@
-# Rebuild-HDTPlugin.ps1
+# Rebuild-APTTracker.ps1
 
 param(
-    [Parameter()][ValidateSet("Debug","Release")]
+    [Parameter()][ValidateSet("Debug", "Release")]
     [string]$Configuration = "Debug"
 )
 
@@ -16,7 +16,7 @@ if ($hdtProcess) {
 }
 
 # Build the project
-Write-Host "Building HDTPlugin ($Configuration)..."
+Write-Host "Building APTTracker ($Configuration)..."
 Set-Location $PSScriptRoot
 dotnet build APTTracker.csproj --configuration $Configuration --no-incremental
 if ($LASTEXITCODE -ne 0) {
