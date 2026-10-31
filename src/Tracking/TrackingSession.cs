@@ -10,6 +10,7 @@ namespace APTTracker.Tracking
         private readonly Stopwatch _phaseClock = new Stopwatch();
         private int _phaseTurn;
         private bool _hasStartedTracking;
+        private bool _trackAptRecords;
 
         public CounterState Counters { get; } = new CounterState();
         public bool IsInGame { get; private set; }
@@ -26,10 +27,11 @@ namespace APTTracker.Tracking
             _engine = new CounterEngine(Counters);
         }
 
-        public void Start(int highestApt)
+        public void Start(int highestApt, bool trackAptRecords)
         {
             IsInGame = true;
             IsInCombat = false;
+            _trackAptRecords = trackAptRecords;
             HighestApt = highestApt;
             _phaseTurn = 0;
             _hasStartedTracking = false;
@@ -63,7 +65,7 @@ namespace APTTracker.Tracking
             if (!IsInShop || counterEvent == null || !_engine.Process(counterEvent))
                 return false;
 
-            if (Counters.TotalActions > HighestApt)
+            if (_trackAptRecords && Counters.TotalActions > HighestApt)
             {
                 HighestApt = Counters.TotalActions;
                 HasNewAptRecord = true;

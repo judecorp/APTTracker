@@ -167,7 +167,7 @@ namespace APTTracker.Controls
 
             _previousTotalActions = totalActions;
 
-            if (hasNewAptRecord || totalActions > AppSettings.Default.HighestApt)
+            if (hasNewAptRecord)
             {
                 Trophy1.Visibility = Visibility.Visible;
                 Trophy2.Visibility = Visibility.Visible;

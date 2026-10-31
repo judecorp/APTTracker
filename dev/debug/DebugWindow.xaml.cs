@@ -88,7 +88,8 @@ namespace APTTracker
             }
 
             // Directly update the display control with the current CounterState
-            _pluginContainer.DisplayControl.UpdateCounters(_counterState);
+            _pluginContainer.DisplayControl.UpdateCounters(_counterState,
+                _counterState.TotalActions > Settings.AppSettings.Default.HighestApt);
         }
 
         // Helper to get a snapshot of the current CounterState values

@@ -257,7 +257,8 @@ namespace APTTracker
             }
             _pluginContainer.SetMainMenu(false);
             _isShowingGame = true;
-            _session.Start(AppSettings.Default.HighestApt);
+            _session.Start(AppSettings.Default.HighestApt,
+                trackAptRecords: Core.Game.CurrentGameMode == GameMode.Battlegrounds);
             UpdateOverlayState(Core.Game.CurrentMode);
             PluginPosition.RestorePosition(_pluginContainer);
             RefreshCounters();
