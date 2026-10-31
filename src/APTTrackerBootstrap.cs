@@ -22,7 +22,7 @@ using Core = Hearthstone_Deck_Tracker.API.Core;
 
 namespace APTTracker
 {
-    public class HDTBootstrap : IPlugin
+    public class APTTrackerBootstrap : IPlugin
     {
         private readonly TrackingSession _session = new TrackingSession();
         private PluginContainer _pluginContainer;

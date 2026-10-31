@@ -138,7 +138,7 @@
     <Compile Include="dev\debug\DebugWindow.xaml.cs" Condition=" '$(Configuration)' == 'Debug' ">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\HDTBootstrap.cs" />
+    <Compile Include="src\APTTrackerBootstrap.cs" />
     <Compile Include="src\Updates\UpdateChecker.cs" />
     <Compile Include="src\Tracking\TrackingSession.cs" />
     <Compile Include="src\Tracking\PhaseLogParser.cs" />
