@@ -1,4 +1,1 @@
-Spectate feature:
-	- need to identify battlegrounds game mode while spectating
-	- do not update highest APT while spectating
-	- test spectating... do all tracker features work while spectating?
+NONE :D !!!!
