@@ -24,7 +24,7 @@
     <Company>JudeCorp Inc.</Company>
     <Product>APTTracker</Product>
     <Copyright>Copyright ©  2026</Copyright>
-    <Version>0.2.0</Version>
+    <Version>0.2.1</Version>
     <AssemblyVersion>$(Version).0</AssemblyVersion>
     <FileVersion>$(Version).0</FileVersion>
     <InformationalVersion>$(Version)</InformationalVersion>
