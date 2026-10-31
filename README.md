@@ -8,7 +8,7 @@ APTTracker is a plugin for [Hearthstone Deck Tracker (HDT)](https://hsreplay.net
 
 - Install [Hearthstone Deck Tracker (HDT)](https://hsreplay.net/downloads/) if needed.
 - (Optional) Review HDT [plugin installation instructions](https://github.com/HearthSim/Hearthstone-Deck-Tracker/wiki/Available-Plugins#how-to-install-plugins)
-- Download [latest release](https://github.com/judecorp/APTTracker/releases/latest)
+- Download APTTracker.dll from [latest release](https://github.com/judecorp/APTTracker/releases/latest)
 - Copy `APTTracker.dll` into the plugins subfolder (default: `%appdata%\Hearthstone Deck Tracker\Plugins`) or click `Options -> Tracker -> Plugins -> Plugins Folder`.
 - (Re-)start HDT.
 - Enable APTTracker in `Options -> Tracker -> Plugins`
@@ -16,7 +16,7 @@ APTTracker is a plugin for [Hearthstone Deck Tracker (HDT)](https://hsreplay.net
 ## How to Update
 ![Update notification](assets/readme/update-notification.png)
 - A link will appear in the plugin when an update is available.
-- Download [latest release](https://github.com/judecorp/APTTracker/releases/latest)
+- Download APTTracker.dll from [latest release](https://github.com/judecorp/APTTracker/releases/latest)
 - Replace existing `APTTracker.dll` with newly downloaded one in the plugins subfolder (default: `%appdata%\Hearthstone Deck Tracker\Plugins`) or click `Options -> Tracker -> Plugins -> Plugins Folder`.
 
 ## Features
