@@ -205,7 +205,7 @@ namespace APTTracker
         private void OnPowerGamestateLogLine(string line)
         {
             if (IsInShop && !string.IsNullOrEmpty(line))
-                ProcessCounterEvent(CounterEventAdapter.FromGamestateLog(line));
+                ProcessCounterEvent(CounterEventAdapter.FromGamestateLog(line, Core.Game.Player.Id));
         }
 
         public void OnUpdate()

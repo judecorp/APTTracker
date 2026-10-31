@@ -12,6 +12,8 @@ namespace APTTracker.Counters
     {
         private static readonly Regex PlaySource = new Regex(
             @"BLOCK_START BlockType=PLAY Entity=\[entityName=.*? id=(\d+) zone=(\w+) zonePos=\d+ cardId=(\S+) player=(\d+)\]");
+        private static readonly Regex FirstChosenEntity = new Regex(
+            @"GameState\.DebugPrintEntitiesChosen\(\) -\s+Entities\[0\]=\[.*\bplayer=(\d+)\](?:\s|$)");
 
         public static CounterEvent FromHandDiscard(Entity discarded, Entity source)
         {
@@ -51,10 +53,14 @@ namespace APTTracker.Counters
             return new CounterEvent(CounterEventKind.LogPlay, cardId: match.Groups[3].Value, subOption: subOption);
         }
 
-        public static CounterEvent FromGamestateLog(string line)
+        public static CounterEvent FromGamestateLog(string line, int playerId)
         {
-            // Preserve the existing discover detection heuristic.
-            return line.Contains("m_chosenEntities")
+            if (string.IsNullOrEmpty(line))
+                return null;
+
+            var match = FirstChosenEntity.Match(line);
+            return playerId > 0 && match.Success
+                && int.TryParse(match.Groups[1].Value, out int controllerId) && controllerId == playerId
                 ? new CounterEvent(CounterEventKind.DiscoverCompleted)
                 : null;
         }
