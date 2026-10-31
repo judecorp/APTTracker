@@ -1,15 +1,18 @@
 name: Prepare draft release
 
 on:
-  push:
-    tags:
-      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'version (e.g. 0.2.0)'
+        required: true
+        type: string
 
 permissions:
   contents: read
 
 concurrency:
-  group: release-${{ github.ref }}
+  group: release-${{ inputs.version }}
   cancel-in-progress: false
 
 jobs:
@@ -22,21 +25,17 @@ jobs:
       run:
         shell: pwsh
     env:
-      RELEASE_TAG: ${{ github.ref_name }}
+      RELEASE_VERSION: ${{ inputs.version }}
+      RELEASE_TAG: v${{ inputs.version }}
 
     steps:
-      - name: Check out the tagged commit
+      - name: Check out the selected commit
         uses: actions/checkout@v6
         with:
           ref: ${{ github.sha }}
           persist-credentials: false
 
-      - name: Install .NET SDK
-        uses: actions/setup-dotnet@v5
-        with:
-          dotnet-version: '10.0.400'
-
-      - name: Parse project version
+      - name: Validate release version
         run: |
           [xml]$project = Get-Content APTTracker.csproj -Raw
           $versions = @($project.SelectNodes('/Project/PropertyGroup/Version'))
@@ -45,13 +44,14 @@ jobs:
           if ($version -cnotmatch '^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$') {
             throw "Expected major.minor.patch, got '$version'."
           }
-          "RELEASE_VERSION=$version" >> $env:GITHUB_ENV
-
-      - name: Compare tag and project version
-        run: |
-          if ($env:RELEASE_TAG -cne "v$env:RELEASE_VERSION") {
-            throw "Tag $env:RELEASE_TAG does not match project version $env:RELEASE_VERSION."
+          if ($env:RELEASE_VERSION -cne $version) {
+            throw "Input version '$env:RELEASE_VERSION' does not match project version '$version'."
           }
+
+      - name: Install .NET SDK
+        uses: actions/setup-dotnet@v5
+        with:
+          global-json-file: global.json
 
       - name: Restore NuGet packages
         run: |
@@ -63,14 +63,16 @@ jobs:
         run: >-
           dotnet build APTTracker.csproj --configuration Release --output artifacts
 
-      - name: Create draft release
+      - name: Tag the built commit
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >-
+          gh api --method POST "repos/$env:GITHUB_REPOSITORY/git/refs"
+          -f "ref=refs/tags/$env:RELEASE_TAG" -f "sha=$env:GITHUB_SHA"
+
+      - name: Create draft release with DLL
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release create $env:RELEASE_TAG --verify-tag --draft `
+          gh release create $env:RELEASE_TAG artifacts/APTTracker.dll --verify-tag --draft `
             --title $env:RELEASE_TAG --generate-notes
-
-      - name: Upload the verified DLL
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: gh release upload $env:RELEASE_TAG artifacts/APTTracker.dll
