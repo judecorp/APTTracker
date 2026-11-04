@@ -13,7 +13,8 @@ namespace APTTracker.Overlay
     {
         private User32.MouseInput _mouseInput;
         private bool _selected = false;
-        private FrameworkElement _element;
+        private bool _hasMoved;
+        private readonly FrameworkElement _element;
         private double _offsetX;
         private double _offsetY;
         private bool _isEnabled = false;
@@ -44,7 +45,7 @@ namespace APTTracker.Overlay
 
         private void MouseInputOnLmbDown(object sender, EventArgs eventArgs)
         {
-            if (!_isEnabled)
+            if (!_isEnabled || _selected)
                 return;
 
             try
@@ -53,7 +54,6 @@ namespace APTTracker.Overlay
                 var mousePos = new DrawingPoint(pos.X, pos.Y);
                 if (PointInsideControl(mousePos, _element))
                 {
-                    _selected = true;
                     try
                     {
                         var canvas = GetParentCanvas();
@@ -62,6 +62,9 @@ namespace APTTracker.Overlay
                             var canvasPos = canvas.PointFromScreen(new System.Windows.Point(pos.X, pos.Y));
                             _offsetX = canvasPos.X - Canvas.GetLeft(_element);
                             _offsetY = canvasPos.Y - Canvas.GetTop(_element);
+                            PluginPosition.BeginDrag(_element);
+                            _hasMoved = false;
+                            _selected = true;
                         }
                     }
                     catch
@@ -82,11 +85,30 @@ namespace APTTracker.Overlay
 
         private void MouseInputOnLmbUp(object sender, EventArgs eventArgs)
         {
-            if (_selected && _isEnabled && _element != null)
+            FinishDrag();
+        }
+
+        private void FinishDrag()
+        {
+            if (!_selected)
+                return;
+
+            try
             {
-                PluginPosition.SavePosition(_element);
+                if (_hasMoved)
+                {
+                    // Account for a final size change even if the pointer has stopped.
+                    PluginPosition.SetPosition(_element, Canvas.GetLeft(_element), Canvas.GetTop(_element));
+                    PluginPosition.SavePosition(_element);
+                }
             }
-            _selected = false;
+            finally
+            {
+                _selected = false;
+                _hasMoved = false;
+                PluginPosition.EndDrag(_element);
+                PluginPosition.RestorePosition(_element);
+            }
         }
 
         private void MouseInputOnMouseMoved(object sender, EventArgs eventArgs)
@@ -103,7 +125,10 @@ namespace APTTracker.Overlay
                     if (canvas != null)
                     {
                         var canvasPos = canvas.PointFromScreen(new System.Windows.Point(pos.X, pos.Y));
+                        var previousLeft = Canvas.GetLeft(_element);
+                        var previousTop = Canvas.GetTop(_element);
                         PluginPosition.SetPosition(_element, canvasPos.X - _offsetX, canvasPos.Y - _offsetY);
+                        _hasMoved |= Canvas.GetLeft(_element) != previousLeft || Canvas.GetTop(_element) != previousTop;
                     }
                 }
                 catch
@@ -120,33 +145,29 @@ namespace APTTracker.Overlay
         {
             try
             {
+                if (!control.IsVisible || !control.IsHitTestVisible)
+                    return false;
+
                 var pos = control.PointFromScreen(new System.Windows.Point(p.X, p.Y));
                 // Basic bounds check
                 if (pos.X < 0 || pos.X > control.ActualWidth || pos.Y < 0 || pos.Y > control.ActualHeight)
                     return false;
 
-                // Hyperlinks are content elements, so the visual-tree walk below cannot see them.
+                // Use the input hit test for both content and visual elements. A raw
+                // visual hit test can return controls in collapsed/inactive panels.
                 var input = control.InputHitTest(pos) as DependencyObject;
-                while (input is System.Windows.ContentElement content)
+                while (input != null)
                 {
-                    if (content is System.Windows.Documents.Hyperlink)
+                    if (input is System.Windows.Documents.Hyperlink ||
+                        input is ButtonBase || input is Slider || input is Thumb || input is ScrollBar)
                         return false;
-                    input = ContentOperations.GetParent(content)
-                        ?? (content as FrameworkContentElement)?.Parent;
-                }
 
-                // Hit‑test the point inside the element
-                var hit = System.Windows.Media.VisualTreeHelper.HitTest(control, new System.Windows.Point(pos.X, pos.Y))?.VisualHit;
+                    if (input == control)
+                        break;
 
-                // Walk up the visual tree to detect Buttons, ScrollBar parts, etc.
-                while (hit != null)
-                {
-                    if (hit is System.Windows.Controls.Primitives.ButtonBase ||
-                        hit is Slider ||
-                        hit is System.Windows.Controls.Primitives.Thumb ||
-                         hit is System.Windows.Controls.Primitives.ScrollBar)
-                        return false; // exempt from dragging
-                    hit = System.Windows.Media.VisualTreeHelper.GetParent(hit) as System.Windows.DependencyObject;
+                    input = input is ContentElement content
+                        ? ContentOperations.GetParent(content) ?? (content as FrameworkContentElement)?.Parent
+                        : VisualTreeHelper.GetParent(input);
                 }
 
                 return true;
@@ -187,13 +208,13 @@ namespace APTTracker.Overlay
         public void Disable()
         {
             _isEnabled = false;
-            _selected = false;
+            FinishDrag();
         }
 
         public void Dispose()
         {
             _isEnabled = false;
-            _selected = false;
+            FinishDrag();
             _mouseInput?.Dispose();
             _mouseInput = null;
         }

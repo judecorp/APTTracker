@@ -8,8 +8,26 @@ namespace APTTracker.Overlay
 {
     public static class PluginPosition
     {
+        private static readonly DependencyProperty IsDraggingProperty = DependencyProperty.RegisterAttached(
+            "IsDragging", typeof(bool), typeof(PluginPosition), new PropertyMetadata(false));
+
+        internal static void BeginDrag(FrameworkElement element)
+        {
+            element.SetValue(IsDraggingProperty, true);
+        }
+
+        internal static void EndDrag(FrameworkElement element)
+        {
+            element.ClearValue(IsDraggingProperty);
+        }
+
         public static void RestorePosition(FrameworkElement element)
         {
+            // Hover expansion, counter animations and viewport changes can all resize
+            // the plugin during a drag. The pointer owns its position until release.
+            if ((bool)element.GetValue(IsDraggingProperty))
+                return;
+
             // Clamping must not overwrite the preferred position: resizing back restores it.
             var settings = AppSettings.Default;
             UpdatePosition(element,

@@ -8,6 +8,7 @@
     xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
     mc:Ignorable="d"
     Width="225"
+    Background="Transparent"
     MouseEnter="Plugin_MouseEnter"
     MouseLeave="Plugin_MouseLeave">
 
