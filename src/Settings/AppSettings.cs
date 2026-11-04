@@ -37,7 +37,7 @@ namespace APTTracker.Settings
 
         public const double MinimumScale = 0.5;
         public const double MaximumScale = 2.0;
-        public const double DefaultPositionLeftPercent = 0.75351745700885875;
+        public const double DefaultPositionLeftPercent = 0.71130797290255343;
         public const double DefaultPositionTopPercent = 0.0;
 
         public static double ClampScale(double value)
@@ -119,7 +119,7 @@ namespace APTTracker.Settings
                     string jsonString = File.ReadAllText(SettingsFilePath);
                     var loadedSettings = JsonConvert.DeserializeObject<AppSettings>(jsonString);
 
-                    
+
                     // Merge loaded settings with current defaults to handle new counters
                     var defaultSettings = new AppSettings(); // This will initialize with defaults
                     foreach (var kvp in defaultSettings.CounterVisibility)
